@@ -100,6 +100,15 @@ const POS = () => {
     }
   };
 
+  const handleLogout = () => {
+    if (cashDrawer) {
+      toast.error('Ju lutem mbyllni arkën para se të çkyçeni');
+      return;
+    }
+    logout();
+    navigate('/login');
+  };
+
   const handleOpenDrawer = async () => {
     try {
       const response = await api.post('/cashier/open', {
