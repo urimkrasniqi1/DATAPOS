@@ -127,10 +127,24 @@ const POS = () => {
     }
   };
 
-  const filteredProducts = products.filter(p => 
-    (p.name?.toLowerCase().includes(search.toLowerCase()) ||
-    p.barcode?.includes(search)) && p.current_stock > 0
-  );
+  const filteredProducts = products.filter(p => {
+    const searchTerm = (showProductSearch ? dialogSearch : search).toLowerCase().trim();
+    if (!searchTerm) return p.current_stock > 0;
+    return (
+      (p.name?.toLowerCase().includes(searchTerm) ||
+      p.barcode?.toLowerCase().includes(searchTerm) ||
+      p.barcode?.includes(searchTerm)) && 
+      p.current_stock > 0
+    );
+  });
+
+  // Products for main search (showing dropdown)
+  const mainSearchResults = search.trim() ? products.filter(p => 
+    (p.name?.toLowerCase().includes(search.toLowerCase().trim()) ||
+    p.barcode?.toLowerCase().includes(search.toLowerCase().trim()) ||
+    p.barcode?.includes(search.trim())) && 
+    p.current_stock > 0
+  ) : [];
 
   const addToCart = useCallback((product) => {
     setCart(prevCart => {
