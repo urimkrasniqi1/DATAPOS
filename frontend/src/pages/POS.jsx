@@ -78,7 +78,10 @@ const POS = () => {
   const [recentSales, setRecentSales] = useState([]);
   const [applyNoVat, setApplyNoVat] = useState(false);
   const [showSearchResults, setShowSearchResults] = useState(false);
+  const [showInvoiceA4, setShowInvoiceA4] = useState(false);
+  const [currentSaleForPrint, setCurrentSaleForPrint] = useState(null);
   const searchRef = useRef(null);
+  const invoiceRef = useRef(null);
 
   useEffect(() => {
     loadData();
