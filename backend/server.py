@@ -737,6 +737,7 @@ async def close_cash_drawer(request: CloseDrawerRequest, current_user: dict = De
     if not drawer:
         raise HTTPException(status_code=404, detail="Nuk keni arkë të hapur")
     
+    actual_balance = request.actual_balance
     discrepancy = actual_balance - drawer["expected_balance"]
     
     await db.cash_drawers.update_one(
