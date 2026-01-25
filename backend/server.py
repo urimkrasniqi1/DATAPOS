@@ -337,10 +337,10 @@ def hash_password(password: str) -> str:
 def verify_password(plain_password: str, hashed_password: str) -> bool:
     return pwd_context.verify(plain_password, hashed_password)
 
-def create_token(user_id: str, email: str, role: str) -> str:
+def create_token(user_id: str, username: str, role: str) -> str:
     payload = {
         "sub": user_id,
-        "email": email,
+        "username": username,
         "role": role,
         "exp": datetime.now(timezone.utc) + timedelta(hours=JWT_EXPIRATION_HOURS)
     }
@@ -381,20 +381,20 @@ async def generate_receipt_number(branch_id: str = None) -> str:
 # ============ AUTH ROUTES ============
 @api_router.post("/auth/login", response_model=TokenResponse)
 async def login(request: LoginRequest):
-    user = await db.users.find_one({"email": request.email}, {"_id": 0})
+    user = await db.users.find_one({"username": request.username}, {"_id": 0})
     if not user or not verify_password(request.password, user.get("password_hash", "")):
-        raise HTTPException(status_code=401, detail="Email ose fjalëkalim i gabuar")
+        raise HTTPException(status_code=401, detail="Username ose fjalëkalim i gabuar")
     if not user.get("is_active", True):
         raise HTTPException(status_code=403, detail="Llogaria është e çaktivizuar")
     
-    token = create_token(user["id"], user["email"], user["role"])
+    token = create_token(user["id"], user["username"], user["role"])
     await log_audit(user["id"], "login", "user", user["id"])
     
     return TokenResponse(
         access_token=token,
         user=UserResponse(
             id=user["id"],
-            email=user["email"],
+            username=user["username"],
             full_name=user["full_name"],
             role=user["role"],
             branch_id=user.get("branch_id"),
