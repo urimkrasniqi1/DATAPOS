@@ -871,7 +871,10 @@ const POS = () => {
       </Dialog>
 
       {/* Product Search Dialog */}
-      <Dialog open={showProductSearch} onOpenChange={setShowProductSearch}>
+      <Dialog open={showProductSearch} onOpenChange={(open) => {
+        setShowProductSearch(open);
+        if (!open) setDialogSearch('');
+      }}>
         <DialogContent className="sm:max-w-lg">
           <DialogHeader>
             <DialogTitle>Kërko Artikullin</DialogTitle>
@@ -883,7 +886,14 @@ const POS = () => {
                 placeholder="Kërko sipas emrit ose barkodit..."
                 className="pl-10"
                 autoFocus
-                onChange={(e) => setSearch(e.target.value)}
+                value={dialogSearch}
+                onChange={(e) => setDialogSearch(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' && filteredProducts.length > 0) {
+                    addToCart(filteredProducts[0]);
+                    setDialogSearch('');
+                  }
+                }}
               />
             </div>
             <ScrollArea className="h-64">
@@ -892,12 +902,15 @@ const POS = () => {
                   <div
                     key={product.id}
                     className="p-3 border rounded-lg hover:bg-[#E0F7FA] cursor-pointer transition-colors"
-                    onClick={() => addToCart(product)}
+                    onClick={() => {
+                      addToCart(product);
+                      setDialogSearch('');
+                    }}
                   >
                     <div className="flex justify-between items-center">
                       <div>
                         <p className="font-medium">{product.name || 'Pa emër'}</p>
-                        <p className="text-sm text-gray-500">{product.barcode || '-'}</p>
+                        <p className="text-sm text-gray-500">Barkod: {product.barcode || '-'}</p>
                       </div>
                       <div className="text-right">
                         <p className="font-bold text-[#E53935]">€{(product.sale_price || 0).toFixed(2)}</p>
@@ -906,8 +919,12 @@ const POS = () => {
                     </div>
                   </div>
                 ))}
-                {filteredProducts.length === 0 && (
-                  <p className="text-center text-gray-400 py-8">Nuk u gjetën produkte</p>
+                {filteredProducts.length === 0 && dialogSearch.trim() && (
+                  <p className="text-center text-gray-400 py-8">Nuk u gjet asnjë produkt për "{dialogSearch}"</p>
+                )}
+                {filteredProducts.length === 0 && !dialogSearch.trim() && (
+                  <p className="text-center text-gray-400 py-8">Shkruani emrin ose barkod-in e produktit</p>
+                )}
                 )}
               </div>
             </ScrollArea>
