@@ -11,7 +11,7 @@ from datetime import datetime, timedelta
 from typing import Dict, Any, Optional
 
 class T3NextPOSAPITester:
-    def __init__(self, base_url: str = "https://vepro-pos.preview.emergentagent.com"):
+    def __init__(self, base_url: str = "https://posmaster-27.preview.emergentagent.com"):
         self.base_url = base_url
         self.api_url = f"{base_url}/api"
         self.token = None
