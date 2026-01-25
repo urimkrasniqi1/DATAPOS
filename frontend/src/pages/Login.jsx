@@ -4,7 +4,7 @@ import { useAuth } from '../App';
 import { Input } from '../components/ui/input';
 import { Button } from '../components/ui/button';
 import { Checkbox } from '../components/ui/checkbox';
-import { User, Lock, Eye, EyeOff } from 'lucide-react';
+import { User, Lock, Eye, EyeOff, Smartphone } from 'lucide-react';
 
 const Login = () => {
   const [username, setUsername] = useState('');
