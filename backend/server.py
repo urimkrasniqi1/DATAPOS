@@ -1212,6 +1212,48 @@ async def get_categories(current_user: dict = Depends(get_current_user)):
     categories = list(set(p.get("category") for p in products if p.get("category")))
     return sorted(categories)
 
+# ============ COMPANY SETTINGS ROUTES ============
+@api_router.get("/settings/company")
+async def get_company_settings(current_user: dict = Depends(get_current_user)):
+    settings = await db.settings.find_one({"type": "company"}, {"_id": 0})
+    if not settings:
+        # Return default settings
+        return CompanySettings().model_dump()
+    return settings.get("data", CompanySettings().model_dump())
+
+@api_router.put("/settings/company")
+async def update_company_settings(
+    settings: CompanySettingsUpdate,
+    current_user: dict = Depends(require_role([UserRole.ADMIN]))
+):
+    # Get existing settings or create new
+    existing = await db.settings.find_one({"type": "company"})
+    
+    if existing:
+        current_data = existing.get("data", {})
+        # Update only provided fields
+        update_data = {k: v for k, v in settings.model_dump().items() if v is not None}
+        current_data.update(update_data)
+        
+        await db.settings.update_one(
+            {"type": "company"},
+            {"$set": {"data": current_data, "updated_at": datetime.now(timezone.utc).isoformat()}}
+        )
+    else:
+        # Create new settings document
+        await db.settings.insert_one({
+            "type": "company",
+            "data": settings.model_dump(),
+            "created_at": datetime.now(timezone.utc).isoformat(),
+            "updated_at": datetime.now(timezone.utc).isoformat()
+        })
+    
+    await log_audit(current_user["id"], "update_settings", "company", "company")
+    
+    # Return updated settings
+    updated = await db.settings.find_one({"type": "company"}, {"_id": 0})
+    return updated.get("data", {})
+
 # ============ INIT ROUTES ============
 @api_router.post("/init/admin")
 async def create_initial_admin():
