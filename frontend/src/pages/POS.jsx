@@ -1062,7 +1062,6 @@ const POS = () => {
                 {filteredProducts.length === 0 && !dialogSearch.trim() && (
                   <p className="text-center text-gray-400 py-8">Shkruani emrin ose barkod-in e produktit</p>
                 )}
-                )}
               </div>
             </ScrollArea>
           </div>
