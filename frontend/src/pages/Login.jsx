@@ -49,12 +49,13 @@ const Login = () => {
           {/* Right side - Login Form */}
           <div className="md:w-1/2 p-8 md:p-12">
             {/* Brand name */}
-            <div className="flex items-center justify-center gap-1 mb-8">
-              <span className="text-3xl font-bold text-[#E53935]">→</span>
+            <div className="flex items-center justify-center gap-2 mb-8">
+              <div className="bg-[#E53935] p-2 rounded-lg">
+                <Smartphone className="h-6 w-6 text-white" />
+              </div>
               <span className="text-2xl font-bold">
-                <span className="text-[#E53935]">t</span>
-                <span className="text-gray-400">3</span>
-                <span className="text-[#00B9D7]">next</span>
+                <span className="text-[#E53935]">Mobilshop</span>
+                <span className="text-gray-600">urimi</span>
               </span>
             </div>
 
