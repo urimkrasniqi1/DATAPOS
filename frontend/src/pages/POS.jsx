@@ -99,7 +99,7 @@ const POS = () => {
     if (actualBalance === null) return;
 
     try {
-      const response = await api.post(`/cashier/close?actual_balance=${parseFloat(actualBalance) || 0}`);
+      const response = await api.post('/cashier/close', { actual_balance: parseFloat(actualBalance) || 0 });
       setCashDrawer(null);
       toast.success(`Arka u mbyll. Diferenca: €${response.data.discrepancy.toFixed(2)}`);
     } catch (error) {
