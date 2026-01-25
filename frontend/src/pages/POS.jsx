@@ -336,16 +336,25 @@ const POS = () => {
   useEffect(() => {
     const handleKeyPress = (e) => {
       if (e.key === 'Enter' && search && !showPayment && !showProductSearch) {
-        const product = products.find(p => p.barcode === search);
-        if (product) {
-          addToCart(product);
+        // First try exact barcode match
+        const productByBarcode = products.find(p => p.barcode === search.trim() && p.current_stock > 0);
+        if (productByBarcode) {
+          addToCart(productByBarcode);
           setSearch('');
+          setShowSearchResults(false);
+          return;
+        }
+        // Then try first search result
+        if (mainSearchResults.length > 0) {
+          addToCart(mainSearchResults[0]);
+          setSearch('');
+          setShowSearchResults(false);
         }
       }
     };
     window.addEventListener('keypress', handleKeyPress);
     return () => window.removeEventListener('keypress', handleKeyPress);
-  }, [search, products, addToCart, showPayment, showProductSearch]);
+  }, [search, products, addToCart, showPayment, showProductSearch, mainSearchResults]);
 
   if (loading) {
     return (
