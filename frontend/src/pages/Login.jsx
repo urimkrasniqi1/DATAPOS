@@ -26,7 +26,7 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-[#E8EEF2] to-[#F8FAFC]">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-[#F5E6F5] to-[#F8FAFC]">
       {/* Decorative top bar */}
       <div className="fixed top-0 left-0 right-0 h-1 bg-gradient-to-r from-[#00B9D7] via-[#E53935] to-[#00B9D7]" />
       
