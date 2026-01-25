@@ -143,8 +143,16 @@ const AppRoutes = () => {
         <Route index element={<Navigate to="/dashboard" replace />} />
         <Route path="dashboard" element={<Dashboard />} />
         <Route path="pos" element={<POS />} />
-        <Route path="products" element={<Products />} />
-        <Route path="stock" element={<Stock />} />
+        <Route path="products" element={
+          <ProtectedRoute allowedRoles={['admin', 'manager']}>
+            <Products />
+          </ProtectedRoute>
+        } />
+        <Route path="stock" element={
+          <ProtectedRoute allowedRoles={['admin', 'manager']}>
+            <Stock />
+          </ProtectedRoute>
+        } />
         <Route path="users" element={
           <ProtectedRoute allowedRoles={['admin', 'manager']}>
             <Users />
