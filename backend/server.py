@@ -330,6 +330,37 @@ class AuditLog(BaseModel):
     ip_address: Optional[str] = None
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
+# Company Settings Models
+class CompanySettings(BaseModel):
+    company_name: str = ""
+    address: str = ""
+    city: str = ""
+    postal_code: str = ""
+    phone: str = ""
+    email: str = ""
+    website: str = ""
+    nui: str = ""  # Numri Unik Identifikues
+    nf: str = ""   # Numri Fiskal
+    vat_number: str = ""
+    bank_name: str = ""
+    bank_account: str = ""
+    logo_url: str = ""
+
+class CompanySettingsUpdate(BaseModel):
+    company_name: Optional[str] = None
+    address: Optional[str] = None
+    city: Optional[str] = None
+    postal_code: Optional[str] = None
+    phone: Optional[str] = None
+    email: Optional[str] = None
+    website: Optional[str] = None
+    nui: Optional[str] = None
+    nf: Optional[str] = None
+    vat_number: Optional[str] = None
+    bank_name: Optional[str] = None
+    bank_account: Optional[str] = None
+    logo_url: Optional[str] = None
+
 # ============ HELPER FUNCTIONS ============
 def hash_password(password: str) -> str:
     return pwd_context.hash(password)
