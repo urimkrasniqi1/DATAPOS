@@ -13,7 +13,8 @@ import {
   LogOut,
   ClipboardList,
   Menu,
-  X
+  X,
+  Smartphone
 } from 'lucide-react';
 import { Button } from './ui/button';
 import { ScrollArea } from './ui/scroll-area';
@@ -81,11 +82,12 @@ const MainLayout = () => {
             {sidebarOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
           </Button>
           <div className="flex items-center gap-2">
-            <span className="text-2xl font-bold text-[#E53935]">→</span>
+            <div className="bg-[#E53935] p-1.5 rounded-lg">
+              <Smartphone className="h-5 w-5 text-white" />
+            </div>
             <span className="text-xl font-bold">
-              <span className="text-[#E53935]">t</span>
-              <span className="text-gray-400">3</span>
-              <span className="text-[#00B9D7]">next</span>
+              <span className="text-[#E53935]">Mobilshop</span>
+              <span className="text-gray-500">urimi</span>
             </span>
           </div>
           <DropdownMenu>
@@ -101,7 +103,7 @@ const MainLayout = () => {
             <DropdownMenuContent align="end">
               <div className="px-3 py-2">
                 <p className="font-medium">{user?.full_name}</p>
-                <p className="text-sm text-gray-500">{user?.email}</p>
+                <p className="text-sm text-gray-500">{user?.username}</p>
               </div>
               <DropdownMenuSeparator />
               <DropdownMenuItem onClick={handleLogout} className="text-red-600">
@@ -122,11 +124,12 @@ const MainLayout = () => {
         {/* Logo */}
         <div className="h-16 flex items-center justify-center border-b border-gray-100">
           <div className="flex items-center gap-2">
-            <span className="text-3xl font-bold text-[#E53935]">→</span>
+            <div className="bg-[#E53935] p-2 rounded-lg">
+              <Smartphone className="h-6 w-6 text-white" />
+            </div>
             <span className="text-2xl font-bold">
-              <span className="text-[#E53935]">t</span>
-              <span className="text-gray-400">3</span>
-              <span className="text-[#00B9D7]">next</span>
+              <span className="text-[#E53935]">Mobilshop</span>
+              <span className="text-gray-500">urimi</span>
             </span>
           </div>
         </div>
@@ -162,7 +165,7 @@ const MainLayout = () => {
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-56">
               <div className="px-3 py-2">
-                <p className="text-sm text-gray-500">{user?.email}</p>
+                <p className="text-sm text-gray-500">@{user?.username}</p>
               </div>
               <DropdownMenuSeparator />
               <DropdownMenuItem onClick={handleLogout} className="text-red-600">
