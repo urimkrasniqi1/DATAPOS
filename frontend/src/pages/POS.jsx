@@ -424,10 +424,51 @@ const POS = () => {
               type="text"
               placeholder="Kërko produkt ose skano barkod..."
               value={search}
-              onChange={(e) => setSearch(e.target.value)}
+              onChange={(e) => {
+                setSearch(e.target.value);
+                setShowSearchResults(e.target.value.trim().length > 0);
+              }}
+              onFocus={() => search.trim() && setShowSearchResults(true)}
+              onBlur={() => setTimeout(() => setShowSearchResults(false), 200)}
               className="pl-10 h-12 border-[#00B9D7] focus:ring-[#00B9D7]"
               data-testid="pos-search-input"
             />
+            
+            {/* Live Search Results Dropdown */}
+            {showSearchResults && mainSearchResults.length > 0 && (
+              <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-50 max-h-64 overflow-auto">
+                {mainSearchResults.map((product) => (
+                  <div
+                    key={product.id}
+                    className="p-3 hover:bg-[#E0F7FA] cursor-pointer border-b border-gray-100 last:border-b-0"
+                    onMouseDown={(e) => {
+                      e.preventDefault();
+                      addToCart(product);
+                      setSearch('');
+                      setShowSearchResults(false);
+                    }}
+                  >
+                    <div className="flex justify-between items-center">
+                      <div>
+                        <p className="font-medium text-gray-900">{product.name || 'Pa emër'}</p>
+                        <p className="text-sm text-gray-500">Barkod: {product.barcode || '-'}</p>
+                      </div>
+                      <div className="text-right">
+                        <p className="font-bold text-[#E53935]">€{(product.sale_price || 0).toFixed(2)}</p>
+                        <p className="text-xs text-gray-400">Stok: {product.current_stock}</p>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+            
+            {/* No results message */}
+            {showSearchResults && search.trim() && mainSearchResults.length === 0 && (
+              <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-50 p-4 text-center text-gray-500">
+                Nuk u gjet asnjë produkt për "{search}"
+              </div>
+            )}
           </div>
           {customerName && (
             <div className="flex items-center gap-2 px-3 py-1 bg-[#00B9D7]/10 rounded-lg">
