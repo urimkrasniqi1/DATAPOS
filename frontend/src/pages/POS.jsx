@@ -55,6 +55,7 @@ const POS = () => {
   const [products, setProducts] = useState([]);
   const [cart, setCart] = useState([]);
   const [search, setSearch] = useState('');
+  const [dialogSearch, setDialogSearch] = useState('');
   const [loading, setLoading] = useState(true);
   const [cashDrawer, setCashDrawer] = useState(null);
   const [showOpenDrawer, setShowOpenDrawer] = useState(false);
@@ -71,6 +72,7 @@ const POS = () => {
   const [selectedItemIndex, setSelectedItemIndex] = useState(null);
   const [recentSales, setRecentSales] = useState([]);
   const [applyNoVat, setApplyNoVat] = useState(false);
+  const [showSearchResults, setShowSearchResults] = useState(false);
   const searchRef = useRef(null);
 
   useEffect(() => {
