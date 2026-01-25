@@ -195,12 +195,12 @@ const AppRoutes = () => {
 
 function App() {
   return (
-    <BrowserRouter>
+    <HashRouter>
       <AuthProvider>
         <Toaster position="top-right" richColors closeButton />
         <AppRoutes />
       </AuthProvider>
-    </BrowserRouter>
+    </HashRouter>
   );
 }
 
