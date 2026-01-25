@@ -33,26 +33,15 @@ const Login = () => {
       <div className="w-full max-w-4xl mx-4">
         <div className="bg-white rounded-2xl shadow-xl overflow-hidden flex flex-col md:flex-row">
           {/* Left side - Logo/Brand */}
-          <div className="md:w-1/2 p-8 md:p-12 flex items-center justify-center bg-white">
-            <div className="text-center md:text-left">
-              {/* Arrow Logo */}
-              <div className="flex items-center justify-center md:justify-start mb-6">
-                <svg
-                  viewBox="0 0 100 100"
-                  className="w-32 h-32 md:w-48 md:h-48"
-                  fill="none"
-                >
-                  {/* Main arrow shape */}
-                  <path
-                    d="M20 50 L50 20 L50 35 L80 35 L80 65 L50 65 L50 80 Z"
-                    fill="#E53935"
-                  />
-                  {/* Inner cutout */}
-                  <path
-                    d="M35 50 L50 35 L50 42 L65 42 L65 58 L50 58 L50 65 Z"
-                    fill="white"
-                  />
-                </svg>
+          <div className="md:w-1/2 p-8 md:p-12 flex items-center justify-center bg-gradient-to-br from-[#9C27B0] to-[#7B1FA2]">
+            <div className="text-center">
+              {/* Mobile Phone Logo */}
+              <div className="flex flex-col items-center justify-center mb-4">
+                <div className="bg-white/20 p-6 rounded-2xl mb-4">
+                  <Smartphone className="w-20 h-20 text-white" strokeWidth={1.5} />
+                </div>
+                <h1 className="text-3xl font-bold text-white">mobilshop</h1>
+                <h2 className="text-2xl font-light text-white/90">urimi</h2>
               </div>
             </div>
           </div>
