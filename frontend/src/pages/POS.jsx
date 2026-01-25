@@ -1083,6 +1083,52 @@ const POS = () => {
       </Dialog>
     </div>
   );
+
+  // If cashier - show fullscreen POS with header
+  if (isCashierFullscreen) {
+    return (
+      <div className="min-h-screen bg-[#F8FAFC]">
+        {/* Cashier Header */}
+        <header className="bg-white border-b border-gray-200 px-4 py-3 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <span className="text-2xl font-bold text-[#E53935]">→</span>
+            <span className="text-xl font-bold">
+              <span className="text-[#E53935]">t</span>
+              <span className="text-gray-400">3</span>
+              <span className="text-[#00B9D7]">next</span>
+            </span>
+            <span className="text-gray-400 mx-2">|</span>
+            <span className="text-gray-600">Arka</span>
+          </div>
+          
+          <div className="flex items-center gap-4">
+            <div className="text-right hidden sm:block">
+              <p className="text-sm font-medium text-gray-900">{user?.full_name}</p>
+              <p className="text-xs text-gray-500">Arkëtar</p>
+            </div>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleLogout}
+              className="gap-2 text-red-600 border-red-200 hover:bg-red-50"
+              data-testid="logout-btn"
+            >
+              <LogOut className="h-4 w-4" />
+              <span className="hidden sm:inline">Çkyçu</span>
+            </Button>
+          </div>
+        </header>
+        
+        {/* POS Content */}
+        <main className="p-4">
+          {posContent}
+        </main>
+      </div>
+    );
+  }
+
+  // For admin/manager - return normal content (will be inside MainLayout)
+  return posContent;
 };
 
 export default POS;
