@@ -17,7 +17,7 @@ Sistema POS (Point of Sale) për markete dhe supermarkete me mbështetje multi-f
 - Raportim me eksport PDF/Excel
 - Mbështetje multi-filiale
 
-## What's Been Implemented (December 2025)
+## What's Been Implemented (January 2025)
 
 ### Backend (FastAPI + MongoDB)
 - [x] Auth: JWT login, role-based access (admin, manager, cashier)
@@ -40,9 +40,20 @@ Sistema POS (Point of Sale) për markete dhe supermarkete me mbështetje multi-f
 - [x] Users management
 - [x] Branches management
 - [x] Reports with date filters
-- [x] Settings page
+- [x] Settings page (UI only)
 - [x] Audit logs page
 - [x] Albanian language interface
+
+### Cashier Workflow (NEW - January 2025)
+- [x] Cashier redirects directly to /pos on login
+- [x] After closing drawer, shows "Hap Arkën" and "Çkyçu" buttons
+- [x] Fullscreen POS interface for cashier role
+
+### Invoice A4 Printing (NEW - January 2025)
+- [x] A4 Invoice component with company info, items, totals
+- [x] "Printo A4" button in POS sidebar
+- [x] View and print recent sales from Documents dialog
+- [x] Print preview with print functionality
 
 ### Design Implementation
 - [x] t3next branding (red #E53935, teal #00B9D7)
@@ -57,11 +68,13 @@ Sistema POS (Point of Sale) për markete dhe supermarkete me mbështetje multi-f
 - Product management ✓
 - POS/Sales ✓
 - Stock management ✓
+- Cashier workflow ✓
+- Invoice A4 printing ✓
 
 ### P1 (High)
-- [ ] Receipt printing integration
-- [ ] Barcode scanner hardware integration
+- [ ] Settings page backend implementation
 - [ ] Real-time stock alerts
+- [ ] Thermal receipt printer integration
 
 ### P2 (Medium)
 - [ ] OpenAI GPT integration for analytics
@@ -81,10 +94,44 @@ Sistema POS (Point of Sale) për markete dhe supermarkete me mbështetje multi-f
 - GET/POST /api/stock/movements
 - POST /api/cashier/open, /api/cashier/close
 - POST /api/sales
+- GET /api/sales/{sale_id}
 - GET /api/reports/dashboard, /api/reports/sales, /api/reports/stock
 - GET /api/reports/export/pdf, /api/reports/export/excel
 - GET /api/audit-logs
 
 ## Demo Credentials
-- Email: admin@t3next.com
-- Password: admin123
+- Admin: admin@t3next.com / admin123
+- Cashier: arketar@t3next.com / arketar123
+
+## Code Architecture
+```
+/app
+├── backend/
+│   └── server.py         # FastAPI app with all routes, models, and logic
+├── frontend/
+│   └── src/
+│       ├── App.js        # Main component with routing and Auth provider
+│       ├── components/
+│       │   ├── MainLayout.jsx # Sidebar layout for admin/manager
+│       │   └── InvoiceA4.jsx  # A4 Invoice printing component
+│       └── pages/
+│           ├── Login.jsx
+│           ├── Dashboard.jsx
+│           ├── POS.jsx       # Core POS logic with A4 printing
+│           ├── Products.jsx
+│           ├── Stock.jsx
+│           ├── Users.jsx
+│           ├── Branches.jsx
+│           ├── Reports.jsx
+│           ├── Settings.jsx
+│           └── AuditLogs.jsx
+└── memory/
+    └── PRD.md
+```
+
+## Latest Updates (January 25, 2025)
+- Fixed cashier redirect to /pos on login
+- Added "Hap Arkën" and "Çkyçu" buttons after drawer close
+- Created InvoiceA4 component for A4 invoice printing
+- Added "Printo A4" button to POS sidebar
+- Added ability to print recent sales from Documents dialog
