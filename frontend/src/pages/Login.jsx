@@ -4,10 +4,10 @@ import { useAuth } from '../App';
 import { Input } from '../components/ui/input';
 import { Button } from '../components/ui/button';
 import { Checkbox } from '../components/ui/checkbox';
-import { Mail, Lock, Eye, EyeOff } from 'lucide-react';
+import { User, Lock, Eye, EyeOff } from 'lucide-react';
 
 const Login = () => {
-  const [email, setEmail] = useState('');
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
@@ -18,7 +18,7 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    const result = await login(email, password);
+    const result = await login(username, password);
     setLoading(false);
     if (result.success) {
       navigate('/dashboard');
@@ -70,19 +70,19 @@ const Login = () => {
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-5">
-              {/* Email Input */}
+              {/* Username Input */}
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Mail className="h-5 w-5 text-gray-400" />
+                  <User className="h-5 w-5 text-gray-400" />
                 </div>
                 <Input
-                  type="email"
-                  placeholder="Email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  type="text"
+                  placeholder="Username"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
                   className="pl-10 h-12 bg-gray-50 border-gray-200 rounded-full focus:ring-[#E53935] focus:border-[#E53935]"
                   required
-                  data-testid="login-email-input"
+                  data-testid="login-username-input"
                 />
               </div>
 
@@ -148,7 +148,7 @@ const Login = () => {
             <div className="mt-8 p-4 bg-gray-50 rounded-lg">
               <p className="text-xs text-gray-500 text-center mb-2">Kredencialet Demo:</p>
               <p className="text-xs text-gray-600 text-center">
-                <span className="font-mono">admin@t3next.com</span> / <span className="font-mono">admin123</span>
+                <span className="font-mono">admin</span> / <span className="font-mono">admin123</span>
               </p>
             </div>
           </div>
