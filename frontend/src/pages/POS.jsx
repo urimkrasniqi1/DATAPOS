@@ -102,8 +102,9 @@ const POS = () => {
 
   const handleLogout = () => {
     if (cashDrawer) {
-      toast.error('Ju lutem mbyllni arkën para se të çkyçeni');
-      return;
+      if (!window.confirm('Keni arkë të hapur. Jeni të sigurt që doni të çkyçeni pa e mbyllur arkën?')) {
+        return;
+      }
     }
     logout();
     navigate('/login');
