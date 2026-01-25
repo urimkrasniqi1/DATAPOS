@@ -46,7 +46,7 @@ const Users = () => {
   const [showDialog, setShowDialog] = useState(false);
   const [editingUser, setEditingUser] = useState(null);
   const [formData, setFormData] = useState({
-    email: '',
+    username: '',
     password: '',
     full_name: '',
     role: 'cashier',
@@ -103,7 +103,7 @@ const Users = () => {
   const handleEdit = (user) => {
     setEditingUser(user);
     setFormData({
-      email: user.email,
+      username: user.username,
       password: '',
       full_name: user.full_name,
       role: user.role,
@@ -128,7 +128,7 @@ const Users = () => {
   const resetForm = () => {
     setEditingUser(null);
     setFormData({
-      email: '',
+      username: '',
       password: '',
       full_name: '',
       role: 'cashier',
@@ -236,7 +236,7 @@ const Users = () => {
               <TableHeader>
                 <TableRow className="bg-gray-50">
                   <TableHead>Përdoruesi</TableHead>
-                  <TableHead>Email</TableHead>
+                  <TableHead>Username</TableHead>
                   <TableHead>Roli</TableHead>
                   <TableHead>Dega</TableHead>
                   <TableHead className="text-center">Statusi</TableHead>
@@ -263,7 +263,7 @@ const Users = () => {
                           </div>
                         </div>
                       </TableCell>
-                      <TableCell>{user.email}</TableCell>
+                      <TableCell className="font-mono text-sm">{user.username}</TableCell>
                       <TableCell>
                         <div className="flex items-center gap-2">
                           {getRoleIcon(user.role)}
@@ -326,14 +326,14 @@ const Users = () => {
               </div>
 
               <div className="space-y-2">
-                <Label>Email</Label>
+                <Label>Username</Label>
                 <Input
-                  type="email"
-                  value={formData.email}
-                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                  placeholder="email@shembull.com"
+                  type="text"
+                  value={formData.username}
+                  onChange={(e) => setFormData({ ...formData, username: e.target.value })}
+                  placeholder="perdoruesi123"
                   required
-                  data-testid="user-email-input"
+                  data-testid="user-username-input"
                 />
               </div>
 
