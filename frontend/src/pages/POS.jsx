@@ -1,14 +1,17 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { api, useAuth } from '../App';
 import { toast } from 'sonner';
-import { Card, CardContent } from '../components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
+import { Label } from '../components/ui/label';
+import { Textarea } from '../components/ui/textarea';
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
+  DialogFooter,
 } from '../components/ui/dialog';
 import {
   Select,
@@ -25,6 +28,7 @@ import {
   TableHeader,
   TableRow,
 } from '../components/ui/table';
+import { ScrollArea } from '../components/ui/scroll-area';
 import {
   Search,
   Plus,
@@ -39,7 +43,11 @@ import {
   Percent,
   Calculator,
   X,
-  Delete
+  Delete,
+  Settings,
+  Printer,
+  List,
+  XCircle
 } from 'lucide-react';
 
 const POS = () => {
@@ -51,10 +59,18 @@ const POS = () => {
   const [cashDrawer, setCashDrawer] = useState(null);
   const [showOpenDrawer, setShowOpenDrawer] = useState(false);
   const [showPayment, setShowPayment] = useState(false);
+  const [showProductSearch, setShowProductSearch] = useState(false);
+  const [showCustomer, setShowCustomer] = useState(false);
+  const [showParams, setShowParams] = useState(false);
+  const [showDocuments, setShowDocuments] = useState(false);
   const [openingBalance, setOpeningBalance] = useState('');
   const [paymentMethod, setPaymentMethod] = useState('cash');
   const [cashAmount, setCashAmount] = useState('');
   const [customerName, setCustomerName] = useState('');
+  const [customerNote, setCustomerNote] = useState('');
+  const [selectedItemIndex, setSelectedItemIndex] = useState(null);
+  const [recentSales, setRecentSales] = useState([]);
+  const [applyNoVat, setApplyNoVat] = useState(false);
   const searchRef = useRef(null);
 
   useEffect(() => {
@@ -64,12 +80,14 @@ const POS = () => {
   const loadData = async () => {
     try {
       setLoading(true);
-      const [productsRes, drawerRes] = await Promise.all([
+      const [productsRes, drawerRes, salesRes] = await Promise.all([
         api.get('/products'),
-        api.get('/cashier/current').catch(() => ({ data: null }))
+        api.get('/cashier/current').catch(() => ({ data: null })),
+        api.get('/sales?limit=10').catch(() => ({ data: [] }))
       ]);
       setProducts(productsRes.data);
       setCashDrawer(drawerRes.data);
+      setRecentSales(salesRes.data || []);
     } catch (error) {
       console.error('Error loading POS data:', error);
     } finally {
@@ -132,11 +150,12 @@ const POS = () => {
         quantity: 1,
         unit_price: product.sale_price || 0,
         discount_percent: 0,
-        vat_percent: product.vat_rate || 0,
+        vat_percent: applyNoVat ? 0 : (product.vat_rate || 0),
         max_stock: product.current_stock
       }];
     });
-  }, []);
+    setShowProductSearch(false);
+  }, [applyNoVat]);
 
   const updateQuantity = (productId, delta) => {
     setCart(prevCart =>
@@ -167,11 +186,25 @@ const POS = () => {
 
   const removeFromCart = (productId) => {
     setCart(prevCart => prevCart.filter(item => item.product_id !== productId));
+    setSelectedItemIndex(null);
+  };
+
+  const deleteSelectedItem = () => {
+    if (selectedItemIndex !== null && cart[selectedItemIndex]) {
+      removeFromCart(cart[selectedItemIndex].product_id);
+      toast.success('Artikulli u fshi');
+    } else {
+      toast.error('Zgjidhni një artikull për ta fshirë');
+    }
   };
 
   const clearCart = () => {
     if (cart.length > 0 && window.confirm('Jeni të sigurt që doni të pastroni shportën?')) {
       setCart([]);
+      setSelectedItemIndex(null);
+      setCustomerName('');
+      setCustomerNote('');
+      toast.success('Shporta u pastrua');
     }
   };
 
@@ -219,7 +252,8 @@ const POS = () => {
         payment_method: paymentMethod,
         cash_amount: paymentMethod === 'cash' ? parseFloat(cashAmount) || 0 : 0,
         bank_amount: paymentMethod === 'bank' ? cartTotals.total : 0,
-        customer_name: customerName || null
+        customer_name: customerName || null,
+        notes: customerNote || null
       };
 
       const response = await api.post('/sales', saleData);
@@ -228,10 +262,47 @@ const POS = () => {
       setShowPayment(false);
       setCashAmount('');
       setCustomerName('');
-      loadData(); // Reload to update stock
+      setCustomerNote('');
+      setSelectedItemIndex(null);
+      loadData();
     } catch (error) {
       toast.error(error.response?.data?.detail || 'Gabim gjatë regjistrimit të shitjes');
     }
+  };
+
+  // Print note (simulation)
+  const handlePrintNote = () => {
+    if (cart.length === 0) {
+      toast.error('Shporta është bosh');
+      return;
+    }
+    // Create printable content
+    const printContent = `
+      =====================================
+      t3next POS - NOTË
+      =====================================
+      Data: ${new Date().toLocaleString('sq-AL')}
+      Arkëtar: ${user?.full_name}
+      -------------------------------------
+      ${cart.map((item, i) => `${i+1}. ${item.product_name || 'Produkt'} x${item.quantity} = €${calculateItemTotal(item).total.toFixed(2)}`).join('\n')}
+      -------------------------------------
+      TOTAL: €${cartTotals.total.toFixed(2)}
+      =====================================
+    `;
+    console.log(printContent);
+    toast.success('Nota u dërgua për printim');
+  };
+
+  // Apply no VAT to all items
+  const handleNoVat = () => {
+    setApplyNoVat(!applyNoVat);
+    setCart(prevCart => 
+      prevCart.map(item => ({
+        ...item,
+        vat_percent: applyNoVat ? (products.find(p => p.id === item.product_id)?.vat_rate || 0) : 0
+      }))
+    );
+    toast.success(applyNoVat ? 'TVSH u aktivizua' : 'TVSH u çaktivizua');
   };
 
   // Numpad handler
@@ -248,7 +319,7 @@ const POS = () => {
   // Keyboard shortcut for barcode scanner
   useEffect(() => {
     const handleKeyPress = (e) => {
-      if (e.key === 'Enter' && search) {
+      if (e.key === 'Enter' && search && !showPayment && !showProductSearch) {
         const product = products.find(p => p.barcode === search);
         if (product) {
           addToCart(product);
@@ -258,7 +329,7 @@ const POS = () => {
     };
     window.addEventListener('keypress', handleKeyPress);
     return () => window.removeEventListener('keypress', handleKeyPress);
-  }, [search, products, addToCart]);
+  }, [search, products, addToCart, showPayment, showProductSearch]);
 
   if (loading) {
     return (
@@ -295,7 +366,7 @@ const POS = () => {
             </DialogHeader>
             <div className="space-y-4 pt-4">
               <div>
-                <label className="text-sm font-medium text-gray-700">Bilanci Fillestar (€)</label>
+                <Label>Bilanci Fillestar (€)</Label>
                 <Input
                   type="number"
                   step="0.01"
@@ -342,6 +413,12 @@ const POS = () => {
               data-testid="pos-search-input"
             />
           </div>
+          {customerName && (
+            <div className="flex items-center gap-2 px-3 py-1 bg-[#00B9D7]/10 rounded-lg">
+              <User className="h-4 w-4 text-[#00B9D7]" />
+              <span className="text-sm font-medium">{customerName}</span>
+            </div>
+          )}
         </div>
 
         {/* Cart Table */}
@@ -372,7 +449,11 @@ const POS = () => {
                   cart.map((item, index) => {
                     const { subtotal, total } = calculateItemTotal(item);
                     return (
-                      <TableRow key={item.product_id} className="table-row-hover">
+                      <TableRow 
+                        key={item.product_id} 
+                        className={`table-row-hover cursor-pointer ${selectedItemIndex === index ? 'bg-[#E53935]/10' : ''}`}
+                        onClick={() => setSelectedItemIndex(index)}
+                      >
                         <TableCell className="w-12">{index + 1}</TableCell>
                         <TableCell>
                           <Select
@@ -386,7 +467,7 @@ const POS = () => {
                                     product_id: product.id,
                                     product_name: product.name,
                                     unit_price: product.sale_price || 0,
-                                    vat_percent: product.vat_rate || 0,
+                                    vat_percent: applyNoVat ? 0 : (product.vat_rate || 0),
                                     max_stock: product.current_stock
                                   } : it
                                 ));
@@ -411,7 +492,7 @@ const POS = () => {
                               variant="ghost"
                               size="icon"
                               className="h-7 w-7"
-                              onClick={() => updateQuantity(item.product_id, -1)}
+                              onClick={(e) => { e.stopPropagation(); updateQuantity(item.product_id, -1); }}
                             >
                               <Minus className="h-3 w-3" />
                             </Button>
@@ -420,7 +501,7 @@ const POS = () => {
                               variant="ghost"
                               size="icon"
                               className="h-7 w-7"
-                              onClick={() => updateQuantity(item.product_id, 1)}
+                              onClick={(e) => { e.stopPropagation(); updateQuantity(item.product_id, 1); }}
                             >
                               <Plus className="h-3 w-3" />
                             </Button>
@@ -434,6 +515,7 @@ const POS = () => {
                             max="100"
                             value={item.discount_percent}
                             onChange={(e) => updateDiscount(item.product_id, e.target.value)}
+                            onClick={(e) => e.stopPropagation()}
                             className="w-16 h-8 text-center"
                           />
                         </TableCell>
@@ -445,7 +527,7 @@ const POS = () => {
                             variant="ghost"
                             size="icon"
                             className="h-7 w-7 text-red-500 hover:text-red-700"
-                            onClick={() => removeFromCart(item.product_id)}
+                            onClick={(e) => { e.stopPropagation(); removeFromCart(item.product_id); }}
                           >
                             <Trash2 className="h-4 w-4" />
                           </Button>
@@ -478,90 +560,114 @@ const POS = () => {
 
       {/* Right Side - Action Buttons */}
       <div className="w-full lg:w-48 flex flex-row lg:flex-col gap-2">
+        {/* Dokumentin - View recent documents/sales */}
         <Button
           variant="outline"
           className="flex-1 lg:h-14 flex items-center justify-center gap-2"
-          onClick={() => {/* Document functionality */}}
+          onClick={() => setShowDocuments(true)}
           data-testid="pos-documents-btn"
         >
           <FileText className="h-5 w-5" />
           <span className="hidden lg:inline">Dokumentin</span>
         </Button>
+
+        {/* Kërko artikullin - Search and add product */}
         <Button
           variant="outline"
           className="flex-1 lg:h-14 flex items-center justify-center gap-2"
-          onClick={() => {/* Add product functionality */}}
+          onClick={() => setShowProductSearch(true)}
           data-testid="pos-add-product-btn"
         >
           <Package className="h-5 w-5" />
           <span className="hidden lg:inline">Kërko artikullin</span>
         </Button>
+
+        {/* Shtyp Noten - Print note/receipt */}
         <Button
           variant="outline"
           className="flex-1 lg:h-14 flex items-center justify-center gap-2"
-          data-testid="pos-stock-btn"
+          onClick={handlePrintNote}
+          data-testid="pos-print-note-btn"
         >
           <Receipt className="h-5 w-5" />
           <span className="hidden lg:inline">Shtyp Noten</span>
         </Button>
+
+        {/* Fshij artikullin - Delete selected item */}
         <Button
           variant="outline"
           className="flex-1 lg:h-14 flex items-center justify-center gap-2"
+          onClick={deleteSelectedItem}
           data-testid="pos-delete-btn"
         >
           <Trash2 className="h-5 w-5" />
           <span className="hidden lg:inline">Fshij artikullin</span>
         </Button>
+
+        {/* Konsumatori - Customer info */}
         <Button
           variant="outline"
-          className="flex-1 lg:h-14 flex items-center justify-center gap-2"
+          className={`flex-1 lg:h-14 flex items-center justify-center gap-2 ${customerName ? 'border-[#00B9D7] text-[#00B9D7]' : ''}`}
+          onClick={() => setShowCustomer(true)}
           data-testid="pos-customer-btn"
         >
           <User className="h-5 w-5" />
           <span className="hidden lg:inline">Konsumatori</span>
         </Button>
+
+        {/* Parametrat - Settings/params */}
         <Button
           variant="outline"
           className="flex-1 lg:h-14 flex items-center justify-center gap-2"
+          onClick={() => setShowParams(true)}
           data-testid="pos-params-btn"
         >
-          <Calculator className="h-5 w-5" />
+          <Settings className="h-5 w-5" />
           <span className="hidden lg:inline">Parametrat</span>
         </Button>
+
+        {/* Shtyp - Print and finish (payment) */}
         <Button
           variant="outline"
-          className="flex-1 lg:h-14 flex items-center justify-center gap-2"
-          data-testid="pos-list-btn"
+          className="flex-1 lg:h-14 flex items-center justify-center gap-2 border-green-500 text-green-600 hover:bg-green-50"
+          onClick={() => cart.length > 0 && setShowPayment(true)}
+          disabled={cart.length === 0}
+          data-testid="pos-print-btn"
         >
-          <Package className="h-5 w-5" />
+          <Printer className="h-5 w-5" />
           <span className="hidden lg:inline">Shtyp</span>
         </Button>
+
+        {/* Provo Art / Mbyll Arkën - Close drawer */}
         <Button
           variant="outline"
           className="flex-1 lg:h-14 flex items-center justify-center gap-2"
           onClick={handleCloseDrawer}
-          data-testid="pos-close-btn"
+          data-testid="pos-close-drawer-btn"
         >
-          <X className="h-5 w-5" />
-          <span className="hidden lg:inline">Provo Art</span>
+          <XCircle className="h-5 w-5" />
+          <span className="hidden lg:inline">Mbyll Arkën</span>
         </Button>
+
+        {/* Pastro - Clear cart */}
         <Button
           variant="outline"
-          className="flex-1 lg:h-14 flex items-center justify-center gap-2 text-red-500"
+          className="flex-1 lg:h-14 flex items-center justify-center gap-2 text-red-500 hover:bg-red-50"
           onClick={clearCart}
           data-testid="pos-clear-btn"
         >
           <Trash2 className="h-5 w-5" />
           <span className="hidden lg:inline">Pastro</span>
         </Button>
+
+        {/* Pa TVSH - Toggle VAT */}
         <Button
-          className="flex-1 lg:h-14 flex items-center justify-center gap-2 bg-[#E53935] hover:bg-[#D32F2F]"
-          onClick={() => cart.length > 0 && setShowPayment(true)}
-          disabled={cart.length === 0}
-          data-testid="pos-pay-btn"
+          className={`flex-1 lg:h-14 flex items-center justify-center gap-2 ${applyNoVat ? 'bg-orange-500 hover:bg-orange-600' : 'bg-[#E53935] hover:bg-[#D32F2F]'}`}
+          onClick={handleNoVat}
+          data-testid="pos-no-vat-btn"
         >
           <Percent className="h-5 w-5" />
-          <span className="hidden lg:inline">Pa TVSH</span>
+          <span className="hidden lg:inline">{applyNoVat ? 'Me TVSH' : 'Pa TVSH'}</span>
         </Button>
       </div>
 
@@ -639,8 +745,9 @@ const POS = () => {
                     <p className="text-lg font-bold">€0.00</p>
                   </div>
                   <div className="col-span-2">
+                    <p className="text-sm text-gray-500">Kusuri:</p>
                     <p className={`text-2xl font-bold ${changeAmount >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                      €{changeAmount >= 0 ? `-${changeAmount.toFixed(2)}` : changeAmount.toFixed(2)}
+                      €{changeAmount.toFixed(2)}
                     </p>
                   </div>
                 </div>
@@ -666,6 +773,14 @@ const POS = () => {
               </>
             )}
 
+            {/* Bank payment - just show total */}
+            {paymentMethod === 'bank' && (
+              <div className="p-4 bg-gray-50 rounded-lg text-center">
+                <p className="text-sm text-gray-500 mb-2">Pagesa me kartë/bank</p>
+                <p className="text-2xl font-bold text-[#00B9D7]">€{cartTotals.total.toFixed(2)}</p>
+              </div>
+            )}
+
             {/* Confirm Button */}
             <Button
               className="w-full h-12 bg-[#2196F3] hover:bg-[#1976D2]"
@@ -675,6 +790,166 @@ const POS = () => {
               Shtyp
             </Button>
           </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Product Search Dialog */}
+      <Dialog open={showProductSearch} onOpenChange={setShowProductSearch}>
+        <DialogContent className="sm:max-w-lg">
+          <DialogHeader>
+            <DialogTitle>Kërko Artikullin</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+              <Input
+                placeholder="Kërko sipas emrit ose barkodit..."
+                className="pl-10"
+                autoFocus
+                onChange={(e) => setSearch(e.target.value)}
+              />
+            </div>
+            <ScrollArea className="h-64">
+              <div className="space-y-2">
+                {filteredProducts.map((product) => (
+                  <div
+                    key={product.id}
+                    className="p-3 border rounded-lg hover:bg-[#E0F7FA] cursor-pointer transition-colors"
+                    onClick={() => addToCart(product)}
+                  >
+                    <div className="flex justify-between items-center">
+                      <div>
+                        <p className="font-medium">{product.name || 'Pa emër'}</p>
+                        <p className="text-sm text-gray-500">{product.barcode || '-'}</p>
+                      </div>
+                      <div className="text-right">
+                        <p className="font-bold text-[#E53935]">€{(product.sale_price || 0).toFixed(2)}</p>
+                        <p className="text-xs text-gray-400">Stok: {product.current_stock}</p>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+                {filteredProducts.length === 0 && (
+                  <p className="text-center text-gray-400 py-8">Nuk u gjetën produkte</p>
+                )}
+              </div>
+            </ScrollArea>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Customer Dialog */}
+      <Dialog open={showCustomer} onOpenChange={setShowCustomer}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Informacioni i Konsumatorit</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div className="space-y-2">
+              <Label>Emri i Konsumatorit</Label>
+              <Input
+                value={customerName}
+                onChange={(e) => setCustomerName(e.target.value)}
+                placeholder="Emri (opsional)"
+                data-testid="customer-name-input"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label>Shënime</Label>
+              <Textarea
+                value={customerNote}
+                onChange={(e) => setCustomerNote(e.target.value)}
+                placeholder="Shënime shtesë..."
+                data-testid="customer-note-input"
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => { setCustomerName(''); setCustomerNote(''); }}>
+              Pastro
+            </Button>
+            <Button onClick={() => setShowCustomer(false)} className="bg-[#E53935] hover:bg-[#D32F2F]">
+              Ruaj
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Parameters Dialog */}
+      <Dialog open={showParams} onOpenChange={setShowParams}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Parametrat e Arkës</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div className="p-4 bg-gray-50 rounded-lg">
+              <div className="flex justify-between mb-2">
+                <span className="text-gray-500">Bilanci Fillestar:</span>
+                <span className="font-semibold">€{cashDrawer?.opening_balance?.toFixed(2) || '0.00'}</span>
+              </div>
+              <div className="flex justify-between mb-2">
+                <span className="text-gray-500">Bilanci Aktual:</span>
+                <span className="font-semibold">€{cashDrawer?.current_balance?.toFixed(2) || '0.00'}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-gray-500">Bilanci i Pritshëm:</span>
+                <span className="font-semibold text-[#00B9D7]">€{cashDrawer?.expected_balance?.toFixed(2) || '0.00'}</span>
+              </div>
+            </div>
+            <div className="p-4 bg-gray-50 rounded-lg">
+              <div className="flex justify-between mb-2">
+                <span className="text-gray-500">Hapur më:</span>
+                <span className="font-semibold">{cashDrawer?.opened_at ? new Date(cashDrawer.opened_at).toLocaleString('sq-AL') : '-'}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-gray-500">Arkëtari:</span>
+                <span className="font-semibold">{user?.full_name}</span>
+              </div>
+            </div>
+            <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+              <span className="text-gray-500">Pa TVSH:</span>
+              <Button
+                variant={applyNoVat ? 'default' : 'outline'}
+                size="sm"
+                onClick={handleNoVat}
+                className={applyNoVat ? 'bg-orange-500' : ''}
+              >
+                {applyNoVat ? 'Aktiv' : 'Joaktiv'}
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Documents Dialog */}
+      <Dialog open={showDocuments} onOpenChange={setShowDocuments}>
+        <DialogContent className="sm:max-w-lg">
+          <DialogHeader>
+            <DialogTitle>Dokumentet e Fundit</DialogTitle>
+          </DialogHeader>
+          <ScrollArea className="h-80">
+            <div className="space-y-2">
+              {recentSales.map((sale) => (
+                <div key={sale.id} className="p-3 border rounded-lg hover:bg-gray-50">
+                  <div className="flex justify-between items-center">
+                    <div>
+                      <p className="font-medium">{sale.receipt_number}</p>
+                      <p className="text-sm text-gray-500">
+                        {new Date(sale.created_at).toLocaleString('sq-AL')}
+                      </p>
+                    </div>
+                    <div className="text-right">
+                      <p className="font-bold text-[#E53935]">€{sale.grand_total?.toFixed(2)}</p>
+                      <p className="text-xs text-gray-400 capitalize">{sale.payment_method}</p>
+                    </div>
+                  </div>
+                </div>
+              ))}
+              {recentSales.length === 0 && (
+                <p className="text-center text-gray-400 py-8">Nuk ka dokumente</p>
+              )}
+            </div>
+          </ScrollArea>
         </DialogContent>
       </Dialog>
     </div>
