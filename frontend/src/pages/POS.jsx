@@ -332,7 +332,7 @@ const POS = () => {
     // Create printable content
     const printContent = `
       =====================================
-      t3next POS - NOTË
+      Mobilshopurimi POS - NOTË
       =====================================
       Data: ${new Date().toLocaleString('sq-AL')}
       Arkëtar: ${user?.full_name}
@@ -346,15 +346,34 @@ const POS = () => {
     toast.success('Nota u dërgua për printim');
   };
 
-  // Print A4 Invoice
+  // Open buyer form before printing A4
   const handlePrintA4 = (sale = null) => {
     if (!sale && cart.length === 0) {
       toast.error('Shporta është bosh');
       return;
     }
     
-    // If no sale provided, create a preview sale from cart
-    const saleData = sale || {
+    // If sale is provided (from documents), go directly to print
+    if (sale) {
+      setCurrentSaleForPrint(sale);
+      setShowInvoiceA4(true);
+      return;
+    }
+    
+    // Otherwise show buyer form first
+    setBuyerInfo({
+      name: customerName || '',
+      address: '',
+      phone: '',
+      nui: '',
+      nf: ''
+    });
+    setShowBuyerForm(true);
+  };
+
+  // Proceed to print after filling buyer info
+  const proceedToPrintA4 = () => {
+    const saleData = {
       receipt_number: 'PREVIEW',
       items: cart.map(item => ({
         ...item,
@@ -368,12 +387,14 @@ const POS = () => {
       cash_amount: parseFloat(cashAmount) || 0,
       bank_amount: paymentMethod === 'bank' ? cartTotals.total : 0,
       change_amount: changeAmount,
-      customer_name: customerName,
+      customer_name: buyerInfo.name,
+      buyer_info: buyerInfo,
       notes: customerNote,
       created_at: new Date().toISOString()
     };
     
     setCurrentSaleForPrint(saleData);
+    setShowBuyerForm(false);
     setShowInvoiceA4(true);
   };
 
