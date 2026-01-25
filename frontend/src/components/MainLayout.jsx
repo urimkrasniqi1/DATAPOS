@@ -39,7 +39,7 @@ const MainLayout = () => {
   const menuItems = [
     { path: '/dashboard', icon: LayoutDashboard, label: 'Paneli', roles: ['admin', 'manager', 'cashier'] },
     { path: '/pos', icon: ShoppingCart, label: 'Arka', roles: ['admin', 'manager', 'cashier'] },
-    { path: '/products', icon: Package, label: 'Produktet', roles: ['admin', 'manager', 'cashier'] },
+    { path: '/products', icon: Package, label: 'Produktet', roles: ['admin', 'manager'] },
     { path: '/stock', icon: Warehouse, label: 'Stoku', roles: ['admin', 'manager'] },
     { path: '/users', icon: Users, label: 'Përdoruesit', roles: ['admin', 'manager'] },
     { path: '/branches', icon: Building2, label: 'Degët', roles: ['admin'] },
