@@ -1350,8 +1350,73 @@ const POS = () => {
             </DialogTitle>
           </DialogHeader>
           <div className="border rounded-lg overflow-hidden">
-            <InvoiceA4 ref={invoiceRef} sale={currentSaleForPrint} />
+            <InvoiceA4 ref={invoiceRef} sale={currentSaleForPrint} companyInfo={companySettings} />
           </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Buyer Info Form Dialog */}
+      <Dialog open={showBuyerForm} onOpenChange={setShowBuyerForm}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Të Dhënat e Blerësit</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div className="space-y-2">
+              <Label>Emri i Blerësit / Kompanisë</Label>
+              <Input
+                value={buyerInfo.name}
+                onChange={(e) => setBuyerInfo({ ...buyerInfo, name: e.target.value })}
+                placeholder="Emri i plotë ose emri i kompanisë"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label>Adresa</Label>
+              <Input
+                value={buyerInfo.address}
+                onChange={(e) => setBuyerInfo({ ...buyerInfo, address: e.target.value })}
+                placeholder="Adresa e blerësit"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label>Telefoni</Label>
+              <Input
+                value={buyerInfo.phone}
+                onChange={(e) => setBuyerInfo({ ...buyerInfo, phone: e.target.value })}
+                placeholder="+383 XX XXX XXX"
+              />
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label>NUI</Label>
+                <Input
+                  value={buyerInfo.nui}
+                  onChange={(e) => setBuyerInfo({ ...buyerInfo, nui: e.target.value })}
+                  placeholder="Numri Unik"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label>NF</Label>
+                <Input
+                  value={buyerInfo.nf}
+                  onChange={(e) => setBuyerInfo({ ...buyerInfo, nf: e.target.value })}
+                  placeholder="Numri Fiskal"
+                />
+              </div>
+            </div>
+          </div>
+          <DialogFooter className="gap-2">
+            <Button variant="outline" onClick={() => setShowBuyerForm(false)}>
+              Anulo
+            </Button>
+            <Button 
+              onClick={proceedToPrintA4}
+              className="bg-[#E53935] hover:bg-[#D32F2F]"
+            >
+              <FileDown className="h-4 w-4 mr-2" />
+              Vazhdo me Faturën
+            </Button>
+          </DialogFooter>
         </DialogContent>
       </Dialog>
     </div>
