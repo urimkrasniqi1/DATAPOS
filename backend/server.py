@@ -68,7 +68,7 @@ class CashDrawerStatus(str, Enum):
 
 # ============ MODELS ============
 class UserBase(BaseModel):
-    email: EmailStr
+    username: str
     full_name: str
     role: UserRole = UserRole.CASHIER
     branch_id: Optional[str] = None
@@ -91,7 +91,7 @@ class User(UserBase):
 
 class UserResponse(BaseModel):
     id: str
-    email: str
+    username: str
     full_name: str
     role: UserRole
     branch_id: Optional[str] = None
@@ -99,7 +99,7 @@ class UserResponse(BaseModel):
     created_at: str
 
 class LoginRequest(BaseModel):
-    email: EmailStr
+    username: str
     password: str
 
 class TokenResponse(BaseModel):
