@@ -1,256 +1,895 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import { api } from '../App';
+import { toast } from 'sonner';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '../components/ui/card';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
 import { Label } from '../components/ui/label';
+import { Textarea } from '../components/ui/textarea';
 import { Switch } from '../components/ui/switch';
 import { Separator } from '../components/ui/separator';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '../components/ui/tabs';
 import {
-  Settings as SettingsIcon,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '../components/ui/select';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '../components/ui/table';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from '../components/ui/dialog';
+import {
+  Building2,
   Store,
-  Bell,
-  Shield,
-  Database,
-  Palette
+  Warehouse,
+  FileText,
+  Receipt,
+  Percent,
+  Save,
+  Plus,
+  Edit2,
+  Trash2,
+  Upload,
+  FolderOpen
 } from 'lucide-react';
 
 const Settings = () => {
+  const [activeTab, setActiveTab] = useState('kompania');
+  const [loading, setLoading] = useState(false);
+  const [branches, setBranches] = useState([]);
+  const [showBranchDialog, setShowBranchDialog] = useState(false);
+  const [editingBranch, setEditingBranch] = useState(null);
+  
+  // Company settings
+  const [companyData, setCompanyData] = useState({
+    emri_kompanise: '',
+    nui: '',
+    numri_fiskal: '',
+    numri_tvsh: '',
+    telefoni: '',
+    fax: '',
+    email: '',
+    adresa: '',
+    qyteti: '',
+    vendi: '',
+    llogarite_bankare: '',
+    koment_fature: '',
+  });
+
+  // POS Settings
+  const [posSettings, setPosSettings] = useState({
+    eshte_me_tvsh: true,
+    shfaq_artikuj_me_minus: true,
+    lejo_shitjen_me_minus: true,
+    gjenero_automatik_numrin: true,
+    lejo_shume_zbritje: false,
+    kam_restaurant: false,
+    orientimi_fatures: 'vertikal',
+    valuta: 'EUR',
+    simboli_valutes: '€',
+    metoda_gjenerimit: '3',
+    shteku_printer: '',
+    partneri_default: '',
+    formati_numrit: 'F-yy-mm-dd-AA',
+  });
+
+  // Branch form
+  const [branchForm, setbranchForm] = useState({
+    name: '',
+    address: '',
+    phone: '',
+    is_active: true
+  });
+
+  // VAT rates
+  const [vatRates, setVatRates] = useState([
+    { id: 1, name: 'Standard', rate: 18, is_default: true },
+    { id: 2, name: 'I reduktuar', rate: 8, is_default: false },
+    { id: 3, name: 'Zero', rate: 0, is_default: false },
+  ]);
+
+  useEffect(() => {
+    loadData();
+  }, []);
+
+  const loadData = async () => {
+    try {
+      const branchesRes = await api.get('/branches');
+      setBranches(branchesRes.data);
+    } catch (error) {
+      console.error('Error loading settings:', error);
+    }
+  };
+
+  const handleSaveCompany = async () => {
+    setLoading(true);
+    try {
+      // In a real app, this would save to backend
+      await new Promise(resolve => setTimeout(resolve, 500));
+      toast.success('Cilësimet e kompanisë u ruajtën');
+    } catch (error) {
+      toast.error('Gabim gjatë ruajtjes');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSavePosSettings = async () => {
+    setLoading(true);
+    try {
+      await new Promise(resolve => setTimeout(resolve, 500));
+      toast.success('Cilësimet e POS u ruajtën');
+    } catch (error) {
+      toast.error('Gabim gjatë ruajtjes');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSaveBranch = async () => {
+    try {
+      if (editingBranch) {
+        await api.put(`/branches/${editingBranch.id}`, branchForm);
+        toast.success('Dega u përditësua');
+      } else {
+        await api.post('/branches', branchForm);
+        toast.success('Dega u krijua');
+      }
+      setShowBranchDialog(false);
+      setEditingBranch(null);
+      setbranchForm({ name: '', address: '', phone: '', is_active: true });
+      loadData();
+    } catch (error) {
+      toast.error(error.response?.data?.detail || 'Gabim gjatë ruajtjes');
+    }
+  };
+
+  const handleDeleteBranch = async (branch) => {
+    if (!window.confirm(`Jeni të sigurt që doni të fshini degën "${branch.name}"?`)) return;
+    try {
+      await api.delete(`/branches/${branch.id}`);
+      toast.success('Dega u fshi');
+      loadData();
+    } catch (error) {
+      toast.error('Gabim gjatë fshirjes');
+    }
+  };
+
+  const editBranch = (branch) => {
+    setEditingBranch(branch);
+    setbranchForm({
+      name: branch.name,
+      address: branch.address || '',
+      phone: branch.phone || '',
+      is_active: branch.is_active
+    });
+    setShowBranchDialog(true);
+  };
+
   return (
     <div className="space-y-6" data-testid="settings-page">
       {/* Header */}
-      <div>
-        <h1 className="text-2xl font-bold text-gray-900">Cilësimet</h1>
-        <p className="text-gray-500">Konfiguro parametrat e sistemit</p>
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-bold text-gray-900">Konfigurimet</h1>
+          <p className="text-gray-500">Menaxho cilësimet e sistemit</p>
+        </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Business Info */}
-        <Card className="border-0 shadow-sm">
-          <CardHeader>
-            <div className="flex items-center gap-3">
-              <div className="h-10 w-10 rounded-lg bg-[#E53935]/10 flex items-center justify-center">
-                <Store className="h-5 w-5 text-[#E53935]" />
+      {/* Tabs */}
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
+        <TabsList className="bg-white border shadow-sm p-1 h-auto flex-wrap">
+          <TabsTrigger value="kompania" className="data-[state=active]:bg-[#E53935] data-[state=active]:text-white">
+            <Building2 className="h-4 w-4 mr-2" />
+            KOMPANIA
+          </TabsTrigger>
+          <TabsTrigger value="filialet" className="data-[state=active]:bg-[#E53935] data-[state=active]:text-white">
+            <Store className="h-4 w-4 mr-2" />
+            FILIALET
+          </TabsTrigger>
+          <TabsTrigger value="depot" className="data-[state=active]:bg-[#E53935] data-[state=active]:text-white">
+            <Warehouse className="h-4 w-4 mr-2" />
+            DEPOT
+          </TabsTrigger>
+          <TabsTrigger value="projektet" className="data-[state=active]:bg-[#E53935] data-[state=active]:text-white">
+            <FolderOpen className="h-4 w-4 mr-2" />
+            PROJEKTET
+          </TabsTrigger>
+          <TabsTrigger value="numri" className="data-[state=active]:bg-[#E53935] data-[state=active]:text-white">
+            <FileText className="h-4 w-4 mr-2" />
+            NUMRI DOKUMENTIT
+          </TabsTrigger>
+          <TabsTrigger value="shabllonet" className="data-[state=active]:bg-[#E53935] data-[state=active]:text-white">
+            <Receipt className="h-4 w-4 mr-2" />
+            SHABLLONET E FATURAVE
+          </TabsTrigger>
+          <TabsTrigger value="tvsh" className="data-[state=active]:bg-[#E53935] data-[state=active]:text-white">
+            <Percent className="h-4 w-4 mr-2" />
+            TVSH
+          </TabsTrigger>
+        </TabsList>
+
+        {/* KOMPANIA Tab */}
+        <TabsContent value="kompania">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {/* Left Column - Company Info */}
+            <Card className="border-0 shadow-sm">
+              <CardHeader className="pb-4">
+                <Button 
+                  onClick={handleSaveCompany} 
+                  disabled={loading}
+                  className="w-fit bg-[#E53935] hover:bg-[#D32F2F]"
+                >
+                  <Save className="h-4 w-4 mr-2" />
+                  Ruaj
+                </Button>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="space-y-2">
+                  <Label>Emri i kompanisë</Label>
+                  <Input
+                    value={companyData.emri_kompanise}
+                    onChange={(e) => setCompanyData({ ...companyData, emri_kompanise: e.target.value })}
+                    placeholder="Emri i kompanisë"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label>NUI</Label>
+                  <Input
+                    value={companyData.nui}
+                    onChange={(e) => setCompanyData({ ...companyData, nui: e.target.value })}
+                    placeholder="Numri Unik i Identifikimit"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label>Numri Fiskal</Label>
+                  <Input
+                    value={companyData.numri_fiskal}
+                    onChange={(e) => setCompanyData({ ...companyData, numri_fiskal: e.target.value })}
+                    placeholder="Numri Fiskal"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label>Numri i Tvsh</Label>
+                  <Input
+                    value={companyData.numri_tvsh}
+                    onChange={(e) => setCompanyData({ ...companyData, numri_tvsh: e.target.value })}
+                    placeholder="Numri i TVSH-së"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label>Telefoni</Label>
+                  <Input
+                    value={companyData.telefoni}
+                    onChange={(e) => setCompanyData({ ...companyData, telefoni: e.target.value })}
+                    placeholder="+383 XX XXX XXX"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label>Fax</Label>
+                  <Input
+                    value={companyData.fax}
+                    onChange={(e) => setCompanyData({ ...companyData, fax: e.target.value })}
+                    placeholder="Numri i Fax"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label>EMail</Label>
+                  <Input
+                    type="email"
+                    value={companyData.email}
+                    onChange={(e) => setCompanyData({ ...companyData, email: e.target.value })}
+                    placeholder="email@kompania.com"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label>Adresa</Label>
+                  <Input
+                    value={companyData.adresa}
+                    onChange={(e) => setCompanyData({ ...companyData, adresa: e.target.value })}
+                    placeholder="Adresa e kompanisë"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label>Qyteti</Label>
+                  <Input
+                    value={companyData.qyteti}
+                    onChange={(e) => setCompanyData({ ...companyData, qyteti: e.target.value })}
+                    placeholder="Qyteti"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label>Vendi</Label>
+                  <Input
+                    value={companyData.vendi}
+                    onChange={(e) => setCompanyData({ ...companyData, vendi: e.target.value })}
+                    placeholder="Vendi/Shteti"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label>Llogaritë bankare</Label>
+                  <Textarea
+                    value={companyData.llogarite_bankare}
+                    onChange={(e) => setCompanyData({ ...companyData, llogarite_bankare: e.target.value })}
+                    placeholder="Llogaritë bankare të kompanisë"
+                    rows={3}
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label>Koment në faturë</Label>
+                  <Textarea
+                    value={companyData.koment_fature}
+                    onChange={(e) => setCompanyData({ ...companyData, koment_fature: e.target.value })}
+                    placeholder="Përshëndetje @partner,
+Ju lutemi gjeni të bashkangjitur faturën me numër @invoiceNo, të lëshuar më @date nga kompania @company.
+Për çdo paqartësi apo informacion shtesë, mund të na kontaktoni në adresën: @companyEmail.
+Faleminderit për bashkëpunimin!"
+                    rows={5}
+                  />
+                  <p className="text-xs text-gray-500">
+                    Mund të përdorni tagat: @partner, @company, @date, @companyEmail, @invoiceNo
+                  </p>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Right Column - POS Settings */}
+            <Card className="border-0 shadow-sm">
+              <CardHeader>
+                <CardTitle>Cilësimet e POS</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="font-medium">Është me Tvsh</p>
+                    <p className="text-sm text-gray-500">Aktivizo kalkulimin e TVSH</p>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className={!posSettings.eshte_me_tvsh ? 'text-gray-900' : 'text-gray-400'}>Jo</span>
+                    <Switch
+                      checked={posSettings.eshte_me_tvsh}
+                      onCheckedChange={(checked) => setPosSettings({ ...posSettings, eshte_me_tvsh: checked })}
+                    />
+                    <span className={posSettings.eshte_me_tvsh ? 'text-green-600' : 'text-gray-400'}>Po</span>
+                  </div>
+                </div>
+
+                <Separator />
+
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="font-medium">Shfaq Artikuj me minus</p>
+                    <p className="text-sm text-gray-500">Shfaq produktet me stok negativ</p>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className={!posSettings.shfaq_artikuj_me_minus ? 'text-gray-900' : 'text-gray-400'}>Jo</span>
+                    <Switch
+                      checked={posSettings.shfaq_artikuj_me_minus}
+                      onCheckedChange={(checked) => setPosSettings({ ...posSettings, shfaq_artikuj_me_minus: checked })}
+                    />
+                    <span className={posSettings.shfaq_artikuj_me_minus ? 'text-green-600' : 'text-gray-400'}>Po</span>
+                  </div>
+                </div>
+
+                <Separator />
+
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="font-medium">Lejo shitjen me minus</p>
+                    <p className="text-sm text-gray-500">Lejo shitjen kur stoku është negativ</p>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className={!posSettings.lejo_shitjen_me_minus ? 'text-gray-900' : 'text-gray-400'}>Jo</span>
+                    <Switch
+                      checked={posSettings.lejo_shitjen_me_minus}
+                      onCheckedChange={(checked) => setPosSettings({ ...posSettings, lejo_shitjen_me_minus: checked })}
+                    />
+                    <span className={posSettings.lejo_shitjen_me_minus ? 'text-green-600' : 'text-gray-400'}>Po</span>
+                  </div>
+                </div>
+
+                <Separator />
+
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="font-medium">Gjenero në mënyrë automatike numrin e faturës</p>
+                    <p className="text-sm text-gray-500">Numri i faturës gjenerohet automatikisht</p>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className={!posSettings.gjenero_automatik_numrin ? 'text-gray-900' : 'text-gray-400'}>Jo</span>
+                    <Switch
+                      checked={posSettings.gjenero_automatik_numrin}
+                      onCheckedChange={(checked) => setPosSettings({ ...posSettings, gjenero_automatik_numrin: checked })}
+                    />
+                    <span className={posSettings.gjenero_automatik_numrin ? 'text-green-600' : 'text-gray-400'}>Po</span>
+                  </div>
+                </div>
+
+                <Separator />
+
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="font-medium">Lejo shitjen me shumë zbritje</p>
+                    <p className="text-sm text-gray-500">Lejo zbritje të shumëfishta në një artikull</p>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className={!posSettings.lejo_shume_zbritje ? 'text-gray-900' : 'text-gray-400'}>Jo</span>
+                    <Switch
+                      checked={posSettings.lejo_shume_zbritje}
+                      onCheckedChange={(checked) => setPosSettings({ ...posSettings, lejo_shume_zbritje: checked })}
+                    />
+                    <span className={posSettings.lejo_shume_zbritje ? 'text-green-600' : 'text-gray-400'}>Po</span>
+                  </div>
+                </div>
+
+                <Separator />
+
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="font-medium">Kam restaurant</p>
+                    <p className="text-sm text-gray-500">Aktivizo modulin e restorantit</p>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className={!posSettings.kam_restaurant ? 'text-gray-900' : 'text-gray-400'}>Jo</span>
+                    <Switch
+                      checked={posSettings.kam_restaurant}
+                      onCheckedChange={(checked) => setPosSettings({ ...posSettings, kam_restaurant: checked })}
+                    />
+                    <span className={posSettings.kam_restaurant ? 'text-green-600' : 'text-gray-400'}>Po</span>
+                  </div>
+                </div>
+
+                <Separator />
+
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="font-medium">Orientimi i faturës</p>
+                    <p className="text-sm text-gray-500">Orientimi i printimit të faturës</p>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className={posSettings.orientimi_fatures === 'horizontal' ? 'text-gray-900' : 'text-gray-400'}>Horizontal</span>
+                    <Switch
+                      checked={posSettings.orientimi_fatures === 'vertikal'}
+                      onCheckedChange={(checked) => setPosSettings({ ...posSettings, orientimi_fatures: checked ? 'vertikal' : 'horizontal' })}
+                    />
+                    <span className={posSettings.orientimi_fatures === 'vertikal' ? 'text-[#00B9D7]' : 'text-gray-400'}>Vertikal</span>
+                  </div>
+                </div>
+
+                <Separator />
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label>Valuta</Label>
+                    <Select
+                      value={posSettings.valuta}
+                      onValueChange={(value) => setPosSettings({ ...posSettings, valuta: value })}
+                    >
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="EUR">EUR</SelectItem>
+                        <SelectItem value="USD">USD</SelectItem>
+                        <SelectItem value="ALL">ALL</SelectItem>
+                        <SelectItem value="CHF">CHF</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Simboli</Label>
+                    <Input
+                      value={posSettings.simboli_valutes}
+                      onChange={(e) => setPosSettings({ ...posSettings, simboli_valutes: e.target.value })}
+                      placeholder="€"
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <Label>Metoda e gjenerimit të numrit të faturës</Label>
+                  <Input
+                    value={posSettings.metoda_gjenerimit}
+                    onChange={(e) => setPosSettings({ ...posSettings, metoda_gjenerimit: e.target.value })}
+                    placeholder="3"
+                  />
+                  <p className="text-xs text-gray-500">1. Ditore, 2. Mujore, 3. Vjetore</p>
+                </div>
+
+                <div className="space-y-2">
+                  <Label>Shteku për printer fiskal</Label>
+                  <Input
+                    value={posSettings.shteku_printer}
+                    onChange={(e) => setPosSettings({ ...posSettings, shteku_printer: e.target.value })}
+                    placeholder="Shtegu i printerit"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label>Partneri default</Label>
+                  <Select
+                    value={posSettings.partneri_default}
+                    onValueChange={(value) => setPosSettings({ ...posSettings, partneri_default: value })}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Zgjidh partnerin" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="partneri">Partneri</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="space-y-2">
+                  <p className="text-sm text-gray-500">Formati i numrit të faturës: <span className="font-medium">Shembull: {posSettings.formati_numrit}</span></p>
+                </div>
+
+                <Separator />
+
+                <div className="space-y-2">
+                  <Label>Logo</Label>
+                  <div className="flex items-center gap-4">
+                    <Button variant="outline" className="gap-2">
+                      <Upload className="h-4 w-4" />
+                      Zgjidh Skedarin
+                    </Button>
+                    <span className="text-sm text-gray-500">Nuk është zgjedhur asnjë skedar</span>
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <Label>Vulë digjitale</Label>
+                  <div className="flex items-center gap-4">
+                    <Button variant="outline" className="gap-2">
+                      <Upload className="h-4 w-4" />
+                      Zgjidh Skedarin
+                    </Button>
+                    <span className="text-sm text-gray-500">Nuk është zgjedhur asnjë skedar</span>
+                  </div>
+                </div>
+
+                <Button onClick={handleSavePosSettings} className="w-full bg-[#E53935] hover:bg-[#D32F2F]">
+                  <Save className="h-4 w-4 mr-2" />
+                  Ruaj Cilësimet
+                </Button>
+              </CardContent>
+            </Card>
+          </div>
+        </TabsContent>
+
+        {/* FILIALET Tab */}
+        <TabsContent value="filialet">
+          <Card className="border-0 shadow-sm">
+            <CardHeader className="flex flex-row items-center justify-between">
+              <CardTitle>Filialet / Degët</CardTitle>
+              <Button 
+                className="bg-[#E53935] hover:bg-[#D32F2F]"
+                onClick={() => {
+                  setEditingBranch(null);
+                  setbranchForm({ name: '', address: '', phone: '', is_active: true });
+                  setShowBranchDialog(true);
+                }}
+              >
+                <Plus className="h-4 w-4 mr-2" />
+                Shto Filial
+              </Button>
+            </CardHeader>
+            <CardContent>
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Emri</TableHead>
+                    <TableHead>Adresa</TableHead>
+                    <TableHead>Telefoni</TableHead>
+                    <TableHead>Statusi</TableHead>
+                    <TableHead className="text-right">Veprime</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {branches.map((branch) => (
+                    <TableRow key={branch.id}>
+                      <TableCell className="font-medium">{branch.name}</TableCell>
+                      <TableCell>{branch.address || '-'}</TableCell>
+                      <TableCell>{branch.phone || '-'}</TableCell>
+                      <TableCell>
+                        <span className={`px-2 py-1 rounded-full text-xs ${branch.is_active ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
+                          {branch.is_active ? 'Aktiv' : 'Joaktiv'}
+                        </span>
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <Button variant="ghost" size="icon" onClick={() => editBranch(branch)}>
+                          <Edit2 className="h-4 w-4" />
+                        </Button>
+                        <Button variant="ghost" size="icon" className="text-red-500" onClick={() => handleDeleteBranch(branch)}>
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                  {branches.length === 0 && (
+                    <TableRow>
+                      <TableCell colSpan={5} className="text-center py-8 text-gray-500">
+                        Nuk ka filiale të regjistruara
+                      </TableCell>
+                    </TableRow>
+                  )}
+                </TableBody>
+              </Table>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        {/* DEPOT Tab */}
+        <TabsContent value="depot">
+          <Card className="border-0 shadow-sm">
+            <CardHeader className="flex flex-row items-center justify-between">
+              <CardTitle>Depot / Magazinat</CardTitle>
+              <Button className="bg-[#E53935] hover:bg-[#D32F2F]">
+                <Plus className="h-4 w-4 mr-2" />
+                Shto Depo
+              </Button>
+            </CardHeader>
+            <CardContent>
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Emri</TableHead>
+                    <TableHead>Filiali</TableHead>
+                    <TableHead>Adresa</TableHead>
+                    <TableHead>Statusi</TableHead>
+                    <TableHead className="text-right">Veprime</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  <TableRow>
+                    <TableCell colSpan={5} className="text-center py-8 text-gray-500">
+                      Nuk ka depo të regjistruara
+                    </TableCell>
+                  </TableRow>
+                </TableBody>
+              </Table>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        {/* PROJEKTET Tab */}
+        <TabsContent value="projektet">
+          <Card className="border-0 shadow-sm">
+            <CardHeader className="flex flex-row items-center justify-between">
+              <CardTitle>Projektet</CardTitle>
+              <Button className="bg-[#E53935] hover:bg-[#D32F2F]">
+                <Plus className="h-4 w-4 mr-2" />
+                Shto Projekt
+              </Button>
+            </CardHeader>
+            <CardContent>
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Emri</TableHead>
+                    <TableHead>Përshkrimi</TableHead>
+                    <TableHead>Data Fillimit</TableHead>
+                    <TableHead>Statusi</TableHead>
+                    <TableHead className="text-right">Veprime</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  <TableRow>
+                    <TableCell colSpan={5} className="text-center py-8 text-gray-500">
+                      Nuk ka projekte të regjistruara
+                    </TableCell>
+                  </TableRow>
+                </TableBody>
+              </Table>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        {/* NUMRI DOKUMENTIT Tab */}
+        <TabsContent value="numri">
+          <Card className="border-0 shadow-sm">
+            <CardHeader>
+              <CardTitle>Numërimi i Dokumenteve</CardTitle>
+              <CardDescription>Konfiguro formatin e numërimit të dokumenteve</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-4">
+                  <div className="space-y-2">
+                    <Label>Formati i Faturës së Shitjes</Label>
+                    <Input defaultValue="SH-{YYYY}-{MM}-{NNNN}" placeholder="SH-{YYYY}-{MM}-{NNNN}" />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Formati i Faturës së Blerjes</Label>
+                    <Input defaultValue="BL-{YYYY}-{MM}-{NNNN}" placeholder="BL-{YYYY}-{MM}-{NNNN}" />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Formati i Ofertës</Label>
+                    <Input defaultValue="OF-{YYYY}-{NNNN}" placeholder="OF-{YYYY}-{NNNN}" />
+                  </div>
+                </div>
+                <div className="p-4 bg-gray-50 rounded-lg">
+                  <h4 className="font-medium mb-2">Variablat e disponueshme:</h4>
+                  <ul className="text-sm text-gray-600 space-y-1">
+                    <li><code className="bg-gray-200 px-1 rounded">{'{YYYY}'}</code> - Viti (4 shifra)</li>
+                    <li><code className="bg-gray-200 px-1 rounded">{'{YY}'}</code> - Viti (2 shifra)</li>
+                    <li><code className="bg-gray-200 px-1 rounded">{'{MM}'}</code> - Muaji</li>
+                    <li><code className="bg-gray-200 px-1 rounded">{'{DD}'}</code> - Dita</li>
+                    <li><code className="bg-gray-200 px-1 rounded">{'{NNNN}'}</code> - Numri rendor</li>
+                  </ul>
+                </div>
               </div>
+              <Button className="bg-[#E53935] hover:bg-[#D32F2F]">
+                <Save className="h-4 w-4 mr-2" />
+                Ruaj Formatet
+              </Button>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        {/* SHABLLONET E FATURAVE Tab */}
+        <TabsContent value="shabllonet">
+          <Card className="border-0 shadow-sm">
+            <CardHeader className="flex flex-row items-center justify-between">
               <div>
-                <CardTitle className="text-lg">Informacioni i Biznesit</CardTitle>
-                <CardDescription>Të dhënat e kompanisë</CardDescription>
+                <CardTitle>Shabllonet e Faturave</CardTitle>
+                <CardDescription>Menaxho template-t e faturave dhe dokumenteve</CardDescription>
               </div>
-            </div>
-          </CardHeader>
-          <CardContent className="space-y-4">
+              <Button className="bg-[#E53935] hover:bg-[#D32F2F]">
+                <Plus className="h-4 w-4 mr-2" />
+                Shto Shabllon
+              </Button>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <Card className="border hover:border-[#E53935] cursor-pointer transition-colors">
+                  <CardContent className="p-4">
+                    <div className="h-32 bg-gray-100 rounded mb-3 flex items-center justify-center">
+                      <Receipt className="h-12 w-12 text-gray-400" />
+                    </div>
+                    <p className="font-medium">Faturë Standarde</p>
+                    <p className="text-sm text-gray-500">A4 - Portrait</p>
+                  </CardContent>
+                </Card>
+                <Card className="border hover:border-[#E53935] cursor-pointer transition-colors">
+                  <CardContent className="p-4">
+                    <div className="h-32 bg-gray-100 rounded mb-3 flex items-center justify-center">
+                      <Receipt className="h-12 w-12 text-gray-400" />
+                    </div>
+                    <p className="font-medium">Faturë Termike</p>
+                    <p className="text-sm text-gray-500">80mm - Receipt</p>
+                  </CardContent>
+                </Card>
+                <Card className="border hover:border-[#E53935] cursor-pointer transition-colors">
+                  <CardContent className="p-4">
+                    <div className="h-32 bg-gray-100 rounded mb-3 flex items-center justify-center">
+                      <Receipt className="h-12 w-12 text-gray-400" />
+                    </div>
+                    <p className="font-medium">Ofertë</p>
+                    <p className="text-sm text-gray-500">A4 - Portrait</p>
+                  </CardContent>
+                </Card>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        {/* TVSH Tab */}
+        <TabsContent value="tvsh">
+          <Card className="border-0 shadow-sm">
+            <CardHeader className="flex flex-row items-center justify-between">
+              <div>
+                <CardTitle>Normat e TVSH-së</CardTitle>
+                <CardDescription>Menaxho normat e tatimit mbi vlerën e shtuar</CardDescription>
+              </div>
+              <Button className="bg-[#E53935] hover:bg-[#D32F2F]">
+                <Plus className="h-4 w-4 mr-2" />
+                Shto Normë
+              </Button>
+            </CardHeader>
+            <CardContent>
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Emri</TableHead>
+                    <TableHead>Norma (%)</TableHead>
+                    <TableHead>Default</TableHead>
+                    <TableHead className="text-right">Veprime</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {vatRates.map((vat) => (
+                    <TableRow key={vat.id}>
+                      <TableCell className="font-medium">{vat.name}</TableCell>
+                      <TableCell>{vat.rate}%</TableCell>
+                      <TableCell>
+                        {vat.is_default && (
+                          <span className="px-2 py-1 rounded-full text-xs bg-green-100 text-green-700">
+                            Default
+                          </span>
+                        )}
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <Button variant="ghost" size="icon">
+                          <Edit2 className="h-4 w-4" />
+                        </Button>
+                        <Button variant="ghost" size="icon" className="text-red-500">
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
+
+      {/* Branch Dialog */}
+      <Dialog open={showBranchDialog} onOpenChange={setShowBranchDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>{editingBranch ? 'Modifiko Filialin' : 'Shto Filial të Ri'}</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
             <div className="space-y-2">
-              <Label>Emri i Biznesit</Label>
-              <Input placeholder="t3next Market" data-testid="business-name-input" />
-            </div>
-            <div className="space-y-2">
-              <Label>NIPT</Label>
-              <Input placeholder="L12345678A" />
+              <Label>Emri i Filialit</Label>
+              <Input
+                value={branchForm.name}
+                onChange={(e) => setbranchForm({ ...branchForm, name: e.target.value })}
+                placeholder="p.sh. Dega Qendrore"
+              />
             </div>
             <div className="space-y-2">
               <Label>Adresa</Label>
-              <Input placeholder="Rruga, Qyteti" />
+              <Input
+                value={branchForm.address}
+                onChange={(e) => setbranchForm({ ...branchForm, address: e.target.value })}
+                placeholder="Adresa e filialit"
+              />
             </div>
             <div className="space-y-2">
               <Label>Telefoni</Label>
-              <Input placeholder="+383 44 123 456" />
+              <Input
+                value={branchForm.phone}
+                onChange={(e) => setbranchForm({ ...branchForm, phone: e.target.value })}
+                placeholder="+383 XX XXX XXX"
+              />
             </div>
-            <Button className="bg-[#E53935] hover:bg-[#D32F2F]">
-              Ruaj Ndryshimet
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowBranchDialog(false)}>Anulo</Button>
+            <Button onClick={handleSaveBranch} className="bg-[#E53935] hover:bg-[#D32F2F]">
+              {editingBranch ? 'Ruaj' : 'Shto'}
             </Button>
-          </CardContent>
-        </Card>
-
-        {/* Notifications */}
-        <Card className="border-0 shadow-sm">
-          <CardHeader>
-            <div className="flex items-center gap-3">
-              <div className="h-10 w-10 rounded-lg bg-[#00B9D7]/10 flex items-center justify-center">
-                <Bell className="h-5 w-5 text-[#00B9D7]" />
-              </div>
-              <div>
-                <CardTitle className="text-lg">Njoftimet</CardTitle>
-                <CardDescription>Konfiguro njoftimet</CardDescription>
-              </div>
-            </div>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="font-medium">Stok i Ulët</p>
-                <p className="text-sm text-gray-500">Njoftim kur stoku bie nën 10</p>
-              </div>
-              <Switch defaultChecked data-testid="low-stock-notification" />
-            </div>
-            <Separator />
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="font-medium">Shitje të Reja</p>
-                <p className="text-sm text-gray-500">Njoftim për çdo shitje</p>
-              </div>
-              <Switch />
-            </div>
-            <Separator />
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="font-medium">Raporte Ditore</p>
-                <p className="text-sm text-gray-500">Email me raportin ditor</p>
-              </div>
-              <Switch defaultChecked />
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Security */}
-        <Card className="border-0 shadow-sm">
-          <CardHeader>
-            <div className="flex items-center gap-3">
-              <div className="h-10 w-10 rounded-lg bg-green-100 flex items-center justify-center">
-                <Shield className="h-5 w-5 text-green-600" />
-              </div>
-              <div>
-                <CardTitle className="text-lg">Siguria</CardTitle>
-                <CardDescription>Cilësimet e sigurisë</CardDescription>
-              </div>
-            </div>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="font-medium">Autentifikim 2FA</p>
-                <p className="text-sm text-gray-500">Verifikimi me dy faktorë</p>
-              </div>
-              <Switch />
-            </div>
-            <Separator />
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="font-medium">Sesion i Gjatë</p>
-                <p className="text-sm text-gray-500">Qëndro i kyçur për 7 ditë</p>
-              </div>
-              <Switch defaultChecked />
-            </div>
-            <Separator />
-            <div className="space-y-2">
-              <Label>Kohëzgjatja e Sesionit (orë)</Label>
-              <Input type="number" defaultValue="24" />
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* POS Settings */}
-        <Card className="border-0 shadow-sm">
-          <CardHeader>
-            <div className="flex items-center gap-3">
-              <div className="h-10 w-10 rounded-lg bg-orange-100 flex items-center justify-center">
-                <SettingsIcon className="h-5 w-5 text-orange-600" />
-              </div>
-              <div>
-                <CardTitle className="text-lg">Cilësimet POS</CardTitle>
-                <CardDescription>Konfigurimi i arkës</CardDescription>
-              </div>
-            </div>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="space-y-2">
-              <Label>TVSH Default (%)</Label>
-              <Input type="number" defaultValue="20" data-testid="default-vat-input" />
-            </div>
-            <div className="space-y-2">
-              <Label>Valuta</Label>
-              <Input defaultValue="EUR (€)" disabled />
-            </div>
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="font-medium">Printo Automatikisht</p>
-                <p className="text-sm text-gray-500">Printo faturën pas çdo shitje</p>
-              </div>
-              <Switch defaultChecked />
-            </div>
-            <Separator />
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="font-medium">Lejo Stok Negativ</p>
-                <p className="text-sm text-gray-500">Lejo shitje pa stok</p>
-              </div>
-              <Switch />
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Database */}
-        <Card className="border-0 shadow-sm">
-          <CardHeader>
-            <div className="flex items-center gap-3">
-              <div className="h-10 w-10 rounded-lg bg-purple-100 flex items-center justify-center">
-                <Database className="h-5 w-5 text-purple-600" />
-              </div>
-              <div>
-                <CardTitle className="text-lg">Databaza</CardTitle>
-                <CardDescription>Backup dhe restore</CardDescription>
-              </div>
-            </div>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="font-medium">Backup Automatik</p>
-                <p className="text-sm text-gray-500">Çdo 24 orë</p>
-              </div>
-              <Switch defaultChecked />
-            </div>
-            <Separator />
-            <div className="flex gap-2">
-              <Button variant="outline" className="flex-1">
-                Krijo Backup
-              </Button>
-              <Button variant="outline" className="flex-1">
-                Restore
-              </Button>
-            </div>
-            <p className="text-xs text-gray-400">
-              Backup i fundit: {new Date().toLocaleDateString('sq-AL')}
-            </p>
-          </CardContent>
-        </Card>
-
-        {/* Appearance */}
-        <Card className="border-0 shadow-sm">
-          <CardHeader>
-            <div className="flex items-center gap-3">
-              <div className="h-10 w-10 rounded-lg bg-pink-100 flex items-center justify-center">
-                <Palette className="h-5 w-5 text-pink-600" />
-              </div>
-              <div>
-                <CardTitle className="text-lg">Pamja</CardTitle>
-                <CardDescription>Personalizo pamjen</CardDescription>
-              </div>
-            </div>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="space-y-2">
-              <Label>Tema</Label>
-              <div className="flex gap-2">
-                <Button variant="outline" className="flex-1 border-[#E53935] text-[#E53935]">
-                  E Ndritshme
-                </Button>
-                <Button variant="outline" className="flex-1">
-                  E Errët
-                </Button>
-              </div>
-            </div>
-            <div className="space-y-2">
-              <Label>Ngjyra Kryesore</Label>
-              <div className="flex gap-2">
-                <button className="w-8 h-8 rounded-full bg-[#E53935] ring-2 ring-offset-2 ring-[#E53935]" />
-                <button className="w-8 h-8 rounded-full bg-blue-500" />
-                <button className="w-8 h-8 rounded-full bg-green-500" />
-                <button className="w-8 h-8 rounded-full bg-purple-500" />
-                <button className="w-8 h-8 rounded-full bg-orange-500" />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
