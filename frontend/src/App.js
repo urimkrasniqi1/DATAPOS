@@ -71,9 +71,9 @@ const AuthProvider = ({ children }) => {
     setLoading(false);
   }, []);
 
-  const login = async (email, password) => {
+  const login = async (username, password) => {
     try {
-      const response = await api.post('/auth/login', { email, password });
+      const response = await api.post('/auth/login', { username, password });
       const { access_token, user: userData } = response.data;
       localStorage.setItem('t3next_token', access_token);
       localStorage.setItem('t3next_user', JSON.stringify(userData));
