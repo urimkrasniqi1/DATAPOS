@@ -239,21 +239,21 @@ const Settings = () => {
                   className="w-fit bg-[#E53935] hover:bg-[#D32F2F]"
                 >
                   <Save className="h-4 w-4 mr-2" />
-                  Ruaj
+                  {loading ? 'Po ruhet...' : 'Ruaj të Dhënat'}
                 </Button>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="space-y-2">
                   <Label>Emri i kompanisë</Label>
                   <Input
-                    value={companyData.emri_kompanise}
-                    onChange={(e) => setCompanyData({ ...companyData, emri_kompanise: e.target.value })}
+                    value={companyData.company_name}
+                    onChange={(e) => setCompanyData({ ...companyData, company_name: e.target.value })}
                     placeholder="Emri i kompanisë"
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <Label>NUI</Label>
+                  <Label>NUI (Numri Unik Identifikues)</Label>
                   <Input
                     value={companyData.nui}
                     onChange={(e) => setCompanyData({ ...companyData, nui: e.target.value })}
@@ -262,19 +262,19 @@ const Settings = () => {
                 </div>
 
                 <div className="space-y-2">
-                  <Label>Numri Fiskal</Label>
+                  <Label>NF (Numri Fiskal)</Label>
                   <Input
-                    value={companyData.numri_fiskal}
-                    onChange={(e) => setCompanyData({ ...companyData, numri_fiskal: e.target.value })}
+                    value={companyData.nf}
+                    onChange={(e) => setCompanyData({ ...companyData, nf: e.target.value })}
                     placeholder="Numri Fiskal"
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <Label>Numri i Tvsh</Label>
+                  <Label>Numri i TVSH-së</Label>
                   <Input
-                    value={companyData.numri_tvsh}
-                    onChange={(e) => setCompanyData({ ...companyData, numri_tvsh: e.target.value })}
+                    value={companyData.vat_number}
+                    onChange={(e) => setCompanyData({ ...companyData, vat_number: e.target.value })}
                     placeholder="Numri i TVSH-së"
                   />
                 </div>
@@ -282,23 +282,14 @@ const Settings = () => {
                 <div className="space-y-2">
                   <Label>Telefoni</Label>
                   <Input
-                    value={companyData.telefoni}
-                    onChange={(e) => setCompanyData({ ...companyData, telefoni: e.target.value })}
+                    value={companyData.phone}
+                    onChange={(e) => setCompanyData({ ...companyData, phone: e.target.value })}
                     placeholder="+383 XX XXX XXX"
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <Label>Fax</Label>
-                  <Input
-                    value={companyData.fax}
-                    onChange={(e) => setCompanyData({ ...companyData, fax: e.target.value })}
-                    placeholder="Numri i Fax"
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label>EMail</Label>
+                  <Label>Email</Label>
                   <Input
                     type="email"
                     value={companyData.email}
@@ -308,56 +299,58 @@ const Settings = () => {
                 </div>
 
                 <div className="space-y-2">
+                  <Label>Website</Label>
+                  <Input
+                    value={companyData.website}
+                    onChange={(e) => setCompanyData({ ...companyData, website: e.target.value })}
+                    placeholder="www.kompania.com"
+                  />
+                </div>
+
+                <div className="space-y-2">
                   <Label>Adresa</Label>
                   <Input
-                    value={companyData.adresa}
-                    onChange={(e) => setCompanyData({ ...companyData, adresa: e.target.value })}
+                    value={companyData.address}
+                    onChange={(e) => setCompanyData({ ...companyData, address: e.target.value })}
                     placeholder="Adresa e kompanisë"
                   />
                 </div>
 
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label>Qyteti</Label>
+                    <Input
+                      value={companyData.city}
+                      onChange={(e) => setCompanyData({ ...companyData, city: e.target.value })}
+                      placeholder="Qyteti"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Kodi Postar</Label>
+                    <Input
+                      value={companyData.postal_code}
+                      onChange={(e) => setCompanyData({ ...companyData, postal_code: e.target.value })}
+                      placeholder="10000"
+                    />
+                  </div>
+                </div>
+
                 <div className="space-y-2">
-                  <Label>Qyteti</Label>
+                  <Label>Banka</Label>
                   <Input
-                    value={companyData.qyteti}
-                    onChange={(e) => setCompanyData({ ...companyData, qyteti: e.target.value })}
-                    placeholder="Qyteti"
+                    value={companyData.bank_name}
+                    onChange={(e) => setCompanyData({ ...companyData, bank_name: e.target.value })}
+                    placeholder="Emri i bankës"
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <Label>Vendi</Label>
+                  <Label>Llogaria Bankare</Label>
                   <Input
-                    value={companyData.vendi}
-                    onChange={(e) => setCompanyData({ ...companyData, vendi: e.target.value })}
-                    placeholder="Vendi/Shteti"
+                    value={companyData.bank_account}
+                    onChange={(e) => setCompanyData({ ...companyData, bank_account: e.target.value })}
+                    placeholder="IBAN ose numri i llogarisë"
                   />
-                </div>
-
-                <div className="space-y-2">
-                  <Label>Llogaritë bankare</Label>
-                  <Textarea
-                    value={companyData.llogarite_bankare}
-                    onChange={(e) => setCompanyData({ ...companyData, llogarite_bankare: e.target.value })}
-                    placeholder="Llogaritë bankare të kompanisë"
-                    rows={3}
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label>Koment në faturë</Label>
-                  <Textarea
-                    value={companyData.koment_fature}
-                    onChange={(e) => setCompanyData({ ...companyData, koment_fature: e.target.value })}
-                    placeholder="Përshëndetje @partner,
-Ju lutemi gjeni të bashkangjitur faturën me numër @invoiceNo, të lëshuar më @date nga kompania @company.
-Për çdo paqartësi apo informacion shtesë, mund të na kontaktoni në adresën: @companyEmail.
-Faleminderit për bashkëpunimin!"
-                    rows={5}
-                  />
-                  <p className="text-xs text-gray-500">
-                    Mund të përdorni tagat: @partner, @company, @date, @companyEmail, @invoiceNo
-                  </p>
                 </div>
               </CardContent>
             </Card>
