@@ -327,6 +327,89 @@ const POS = () => {
     toast.success('Nota u dërgua për printim');
   };
 
+  // Print A4 Invoice
+  const handlePrintA4 = (sale = null) => {
+    if (!sale && cart.length === 0) {
+      toast.error('Shporta është bosh');
+      return;
+    }
+    
+    // If no sale provided, create a preview sale from cart
+    const saleData = sale || {
+      receipt_number: 'PREVIEW',
+      items: cart.map(item => ({
+        ...item,
+        total: calculateItemTotal(item).total
+      })),
+      subtotal: cartTotals.subtotal,
+      total_discount: cartTotals.discount,
+      total_vat: cartTotals.vat,
+      grand_total: cartTotals.total,
+      payment_method: paymentMethod,
+      cash_amount: parseFloat(cashAmount) || 0,
+      bank_amount: paymentMethod === 'bank' ? cartTotals.total : 0,
+      change_amount: changeAmount,
+      customer_name: customerName,
+      notes: customerNote,
+      created_at: new Date().toISOString()
+    };
+    
+    setCurrentSaleForPrint(saleData);
+    setShowInvoiceA4(true);
+  };
+
+  // Print the invoice
+  const executePrint = () => {
+    const printContent = invoiceRef.current;
+    if (!printContent) return;
+
+    const printWindow = window.open('', '_blank');
+    if (!printWindow) {
+      toast.error('Lejo popup-et për printim');
+      return;
+    }
+
+    printWindow.document.write(`
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <title>Faturë - ${currentSaleForPrint?.receipt_number || 'Preview'}</title>
+          <script src="https://cdn.tailwindcss.com"></script>
+          <style>
+            @media print {
+              body { margin: 0; padding: 0; }
+              @page { size: A4; margin: 0; }
+            }
+            body { font-family: Arial, sans-serif; }
+          </style>
+        </head>
+        <body>
+          ${printContent.outerHTML}
+          <script>
+            setTimeout(() => {
+              window.print();
+              window.close();
+            }, 500);
+          </script>
+        </body>
+      </html>
+    `);
+    printWindow.document.close();
+    toast.success('Fatura po printohet...');
+  };
+
+  // View and print recent sale A4
+  const handleViewSaleA4 = async (saleId) => {
+    try {
+      const response = await api.get(`/sales/${saleId}`);
+      setCurrentSaleForPrint(response.data);
+      setShowInvoiceA4(true);
+      setShowDocuments(false);
+    } catch (error) {
+      toast.error('Gabim gjatë ngarkimit të faturës');
+    }
+  };
+
   // Apply no VAT to all items
   const handleNoVat = () => {
     setApplyNoVat(!applyNoVat);
