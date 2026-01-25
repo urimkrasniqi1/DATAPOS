@@ -49,8 +49,10 @@ import {
   Printer,
   List,
   XCircle,
-  LogOut
+  LogOut,
+  FileDown
 } from 'lucide-react';
+import InvoiceA4 from '../components/InvoiceA4';
 
 const POS = () => {
   const { user, logout } = useAuth();
