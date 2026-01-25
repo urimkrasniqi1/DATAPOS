@@ -332,10 +332,28 @@ const POS = () => {
     }
   };
 
-  // Keyboard shortcut for barcode scanner
+  // Keyboard shortcuts: F2 for payment, Enter for barcode/complete sale
   useEffect(() => {
-    const handleKeyPress = (e) => {
+    const handleKeyDown = (e) => {
+      // F2 - Open payment dialog
+      if (e.key === 'F2' && cart.length > 0 && !showPayment && cashDrawer) {
+        e.preventDefault();
+        setShowPayment(true);
+        return;
+      }
+      
+      // Enter in payment dialog - complete sale
+      if (e.key === 'Enter' && showPayment) {
+        e.preventDefault();
+        if (paymentMethod === 'bank' || (paymentMethod === 'cash' && parseFloat(cashAmount) >= cartTotals.total)) {
+          handlePayment();
+        }
+        return;
+      }
+      
+      // Enter for barcode/search (when not in payment dialog)
       if (e.key === 'Enter' && search && !showPayment && !showProductSearch) {
+        e.preventDefault();
         // First try exact barcode match
         const productByBarcode = products.find(p => p.barcode === search.trim() && p.current_stock > 0);
         if (productByBarcode) {
@@ -352,9 +370,13 @@ const POS = () => {
         }
       }
     };
-    window.addEventListener('keypress', handleKeyPress);
-    return () => window.removeEventListener('keypress', handleKeyPress);
-  }, [search, products, addToCart, showPayment, showProductSearch, mainSearchResults]);
+    
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [search, products, addToCart, showPayment, showProductSearch, mainSearchResults, cart, cashDrawer, paymentMethod, cashAmount, cartTotals.total]);
+
+  // Check if cashier should see full POS mode (no sidebar)
+  const isCashierFullscreen = user?.role === 'cashier';
 
   if (loading) {
     return (
