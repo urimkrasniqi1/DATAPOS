@@ -113,7 +113,7 @@ const Login = () => {
                 {loading ? (
                   <div className="spinner border-white border-t-transparent" />
                 ) : (
-                  'LOGIN'
+                  'KYÇU'
                 )}
               </Button>
 
