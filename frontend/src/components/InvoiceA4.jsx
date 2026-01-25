@@ -3,10 +3,10 @@ import React, { forwardRef } from 'react';
 // Invoice A4 Component for printing
 const InvoiceA4 = forwardRef(({ sale, companyInfo }, ref) => {
   const defaultCompany = {
-    name: 't3next',
+    name: 'Mobilshopurimi',
     address: 'Adresa e kompanisë',
     phone: '+383 XX XXX XXX',
-    email: 'info@t3next.com',
+    email: 'info@mobilshopurimi.com',
     nui: 'XXXXXXXXX',
     nf: 'XXXXXXXXX',
   };
@@ -32,11 +32,15 @@ const InvoiceA4 = forwardRef(({ sale, companyInfo }, ref) => {
         {/* Company Logo & Info */}
         <div className="flex-1">
           <div className="flex items-center gap-2 mb-2">
-            <span className="text-3xl font-bold text-[#E53935]">→</span>
+            <div className="bg-[#E53935] p-2 rounded-lg">
+              <svg className="w-6 h-6 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <rect x="5" y="2" width="14" height="20" rx="2" ry="2"/>
+                <line x1="12" y1="18" x2="12" y2="18"/>
+              </svg>
+            </div>
             <span className="text-2xl font-bold">
-              <span className="text-[#E53935]">t</span>
-              <span className="text-gray-400">3</span>
-              <span className="text-[#00B9D7]">next</span>
+              <span className="text-[#E53935]">Mobilshop</span>
+              <span className="text-gray-500">urimi</span>
             </span>
           </div>
           <p className="text-sm text-gray-600">{company.address}</p>
