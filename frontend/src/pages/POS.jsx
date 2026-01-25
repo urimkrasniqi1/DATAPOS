@@ -398,8 +398,109 @@ const POS = () => {
     );
   }
 
-  // Check if drawer is open
+  // Check if drawer is open - show fullscreen for cashier
   if (!cashDrawer) {
+    // For cashier - fullscreen view with header
+    if (isCashierFullscreen) {
+      return (
+        <div className="min-h-screen bg-[#F8FAFC]">
+          {/* Cashier Header */}
+          <header className="bg-white border-b border-gray-200 px-4 py-3 flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <span className="text-2xl font-bold text-[#E53935]">→</span>
+              <span className="text-xl font-bold">
+                <span className="text-[#E53935]">t</span>
+                <span className="text-gray-400">3</span>
+                <span className="text-[#00B9D7]">next</span>
+              </span>
+              <span className="text-gray-400 mx-2">|</span>
+              <span className="text-gray-600">Arka</span>
+            </div>
+            
+            <div className="flex items-center gap-4">
+              <div className="text-right hidden sm:block">
+                <p className="text-sm font-medium text-gray-900">{user?.full_name}</p>
+                <p className="text-xs text-gray-500">Arkëtar</p>
+              </div>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleLogout}
+                className="gap-2 text-red-600 border-red-200 hover:bg-red-50"
+                data-testid="logout-btn"
+              >
+                <LogOut className="h-4 w-4" />
+                <span className="hidden sm:inline">Çkyçu</span>
+              </Button>
+            </div>
+          </header>
+
+          {/* Open Drawer Content */}
+          <div className="flex flex-col items-center justify-center h-[calc(100vh-5rem)]" data-testid="pos-open-drawer">
+            <div className="text-center space-y-6">
+              <div className="h-24 w-24 mx-auto bg-[#E53935]/10 rounded-full flex items-center justify-center">
+                <Calculator className="h-12 w-12 text-[#E53935]" />
+              </div>
+              <div>
+                <h2 className="text-3xl font-bold text-gray-900">Arka është e Mbyllur</h2>
+                <p className="text-gray-500 mt-2">Hapni arkën për të filluar shitjen</p>
+              </div>
+              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                <Button
+                  onClick={() => setShowOpenDrawer(true)}
+                  className="bg-[#E53935] hover:bg-[#D32F2F] text-white px-8 py-6 text-lg"
+                  data-testid="open-drawer-btn"
+                >
+                  <Calculator className="h-5 w-5 mr-2" />
+                  Hap Arkën
+                </Button>
+                <Button
+                  variant="outline"
+                  onClick={handleLogout}
+                  className="px-8 py-6 text-lg text-red-600 border-red-200 hover:bg-red-50"
+                  data-testid="logout-main-btn"
+                >
+                  <LogOut className="h-5 w-5 mr-2" />
+                  Çkyçu
+                </Button>
+              </div>
+            </div>
+
+            {/* Open Drawer Dialog */}
+            <Dialog open={showOpenDrawer} onOpenChange={setShowOpenDrawer}>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Hap Arkën</DialogTitle>
+                </DialogHeader>
+                <div className="space-y-4 pt-4">
+                  <div>
+                    <Label>Bilanci Fillestar (€)</Label>
+                    <Input
+                      type="number"
+                      step="0.01"
+                      value={openingBalance}
+                      onChange={(e) => setOpeningBalance(e.target.value)}
+                      placeholder="0.00"
+                      className="mt-1"
+                      data-testid="opening-balance-input"
+                    />
+                  </div>
+                  <Button
+                    onClick={handleOpenDrawer}
+                    className="w-full bg-[#E53935] hover:bg-[#D32F2F]"
+                    data-testid="confirm-open-drawer"
+                  >
+                    Konfirmo
+                  </Button>
+                </div>
+              </DialogContent>
+            </Dialog>
+          </div>
+        </div>
+      );
+    }
+
+    // For admin/manager - normal view
     return (
       <div className="flex flex-col items-center justify-center h-[70vh]" data-testid="pos-open-drawer">
         <div className="text-center space-y-4">
