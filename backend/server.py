@@ -1189,7 +1189,7 @@ async def create_initial_admin():
         return {"message": "Admin ekziston tashmë"}
     
     admin = User(
-        email="admin@t3next.com",
+        username="admin",
         full_name="Administrator",
         role=UserRole.ADMIN,
         is_active=True
@@ -1199,7 +1199,7 @@ async def create_initial_admin():
     doc['created_at'] = doc['created_at'].isoformat()
     await db.users.insert_one(doc)
     
-    return {"message": "Admin u krijua me sukses", "email": "admin@t3next.com", "password": "admin123"}
+    return {"message": "Admin u krijua me sukses", "username": "admin", "password": "admin123"}
 
 @api_router.get("/")
 async def root():
