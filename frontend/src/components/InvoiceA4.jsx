@@ -3,15 +3,17 @@ import React, { forwardRef } from 'react';
 // Invoice A4 Component for printing
 const InvoiceA4 = forwardRef(({ sale, companyInfo }, ref) => {
   const defaultCompany = {
-    name: 'Mobilshopurimi',
+    company_name: 'Mobilshopurimi',
     address: 'Adresa e kompanisë',
+    city: '',
     phone: '+383 XX XXX XXX',
     email: 'info@mobilshopurimi.com',
     nui: 'XXXXXXXXX',
     nf: 'XXXXXXXXX',
   };
 
-  const company = companyInfo || defaultCompany;
+  const company = companyInfo && companyInfo.company_name ? companyInfo : defaultCompany;
+  const buyer = sale?.buyer_info || {};
   
   // Format date
   const formatDate = (dateStr) => {
@@ -39,11 +41,10 @@ const InvoiceA4 = forwardRef(({ sale, companyInfo }, ref) => {
               </svg>
             </div>
             <span className="text-2xl font-bold">
-              <span className="text-[#E53935]">Mobilshop</span>
-              <span className="text-gray-500">urimi</span>
+              <span className="text-[#E53935]">{company.company_name || 'Mobilshopurimi'}</span>
             </span>
           </div>
-          <p className="text-sm text-gray-600">{company.address}</p>
+          <p className="text-sm text-gray-600">{company.address}{company.city ? `, ${company.city}` : ''}</p>
           <p className="text-sm text-gray-600">Tel: {company.phone}</p>
           <p className="text-sm text-gray-600">Email: {company.email}</p>
         </div>
@@ -60,15 +61,23 @@ const InvoiceA4 = forwardRef(({ sale, companyInfo }, ref) => {
       <div className="grid grid-cols-2 gap-8 mb-6">
         <div className="bg-gray-50 p-4 rounded">
           <h3 className="font-bold text-gray-800 mb-2 text-sm uppercase">Shitësi</h3>
-          <p className="font-semibold">{company.name}</p>
-          <p className="text-sm text-gray-600">NUI: {company.nui}</p>
-          <p className="text-sm text-gray-600">NF: {company.nf}</p>
+          <p className="font-semibold">{company.company_name || 'Mobilshopurimi'}</p>
+          {company.nui && <p className="text-sm text-gray-600">NUI: {company.nui}</p>}
+          {company.nf && <p className="text-sm text-gray-600">NF: {company.nf}</p>}
+          {company.vat_number && <p className="text-sm text-gray-600">TVSH: {company.vat_number}</p>}
           <p className="text-sm text-gray-600">{company.address}</p>
+          {company.city && <p className="text-sm text-gray-600">{company.city} {company.postal_code}</p>}
         </div>
         <div className="bg-gray-50 p-4 rounded">
           <h3 className="font-bold text-gray-800 mb-2 text-sm uppercase">Blerësi</h3>
-          {sale?.customer_name ? (
-            <p className="font-semibold">{sale.customer_name}</p>
+          {buyer.name || sale?.customer_name ? (
+            <>
+              <p className="font-semibold">{buyer.name || sale?.customer_name}</p>
+              {buyer.nui && <p className="text-sm text-gray-600">NUI: {buyer.nui}</p>}
+              {buyer.nf && <p className="text-sm text-gray-600">NF: {buyer.nf}</p>}
+              {buyer.address && <p className="text-sm text-gray-600">{buyer.address}</p>}
+              {buyer.phone && <p className="text-sm text-gray-600">Tel: {buyer.phone}</p>}
+            </>
           ) : (
             <p className="text-gray-500 italic">Konsumator i përgjithshëm</p>
           )}
