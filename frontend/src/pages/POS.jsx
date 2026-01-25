@@ -669,15 +669,17 @@ const POS = () => {
           <span className="hidden lg:inline">Pastro</span>
         </Button>
 
-        {/* Pa TVSH - Toggle VAT */}
-        <Button
-          className={`flex-1 lg:h-14 flex items-center justify-center gap-2 ${applyNoVat ? 'bg-orange-500 hover:bg-orange-600' : 'bg-[#E53935] hover:bg-[#D32F2F]'}`}
-          onClick={handleNoVat}
-          data-testid="pos-no-vat-btn"
-        >
-          <Percent className="h-5 w-5" />
-          <span className="hidden lg:inline">{applyNoVat ? 'Me TVSH' : 'Pa TVSH'}</span>
-        </Button>
+        {/* Pa TVSH - Toggle VAT (vetëm admin/manager) */}
+        {(user?.role === 'admin' || user?.role === 'manager') && (
+          <Button
+            className={`flex-1 lg:h-14 flex items-center justify-center gap-2 ${applyNoVat ? 'bg-orange-500 hover:bg-orange-600' : 'bg-[#E53935] hover:bg-[#D32F2F]'}`}
+            onClick={handleNoVat}
+            data-testid="pos-no-vat-btn"
+          >
+            <Percent className="h-5 w-5" />
+            <span className="hidden lg:inline">{applyNoVat ? 'Me TVSH' : 'Pa TVSH'}</span>
+          </Button>
+        )}
       </div>
 
       {/* Time Display */}
