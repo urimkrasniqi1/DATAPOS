@@ -1260,7 +1260,7 @@ const POS = () => {
           <ScrollArea className="h-80">
             <div className="space-y-2">
               {recentSales.map((sale) => (
-                <div key={sale.id} className="p-3 border rounded-lg hover:bg-gray-50">
+                <div key={sale.id} className="p-3 border rounded-lg hover:bg-gray-50 cursor-pointer" onClick={() => handleViewSaleA4(sale.id)}>
                   <div className="flex justify-between items-center">
                     <div>
                       <p className="font-medium">{sale.receipt_number}</p>
@@ -1268,9 +1268,20 @@ const POS = () => {
                         {new Date(sale.created_at).toLocaleString('sq-AL')}
                       </p>
                     </div>
-                    <div className="text-right">
-                      <p className="font-bold text-[#E53935]">€{sale.grand_total?.toFixed(2)}</p>
-                      <p className="text-xs text-gray-400 capitalize">{sale.payment_method}</p>
+                    <div className="flex items-center gap-3">
+                      <div className="text-right">
+                        <p className="font-bold text-[#E53935]">€{sale.grand_total?.toFixed(2)}</p>
+                        <p className="text-xs text-gray-400 capitalize">{sale.payment_method}</p>
+                      </div>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-8 w-8 text-blue-600"
+                        onClick={(e) => { e.stopPropagation(); handleViewSaleA4(sale.id); }}
+                        title="Printo A4"
+                      >
+                        <FileDown className="h-4 w-4" />
+                      </Button>
                     </div>
                   </div>
                 </div>
@@ -1280,6 +1291,27 @@ const POS = () => {
               )}
             </div>
           </ScrollArea>
+        </DialogContent>
+      </Dialog>
+
+      {/* Invoice A4 Dialog */}
+      <Dialog open={showInvoiceA4} onOpenChange={setShowInvoiceA4}>
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-auto">
+          <DialogHeader>
+            <DialogTitle className="flex items-center justify-between">
+              <span>Fatura A4 - {currentSaleForPrint?.receipt_number || 'Preview'}</span>
+              <Button
+                onClick={executePrint}
+                className="bg-[#E53935] hover:bg-[#D32F2F]"
+              >
+                <Printer className="h-4 w-4 mr-2" />
+                Printo
+              </Button>
+            </DialogTitle>
+          </DialogHeader>
+          <div className="border rounded-lg overflow-hidden">
+            <InvoiceA4 ref={invoiceRef} sale={currentSaleForPrint} />
+          </div>
         </DialogContent>
       </Dialog>
     </div>
