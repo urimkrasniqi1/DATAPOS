@@ -79,13 +79,32 @@ const POS = () => {
   const [applyNoVat, setApplyNoVat] = useState(false);
   const [showSearchResults, setShowSearchResults] = useState(false);
   const [showInvoiceA4, setShowInvoiceA4] = useState(false);
+  const [showBuyerForm, setShowBuyerForm] = useState(false);
   const [currentSaleForPrint, setCurrentSaleForPrint] = useState(null);
+  const [companySettings, setCompanySettings] = useState(null);
+  const [buyerInfo, setBuyerInfo] = useState({
+    name: '',
+    address: '',
+    phone: '',
+    nui: '',
+    nf: ''
+  });
   const searchRef = useRef(null);
   const invoiceRef = useRef(null);
 
   useEffect(() => {
     loadData();
+    loadCompanySettings();
   }, []);
+
+  const loadCompanySettings = async () => {
+    try {
+      const response = await api.get('/settings/company');
+      setCompanySettings(response.data);
+    } catch (error) {
+      console.error('Error loading company settings:', error);
+    }
+  };
 
   const loadData = async () => {
     try {
