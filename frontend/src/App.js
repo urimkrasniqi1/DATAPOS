@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
-import { BrowserRouter, Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-dom';
+import { HashRouter, Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import { Toaster, toast } from 'sonner';
 
@@ -18,7 +18,9 @@ import AuditLogs from './pages/AuditLogs';
 // Layout
 import MainLayout from './components/MainLayout';
 
-const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
+// Determine backend URL - for desktop app use localhost, otherwise use env variable
+const isElectron = window.navigator.userAgent.toLowerCase().includes('electron');
+const BACKEND_URL = isElectron ? 'http://127.0.0.1:8001' : (process.env.REACT_APP_BACKEND_URL || '');
 const API = `${BACKEND_URL}/api`;
 
 // Auth Context
