@@ -137,12 +137,18 @@ const AppRoutes = () => {
 
   return (
     <Routes>
-      <Route path="/login" element={isAuthenticated ? <Navigate to="/dashboard" /> : <Login />} />
+      <Route path="/login" element={isAuthenticated ? <Navigate to={user?.role === 'cashier' ? '/pos' : '/dashboard'} /> : <Login />} />
+      
+      {/* Cashier gets POS without MainLayout */}
+      <Route path="/pos" element={
+        <ProtectedRoute>
+          <POS />
+        </ProtectedRoute>
+      } />
       
       <Route path="/" element={<ProtectedRoute><MainLayout /></ProtectedRoute>}>
         <Route index element={<Navigate to="/dashboard" replace />} />
         <Route path="dashboard" element={<Dashboard />} />
-        <Route path="pos" element={<POS />} />
         <Route path="products" element={
           <ProtectedRoute allowedRoles={['admin', 'manager']}>
             <Products />
