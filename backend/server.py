@@ -407,7 +407,7 @@ async def login(request: LoginRequest):
 async def get_me(current_user: dict = Depends(get_current_user)):
     return UserResponse(
         id=current_user["id"],
-        email=current_user["email"],
+        username=current_user["username"],
         full_name=current_user["full_name"],
         role=current_user["role"],
         branch_id=current_user.get("branch_id"),
@@ -418,9 +418,9 @@ async def get_me(current_user: dict = Depends(get_current_user)):
 # ============ USER ROUTES ============
 @api_router.post("/users", response_model=UserResponse)
 async def create_user(user_data: UserCreate, current_user: dict = Depends(require_role([UserRole.ADMIN]))):
-    existing = await db.users.find_one({"email": user_data.email})
+    existing = await db.users.find_one({"username": user_data.username})
     if existing:
-        raise HTTPException(status_code=400, detail="Email ekziston tashmë")
+        raise HTTPException(status_code=400, detail="Username ekziston tashmë")
     
     user = User(**user_data.model_dump(exclude={"password"}))
     doc = user.model_dump()
