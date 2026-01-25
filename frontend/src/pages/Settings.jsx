@@ -55,18 +55,18 @@ const Settings = () => {
   
   // Company settings
   const [companyData, setCompanyData] = useState({
-    emri_kompanise: '',
+    company_name: '',
     nui: '',
-    numri_fiskal: '',
-    numri_tvsh: '',
-    telefoni: '',
-    fax: '',
+    nf: '',
+    vat_number: '',
+    phone: '',
     email: '',
-    adresa: '',
-    qyteti: '',
-    vendi: '',
-    llogarite_bankare: '',
-    koment_fature: '',
+    address: '',
+    city: '',
+    postal_code: '',
+    bank_name: '',
+    bank_account: '',
+    website: '',
   });
 
   // POS Settings
@@ -107,8 +107,14 @@ const Settings = () => {
 
   const loadData = async () => {
     try {
-      const branchesRes = await api.get('/branches');
+      const [branchesRes, companyRes] = await Promise.all([
+        api.get('/branches'),
+        api.get('/settings/company')
+      ]);
       setBranches(branchesRes.data);
+      if (companyRes.data) {
+        setCompanyData(prev => ({...prev, ...companyRes.data}));
+      }
     } catch (error) {
       console.error('Error loading settings:', error);
     }
@@ -117,11 +123,10 @@ const Settings = () => {
   const handleSaveCompany = async () => {
     setLoading(true);
     try {
-      // In a real app, this would save to backend
-      await new Promise(resolve => setTimeout(resolve, 500));
-      toast.success('Cilësimet e kompanisë u ruajtën');
+      await api.put('/settings/company', companyData);
+      toast.success('Të dhënat e kompanisë u ruajtën me sukses!');
     } catch (error) {
-      toast.error('Gabim gjatë ruajtjes');
+      toast.error('Gabim gjatë ruajtjes së të dhënave');
     } finally {
       setLoading(false);
     }
