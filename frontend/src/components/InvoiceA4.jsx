@@ -162,7 +162,7 @@ const InvoiceA4 = forwardRef(({ sale, companyInfo }, ref) => {
         <div className="text-center text-sm text-gray-600">
           <p className="font-semibold mb-1">Faleminderit për blerjen tuaj!</p>
           <p>Për çdo pyetje kontaktoni: {company.phone}</p>
-          <p className="text-xs mt-2 text-gray-400">Kjo faturë është gjeneruar automatikisht nga sistemi t3next POS</p>
+          <p className="text-xs mt-2 text-gray-400">Kjo faturë është gjeneruar automatikisht nga sistemi Mobilshopurimi POS</p>
         </div>
       </div>
 
