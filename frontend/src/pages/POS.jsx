@@ -926,6 +926,18 @@ const POS = () => {
           <span className="hidden lg:inline">Parametrat</span>
         </Button>
 
+        {/* Printo A4 - Print A4 Invoice */}
+        <Button
+          variant="outline"
+          className="flex-1 lg:h-14 flex items-center justify-center gap-2 border-blue-500 text-blue-600 hover:bg-blue-50"
+          onClick={() => handlePrintA4()}
+          disabled={cart.length === 0}
+          data-testid="pos-print-a4-btn"
+        >
+          <FileDown className="h-5 w-5" />
+          <span className="hidden lg:inline">Printo A4</span>
+        </Button>
+
         {/* Shtyp - Print and finish (payment) */}
         <Button
           variant="outline"
