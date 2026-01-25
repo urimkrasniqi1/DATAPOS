@@ -725,8 +725,11 @@ async def add_drawer_transaction(transaction: CashDrawerTransaction, current_use
     
     return {"message": "Transaksioni u regjistrua", "new_balance": new_balance}
 
+class CloseDrawerRequest(BaseModel):
+    actual_balance: float
+
 @api_router.post("/cashier/close")
-async def close_cash_drawer(actual_balance: float = Query(...), current_user: dict = Depends(get_current_user)):
+async def close_cash_drawer(request: CloseDrawerRequest, current_user: dict = Depends(get_current_user)):
     drawer = await db.cash_drawers.find_one({
         "user_id": current_user["id"],
         "status": CashDrawerStatus.OPEN.value
