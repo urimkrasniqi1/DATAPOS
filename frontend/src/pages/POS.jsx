@@ -448,6 +448,7 @@ const POS = () => {
                 ) : (
                   cart.map((item, index) => {
                     const { subtotal, total } = calculateItemTotal(item);
+                    const canEdit = user?.role === 'admin' || user?.role === 'manager';
                     return (
                       <TableRow 
                         key={item.product_id} 
@@ -456,35 +457,39 @@ const POS = () => {
                       >
                         <TableCell className="w-12">{index + 1}</TableCell>
                         <TableCell>
-                          <Select
-                            value={item.product_id}
-                            onValueChange={(value) => {
-                              const product = products.find(p => p.id === value);
-                              if (product) {
-                                setCart(prev => prev.map((it, i) => 
-                                  i === index ? {
-                                    ...it,
-                                    product_id: product.id,
-                                    product_name: product.name,
-                                    unit_price: product.sale_price || 0,
-                                    vat_percent: applyNoVat ? 0 : (product.vat_rate || 0),
-                                    max_stock: product.current_stock
-                                  } : it
-                                ));
-                              }
-                            }}
-                          >
-                            <SelectTrigger className="border-[#00B9D7]">
-                              <SelectValue>{item.product_name || 'Zgjidh'}</SelectValue>
-                            </SelectTrigger>
-                            <SelectContent>
-                              {products.filter(p => p.current_stock > 0).map(p => (
-                                <SelectItem key={p.id} value={p.id}>
-                                  {p.name || p.barcode || p.id}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
+                          {canEdit ? (
+                            <Select
+                              value={item.product_id}
+                              onValueChange={(value) => {
+                                const product = products.find(p => p.id === value);
+                                if (product) {
+                                  setCart(prev => prev.map((it, i) => 
+                                    i === index ? {
+                                      ...it,
+                                      product_id: product.id,
+                                      product_name: product.name,
+                                      unit_price: product.sale_price || 0,
+                                      vat_percent: applyNoVat ? 0 : (product.vat_rate || 0),
+                                      max_stock: product.current_stock
+                                    } : it
+                                  ));
+                                }
+                              }}
+                            >
+                              <SelectTrigger className="border-[#00B9D7]">
+                                <SelectValue>{item.product_name || 'Zgjidh'}</SelectValue>
+                              </SelectTrigger>
+                              <SelectContent>
+                                {products.filter(p => p.current_stock > 0).map(p => (
+                                  <SelectItem key={p.id} value={p.id}>
+                                    {p.name || p.barcode || p.id}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          ) : (
+                            <span className="font-medium">{item.product_name || 'Produkt'}</span>
+                          )}
                         </TableCell>
                         <TableCell>
                           <div className="flex items-center justify-center gap-1">
@@ -509,15 +514,19 @@ const POS = () => {
                         </TableCell>
                         <TableCell className="text-right">€{item.unit_price.toFixed(2)}</TableCell>
                         <TableCell>
-                          <Input
-                            type="number"
-                            min="0"
-                            max="100"
-                            value={item.discount_percent}
-                            onChange={(e) => updateDiscount(item.product_id, e.target.value)}
-                            onClick={(e) => e.stopPropagation()}
-                            className="w-16 h-8 text-center"
-                          />
+                          {canEdit ? (
+                            <Input
+                              type="number"
+                              min="0"
+                              max="100"
+                              value={item.discount_percent}
+                              onChange={(e) => updateDiscount(item.product_id, e.target.value)}
+                              onClick={(e) => e.stopPropagation()}
+                              className="w-16 h-8 text-center"
+                            />
+                          ) : (
+                            <span className="text-center">{item.discount_percent}%</span>
+                          )}
                         </TableCell>
                         <TableCell className="text-center">{item.vat_percent}</TableCell>
                         <TableCell className="text-right">€{(item.unit_price * (1 + item.vat_percent / 100)).toFixed(2)}</TableCell>
