@@ -1287,13 +1287,28 @@ const POS = () => {
               </div>
             )}
 
+            {/* Print Receipt Option */}
+            <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+              <Checkbox
+                id="printReceipt"
+                checked={printReceipt}
+                onCheckedChange={setPrintReceipt}
+                className="border-[#E53935] data-[state=checked]:bg-[#E53935]"
+              />
+              <label htmlFor="printReceipt" className="text-sm font-medium cursor-pointer flex-1">
+                Shtyp kupon për klientin
+              </label>
+              <Printer className="h-4 w-4 text-gray-400" />
+            </div>
+
             {/* Confirm Button */}
             <Button
               className="w-full h-12 bg-[#2196F3] hover:bg-[#1976D2]"
               onClick={handlePayment}
               data-testid="confirm-payment-btn"
             >
-              Shtyp
+              <Receipt className="h-4 w-4 mr-2" />
+              {printReceipt ? 'Shtyp & Përfundo' : 'Përfundo pa Shtypur'}
             </Button>
           </div>
         </DialogContent>
