@@ -100,8 +100,8 @@ Sistema POS (Point of Sale) për markete dhe supermarkete me mbështetje multi-f
 - GET /api/audit-logs
 
 ## Demo Credentials
-- Admin: admin@t3next.com / admin123
-- Cashier: arketar@t3next.com / arketar123
+- Admin: admin / admin123
+- Cashier: arketar / arketar123
 
 ## Code Architecture
 ```
