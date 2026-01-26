@@ -288,96 +288,90 @@ const POS = () => {
 
   const changeAmount = Math.max(0, (parseFloat(cashAmount) || 0) - cartTotals.total);
 
-  // Print thermal receipt
+  // State for receipt preview
+  const [showReceiptPreview, setShowReceiptPreview] = useState(false);
+  const [receiptDataForPrint, setReceiptDataForPrint] = useState(null);
+
+  // Print thermal receipt - show preview dialog first
   const printThermalReceipt = (saleData) => {
-    const printWindow = window.open('', '_blank', 'width=350,height=600');
+    setReceiptDataForPrint(saleData);
+    setShowReceiptPreview(true);
+  };
+
+  // Execute the actual print
+  const executeThermalPrint = () => {
+    const printArea = document.getElementById('thermal-receipt-print');
+    if (!printArea) return;
+
+    const printWindow = window.open('', 'PRINT', 'height=600,width=350');
     if (!printWindow) {
       toast.error('Lejo popup-et për printim');
       return;
     }
 
-    const receiptContent = `
+    printWindow.document.write(`
       <!DOCTYPE html>
       <html>
         <head>
-          <title>Kupon - ${saleData.receipt_number}</title>
+          <title>Kupon</title>
           <style>
             * { margin: 0; padding: 0; box-sizing: border-box; }
             body { 
-              font-family: 'Courier New', monospace; 
+              font-family: 'Courier New', Courier, monospace; 
               font-size: 12px; 
-              line-height: 1.3;
+              line-height: 1.4;
               width: 80mm;
-              padding: 3mm;
+              max-width: 80mm;
+              padding: 2mm;
+              background: white;
             }
-            .center { text-align: center; }
-            .bold { font-weight: bold; }
-            .border-dash { border-top: 1px dashed #000; padding-top: 5px; margin-top: 5px; }
-            .flex { display: flex; justify-content: space-between; }
-            .total-line { font-size: 14px; font-weight: bold; border-top: 1px solid #000; padding-top: 3px; margin-top: 3px; }
-            .small { font-size: 10px; color: #666; }
+            .receipt-header { text-align: center; border-bottom: 1px dashed #000; padding-bottom: 8px; margin-bottom: 8px; }
+            .company-name { font-size: 16px; font-weight: bold; }
+            .receipt-title { text-align: center; margin: 8px 0; }
+            .receipt-title h2 { font-size: 14px; margin: 0; }
+            .receipt-title span { font-size: 10px; color: #666; }
+            .info-row { display: flex; justify-content: space-between; font-size: 11px; }
+            .divider { border-top: 1px dashed #000; margin: 8px 0; }
+            .item { margin-bottom: 6px; }
+            .item-name { font-size: 11px; }
+            .item-details { display: flex; justify-content: space-between; font-size: 11px; }
+            .totals .info-row { font-size: 11px; }
+            .grand-total { display: flex; justify-content: space-between; font-size: 14px; font-weight: bold; border-top: 1px solid #000; padding-top: 4px; margin-top: 4px; }
+            .payment-info { font-size: 11px; }
+            .change { font-weight: bold; }
+            .footer { text-align: center; margin-top: 10px; padding-top: 8px; border-top: 1px dashed #000; }
+            .footer .thanks { font-weight: bold; }
+            .footer .small { font-size: 10px; color: #666; }
             @media print {
-              @page { size: 80mm auto; margin: 0; }
-              body { width: 80mm; }
+              @page { 
+                size: 80mm auto; 
+                margin: 0; 
+              }
+              body { 
+                width: 80mm !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+              }
             }
           </style>
         </head>
         <body>
-          <div class="center border-dash" style="padding-bottom: 5px; margin-bottom: 5px;">
-            <div class="bold" style="font-size: 14px;">${companySettings?.company_name || 'Mobilshopurimi'}</div>
-            ${companySettings?.address ? `<div class="small">${companySettings.address}</div>` : ''}
-            ${companySettings?.city ? `<div class="small">${companySettings.city}</div>` : ''}
-            ${companySettings?.phone ? `<div class="small">Tel: ${companySettings.phone}</div>` : ''}
-          </div>
-          
-          <div class="center" style="margin-bottom: 5px;">
-            <div class="bold">KUPON SHITJE</div>
-            <div class="small">(Jo Fiskal)</div>
-          </div>
-          
-          <div class="flex small border-dash">
-            <span>Nr: ${saleData.receipt_number}</span>
-            <span>${new Date(saleData.created_at).toLocaleDateString('sq-AL')}</span>
-          </div>
-          <div class="flex small" style="margin-bottom: 5px;">
-            <span>Ora: ${new Date(saleData.created_at).toLocaleTimeString('sq-AL', { hour: '2-digit', minute: '2-digit' })}</span>
-            <span>Arkëtar: ${user?.full_name || '-'}</span>
-          </div>
-          
-          <div class="border-dash">
-            ${saleData.items.map(item => `
-              <div style="margin-bottom: 3px;">
-                <div style="font-size: 11px;">${item.product_name || 'Produkt'}</div>
-                <div class="flex small">
-                  <span>${item.quantity}x €${(item.unit_price || 0).toFixed(2)}</span>
-                  <span class="bold">€${(item.total || (item.quantity * item.unit_price)).toFixed(2)}</span>
-                </div>
-                ${item.discount_percent > 0 ? `<div class="small" style="text-align: right;">-${item.discount_percent}% zbritje</div>` : ''}
-              </div>
-            `).join('')}
-          </div>
-          
-          <div class="border-dash">
-            <div class="flex small"><span>Nëntotali:</span><span>€${(saleData.subtotal || 0).toFixed(2)}</span></div>
-            ${saleData.total_discount > 0 ? `<div class="flex small"><span>Zbritja:</span><span>-€${saleData.total_discount.toFixed(2)}</span></div>` : ''}
-            ${saleData.total_vat > 0 ? `<div class="flex small"><span>TVSH:</span><span>€${saleData.total_vat.toFixed(2)}</span></div>` : ''}
-            <div class="flex total-line"><span>TOTAL:</span><span>€${(saleData.grand_total || 0).toFixed(2)}</span></div>
-          </div>
-          
-          <div class="border-dash small">
-            <div class="flex"><span>Pagesa:</span><span>${saleData.payment_method === 'cash' ? 'Cash' : 'Bankë'}</span></div>
-            ${saleData.payment_method === 'cash' ? `
-              <div class="flex"><span>Paguar:</span><span>€${(saleData.cash_amount || 0).toFixed(2)}</span></div>
-              <div class="flex bold"><span>Kusuri:</span><span>€${(saleData.change_amount || 0).toFixed(2)}</span></div>
-            ` : ''}
-          </div>
-          
-          <div class="center border-dash" style="padding-top: 8px;">
-            <div class="bold">Faleminderit!</div>
-            <div class="small">Mirë se vini përsëri</div>
-            <div class="small" style="margin-top: 5px;">- - - - - - - - - - - - - - -</div>
-            <div class="small">Mobilshopurimi POS</div>
-          </div>
+          ${printArea.innerHTML}
+        </body>
+      </html>
+    `);
+    
+    printWindow.document.close();
+    printWindow.focus();
+    
+    setTimeout(() => {
+      printWindow.print();
+      printWindow.close();
+    }, 250);
+    
+    setShowReceiptPreview(false);
+    toast.success('Kuponi po printohet...');
+  };
           
           <script>
             setTimeout(() => { window.print(); window.close(); }, 300);
