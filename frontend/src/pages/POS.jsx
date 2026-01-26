@@ -1187,7 +1187,9 @@ const POS = () => {
                 {filteredProducts.map((product) => (
                   <div
                     key={product.id}
-                    className="p-3 border rounded-lg hover:bg-[#E0F7FA] cursor-pointer transition-colors"
+                    className={`p-3 border rounded-lg cursor-pointer transition-colors ${
+                      product.current_stock > 0 ? 'hover:bg-[#E0F7FA]' : 'bg-gray-100 opacity-70'
+                    }`}
                     onClick={() => {
                       addToCart(product);
                       setDialogSearch('');
@@ -1200,7 +1202,9 @@ const POS = () => {
                       </div>
                       <div className="text-right">
                         <p className="font-bold text-[#E53935]">€{(product.sale_price || 0).toFixed(2)}</p>
-                        <p className="text-xs text-gray-400">Stok: {product.current_stock}</p>
+                        <p className={`text-xs ${product.current_stock > 0 ? 'text-green-600' : 'text-red-500 font-semibold'}`}>
+                          {product.current_stock > 0 ? `Stok: ${product.current_stock}` : 'Pa stok!'}
+                        </p>
                       </div>
                     </div>
                   </div>
