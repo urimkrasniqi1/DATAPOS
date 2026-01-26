@@ -183,19 +183,9 @@ const POS = () => {
   ) : [];
 
   const addToCart = useCallback((product) => {
-    // Check if product has stock
-    if (product.current_stock <= 0) {
-      toast.error(`Produkti "${product.name}" nuk ka stok!`);
-      return;
-    }
-    
     setCart(prevCart => {
       const existing = prevCart.find(item => item.product_id === product.id);
       if (existing) {
-        if (existing.quantity >= product.current_stock) {
-          toast.error('Stok i pamjaftueshëm');
-          return prevCart;
-        }
         return prevCart.map(item =>
           item.product_id === product.id
             ? { ...item, quantity: item.quantity + 1 }
@@ -209,12 +199,17 @@ const POS = () => {
         unit_price: product.sale_price || 0,
         discount_percent: 0,
         vat_percent: applyNoVat ? 0 : (product.vat_rate || 0),
-        max_stock: product.current_stock
+        current_stock: product.current_stock
       }];
     });
     setShowProductSearch(false);
     setSearch('');
     setShowSearchResults(false);
+    
+    // Show warning if product has no stock
+    if (product.current_stock <= 0) {
+      toast.warning(`Kujdes: "${product.name}" nuk ka stok!`);
+    }
   }, [applyNoVat]);
 
   const updateQuantity = (productId, delta) => {
