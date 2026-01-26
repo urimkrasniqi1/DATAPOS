@@ -218,9 +218,9 @@ const POS = () => {
         if (item.product_id === productId) {
           const newQty = item.quantity + delta;
           if (newQty <= 0) return item;
-          if (newQty > item.max_stock) {
-            toast.error('Stok i pamjaftueshëm');
-            return item;
+          // Allow selling without stock limit - just show warning
+          if (item.current_stock > 0 && newQty > item.current_stock) {
+            toast.warning('Kujdes: Po shisni mbi stokun e disponueshëm!');
           }
           return { ...item, quantity: newQty };
         }
