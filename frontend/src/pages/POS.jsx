@@ -288,6 +288,108 @@ const POS = () => {
 
   const changeAmount = Math.max(0, (parseFloat(cashAmount) || 0) - cartTotals.total);
 
+  // Print thermal receipt
+  const printThermalReceipt = (saleData) => {
+    const printWindow = window.open('', '_blank', 'width=350,height=600');
+    if (!printWindow) {
+      toast.error('Lejo popup-et për printim');
+      return;
+    }
+
+    const receiptContent = `
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <title>Kupon - ${saleData.receipt_number}</title>
+          <style>
+            * { margin: 0; padding: 0; box-sizing: border-box; }
+            body { 
+              font-family: 'Courier New', monospace; 
+              font-size: 12px; 
+              line-height: 1.3;
+              width: 80mm;
+              padding: 3mm;
+            }
+            .center { text-align: center; }
+            .bold { font-weight: bold; }
+            .border-dash { border-top: 1px dashed #000; padding-top: 5px; margin-top: 5px; }
+            .flex { display: flex; justify-content: space-between; }
+            .total-line { font-size: 14px; font-weight: bold; border-top: 1px solid #000; padding-top: 3px; margin-top: 3px; }
+            .small { font-size: 10px; color: #666; }
+            @media print {
+              @page { size: 80mm auto; margin: 0; }
+              body { width: 80mm; }
+            }
+          </style>
+        </head>
+        <body>
+          <div class="center border-dash" style="padding-bottom: 5px; margin-bottom: 5px;">
+            <div class="bold" style="font-size: 14px;">${companySettings?.company_name || 'Mobilshopurimi'}</div>
+            ${companySettings?.address ? `<div class="small">${companySettings.address}</div>` : ''}
+            ${companySettings?.city ? `<div class="small">${companySettings.city}</div>` : ''}
+            ${companySettings?.phone ? `<div class="small">Tel: ${companySettings.phone}</div>` : ''}
+          </div>
+          
+          <div class="center" style="margin-bottom: 5px;">
+            <div class="bold">KUPON SHITJE</div>
+            <div class="small">(Jo Fiskal)</div>
+          </div>
+          
+          <div class="flex small border-dash">
+            <span>Nr: ${saleData.receipt_number}</span>
+            <span>${new Date(saleData.created_at).toLocaleDateString('sq-AL')}</span>
+          </div>
+          <div class="flex small" style="margin-bottom: 5px;">
+            <span>Ora: ${new Date(saleData.created_at).toLocaleTimeString('sq-AL', { hour: '2-digit', minute: '2-digit' })}</span>
+            <span>Arkëtar: ${user?.full_name || '-'}</span>
+          </div>
+          
+          <div class="border-dash">
+            ${saleData.items.map(item => `
+              <div style="margin-bottom: 3px;">
+                <div style="font-size: 11px;">${item.product_name || 'Produkt'}</div>
+                <div class="flex small">
+                  <span>${item.quantity}x €${(item.unit_price || 0).toFixed(2)}</span>
+                  <span class="bold">€${(item.total || (item.quantity * item.unit_price)).toFixed(2)}</span>
+                </div>
+                ${item.discount_percent > 0 ? `<div class="small" style="text-align: right;">-${item.discount_percent}% zbritje</div>` : ''}
+              </div>
+            `).join('')}
+          </div>
+          
+          <div class="border-dash">
+            <div class="flex small"><span>Nëntotali:</span><span>€${(saleData.subtotal || 0).toFixed(2)}</span></div>
+            ${saleData.total_discount > 0 ? `<div class="flex small"><span>Zbritja:</span><span>-€${saleData.total_discount.toFixed(2)}</span></div>` : ''}
+            ${saleData.total_vat > 0 ? `<div class="flex small"><span>TVSH:</span><span>€${saleData.total_vat.toFixed(2)}</span></div>` : ''}
+            <div class="flex total-line"><span>TOTAL:</span><span>€${(saleData.grand_total || 0).toFixed(2)}</span></div>
+          </div>
+          
+          <div class="border-dash small">
+            <div class="flex"><span>Pagesa:</span><span>${saleData.payment_method === 'cash' ? 'Cash' : 'Bankë'}</span></div>
+            ${saleData.payment_method === 'cash' ? `
+              <div class="flex"><span>Paguar:</span><span>€${(saleData.cash_amount || 0).toFixed(2)}</span></div>
+              <div class="flex bold"><span>Kusuri:</span><span>€${(saleData.change_amount || 0).toFixed(2)}</span></div>
+            ` : ''}
+          </div>
+          
+          <div class="center border-dash" style="padding-top: 8px;">
+            <div class="bold">Faleminderit!</div>
+            <div class="small">Mirë se vini përsëri</div>
+            <div class="small" style="margin-top: 5px;">- - - - - - - - - - - - - - -</div>
+            <div class="small">Mobilshopurimi POS</div>
+          </div>
+          
+          <script>
+            setTimeout(() => { window.print(); window.close(); }, 300);
+          </script>
+        </body>
+      </html>
+    `;
+
+    printWindow.document.write(receiptContent);
+    printWindow.document.close();
+  };
+
   const handlePayment = async () => {
     if (cart.length === 0) {
       toast.error('Shporta është bosh');
@@ -317,6 +419,25 @@ const POS = () => {
 
       const response = await api.post('/sales', saleData);
       toast.success(`Shitja u regjistrua: ${response.data.receipt_number}`);
+      
+      // Print thermal receipt if option is checked
+      if (printReceipt) {
+        const receiptData = {
+          ...response.data,
+          items: cart.map(item => ({
+            ...item,
+            total: calculateItemTotal(item).total
+          })),
+          subtotal: cartTotals.subtotal,
+          total_discount: cartTotals.discount,
+          total_vat: cartTotals.vat,
+          grand_total: cartTotals.total,
+          cash_amount: parseFloat(cashAmount) || 0,
+          change_amount: changeAmount
+        };
+        printThermalReceipt(receiptData);
+      }
+      
       setCart([]);
       setShowPayment(false);
       setCashAmount('');
