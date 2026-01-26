@@ -129,9 +129,21 @@ Sistema POS (Point of Sale) për markete dhe supermarkete me mbështetje multi-f
     └── PRD.md
 ```
 
-## Latest Updates (January 25, 2025)
+## Latest Updates (January 26, 2025)
+- Shtuar tekst informues për zgjedhjen e printerit në dialogun e kuponit termik
+- Shtuar tekst informues për zgjedhjen e printerit në dialogun e faturës A4
+- Shtuar banner informues në Settings > SHABLLONET E FATURAVE për udhëzime printimi
+- Përdoruesit tani informohen se mund të zgjedhin printerin nga dialogu standard i browser-it
+
+## Previous Updates (January 25, 2025)
 - Fixed cashier redirect to /pos on login
 - Added "Hap Arkën" and "Çkyçu" buttons after drawer close
 - Created InvoiceA4 component for A4 invoice printing
 - Added "Printo A4" button to POS sidebar
 - Added ability to print recent sales from Documents dialog
+- Username-based authentication (migrated from email)
+- Desktop App Setup with Electron
+- Rebranding to "Mobilshopurimi"
+- Thermal receipt (80mm) implementation
+- Out-of-stock sales enabled
+- Company settings backend (GET/PUT /api/settings/company)
