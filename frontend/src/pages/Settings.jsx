@@ -751,6 +751,21 @@ const Settings = () => {
 
         {/* SHABLLONET E FATURAVE Tab */}
         <TabsContent value="shabllonet">
+          {/* Printer Info Banner */}
+          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+            <div className="flex items-start gap-3">
+              <Receipt className="h-5 w-5 text-blue-600 mt-0.5 flex-shrink-0" />
+              <div>
+                <h4 className="font-medium text-blue-800 mb-1">Si të zgjidhni Printerin?</h4>
+                <p className="text-sm text-blue-700">
+                  Kur klikoni butonin "Printo" në çdo dokument (kupon termik 80mm ose faturë A4), do të hapet një dialog 
+                  ku mund të zgjidhni printerin tuaj të preferuar nga lista e të gjithë printerëve të instaluar në kompjuter. 
+                  Për printer termik, sigurohuni që të keni konfiguruar madhësinë e letrës si 80mm në cilësimet e printerit.
+                </p>
+              </div>
+            </div>
+          </div>
+          
           <Card className="border-0 shadow-sm">
             <CardHeader className="flex flex-row items-center justify-between">
               <div>
