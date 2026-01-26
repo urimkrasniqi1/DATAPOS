@@ -372,17 +372,6 @@ const POS = () => {
     setShowReceiptPreview(false);
     toast.success('Kuponi po printohet...');
   };
-          
-          <script>
-            setTimeout(() => { window.print(); window.close(); }, 300);
-          </script>
-        </body>
-      </html>
-    `;
-
-    printWindow.document.write(receiptContent);
-    printWindow.document.close();
-  };
 
   const handlePayment = async () => {
     if (cart.length === 0) {
