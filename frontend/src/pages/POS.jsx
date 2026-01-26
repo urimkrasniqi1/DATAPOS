@@ -1488,6 +1488,135 @@ const POS = () => {
         </DialogContent>
       </Dialog>
 
+      {/* Thermal Receipt Preview Dialog */}
+      <Dialog open={showReceiptPreview} onOpenChange={setShowReceiptPreview}>
+        <DialogContent className="sm:max-w-sm">
+          <DialogHeader>
+            <DialogTitle className="flex items-center justify-between">
+              <span>Kupon Shitje</span>
+              <Button
+                onClick={executeThermalPrint}
+                className="bg-[#E53935] hover:bg-[#D32F2F]"
+                size="sm"
+              >
+                <Printer className="h-4 w-4 mr-2" />
+                Printo
+              </Button>
+            </DialogTitle>
+          </DialogHeader>
+          <div className="border rounded-lg overflow-auto max-h-[60vh] bg-white p-2">
+            {receiptDataForPrint && (
+              <div id="thermal-receipt-print" style={{ fontFamily: "'Courier New', monospace", fontSize: '12px', width: '76mm', margin: '0 auto' }}>
+                {/* Header */}
+                <div className="receipt-header" style={{ textAlign: 'center', borderBottom: '1px dashed #000', paddingBottom: '8px', marginBottom: '8px' }}>
+                  <div className="company-name" style={{ fontSize: '16px', fontWeight: 'bold' }}>
+                    {companySettings?.company_name || 'Mobilshopurimi'}
+                  </div>
+                  {companySettings?.address && <div style={{ fontSize: '10px', color: '#666' }}>{companySettings.address}</div>}
+                  {companySettings?.city && <div style={{ fontSize: '10px', color: '#666' }}>{companySettings.city}</div>}
+                  {companySettings?.phone && <div style={{ fontSize: '10px', color: '#666' }}>Tel: {companySettings.phone}</div>}
+                </div>
+
+                {/* Title */}
+                <div style={{ textAlign: 'center', marginBottom: '8px' }}>
+                  <div style={{ fontSize: '14px', fontWeight: 'bold' }}>KUPON SHITJE</div>
+                  <div style={{ fontSize: '10px', color: '#666' }}>(Jo Fiskal)</div>
+                </div>
+
+                {/* Info */}
+                <div style={{ borderTop: '1px dashed #000', paddingTop: '8px' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px' }}>
+                    <span>Nr: {receiptDataForPrint.receipt_number}</span>
+                    <span>{new Date(receiptDataForPrint.created_at).toLocaleDateString('sq-AL')}</span>
+                  </div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', marginBottom: '8px' }}>
+                    <span>Ora: {new Date(receiptDataForPrint.created_at).toLocaleTimeString('sq-AL', { hour: '2-digit', minute: '2-digit' })}</span>
+                    <span>Arkëtar: {user?.full_name || '-'}</span>
+                  </div>
+                </div>
+
+                {/* Items */}
+                <div style={{ borderTop: '1px dashed #000', paddingTop: '8px' }}>
+                  {receiptDataForPrint.items?.map((item, index) => (
+                    <div key={index} style={{ marginBottom: '6px' }}>
+                      <div style={{ fontSize: '11px' }}>{item.product_name || 'Produkt'}</div>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px' }}>
+                        <span>{item.quantity}x €{(item.unit_price || 0).toFixed(2)}</span>
+                        <span style={{ fontWeight: 'bold' }}>€{(item.total || (item.quantity * item.unit_price)).toFixed(2)}</span>
+                      </div>
+                      {item.discount_percent > 0 && (
+                        <div style={{ fontSize: '10px', textAlign: 'right', color: '#666' }}>-{item.discount_percent}% zbritje</div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+
+                {/* Totals */}
+                <div style={{ borderTop: '1px dashed #000', paddingTop: '8px' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px' }}>
+                    <span>Nëntotali:</span>
+                    <span>€{(receiptDataForPrint.subtotal || 0).toFixed(2)}</span>
+                  </div>
+                  {receiptDataForPrint.total_discount > 0 && (
+                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px' }}>
+                      <span>Zbritja:</span>
+                      <span>-€{receiptDataForPrint.total_discount.toFixed(2)}</span>
+                    </div>
+                  )}
+                  {receiptDataForPrint.total_vat > 0 && (
+                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px' }}>
+                      <span>TVSH:</span>
+                      <span>€{receiptDataForPrint.total_vat.toFixed(2)}</span>
+                    </div>
+                  )}
+                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '14px', fontWeight: 'bold', borderTop: '1px solid #000', paddingTop: '4px', marginTop: '4px' }}>
+                    <span>TOTAL:</span>
+                    <span>€{(receiptDataForPrint.grand_total || 0).toFixed(2)}</span>
+                  </div>
+                </div>
+
+                {/* Payment */}
+                <div style={{ borderTop: '1px dashed #000', paddingTop: '8px', fontSize: '11px' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                    <span>Pagesa:</span>
+                    <span>{receiptDataForPrint.payment_method === 'cash' ? 'Cash' : 'Bankë'}</span>
+                  </div>
+                  {receiptDataForPrint.payment_method === 'cash' && (
+                    <>
+                      <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                        <span>Paguar:</span>
+                        <span>€{(receiptDataForPrint.cash_amount || 0).toFixed(2)}</span>
+                      </div>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', fontWeight: 'bold' }}>
+                        <span>Kusuri:</span>
+                        <span>€{(receiptDataForPrint.change_amount || 0).toFixed(2)}</span>
+                      </div>
+                    </>
+                  )}
+                </div>
+
+                {/* Footer */}
+                <div style={{ borderTop: '1px dashed #000', paddingTop: '10px', marginTop: '8px', textAlign: 'center' }}>
+                  <div style={{ fontWeight: 'bold' }}>Faleminderit!</div>
+                  <div style={{ fontSize: '10px', color: '#666' }}>Mirë se vini përsëri</div>
+                  <div style={{ fontSize: '10px', color: '#666', marginTop: '6px' }}>- - - - - - - - - - - - - -</div>
+                  <div style={{ fontSize: '10px', color: '#666' }}>Mobilshopurimi POS</div>
+                </div>
+              </div>
+            )}
+          </div>
+          <div className="flex gap-2 mt-2">
+            <Button variant="outline" className="flex-1" onClick={() => setShowReceiptPreview(false)}>
+              Mbyll
+            </Button>
+            <Button className="flex-1 bg-[#E53935] hover:bg-[#D32F2F]" onClick={executeThermalPrint}>
+              <Printer className="h-4 w-4 mr-2" />
+              Printo Kuponin
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
       {/* Invoice A4 Dialog */}
       <Dialog open={showInvoiceA4} onOpenChange={setShowInvoiceA4}>
         <DialogContent className="max-w-4xl max-h-[90vh] overflow-auto">
