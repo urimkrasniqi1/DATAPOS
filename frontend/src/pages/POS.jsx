@@ -475,12 +475,27 @@ const POS = () => {
     }
   };
 
+  // Reference for cash input
+  const cashInputRef = useRef(null);
+
+  // Focus on cash input when payment dialog opens
+  useEffect(() => {
+    if (showPayment && paymentMethod === 'cash' && cashInputRef.current) {
+      setTimeout(() => {
+        cashInputRef.current?.focus();
+        cashInputRef.current?.select();
+      }, 100);
+    }
+  }, [showPayment, paymentMethod]);
+
   // Keyboard shortcuts: F2 for payment, Enter for barcode/complete sale
   useEffect(() => {
     const handleKeyDown = (e) => {
-      // F2 - Open payment dialog
+      // F2 - Open payment dialog and focus on cash input
       if (e.key === 'F2' && cart.length > 0 && !showPayment && cashDrawer) {
         e.preventDefault();
+        setCashAmount(''); // Clear previous amount
+        setPaymentMethod('cash'); // Default to cash
         setShowPayment(true);
         return;
       }
@@ -498,7 +513,7 @@ const POS = () => {
       if (e.key === 'Enter' && search && !showPayment && !showProductSearch) {
         e.preventDefault();
         // First try exact barcode match
-        const productByBarcode = products.find(p => p.barcode === search.trim() && p.current_stock > 0);
+        const productByBarcode = products.find(p => p.barcode === search.trim());
         if (productByBarcode) {
           addToCart(productByBarcode);
           setSearch('');
