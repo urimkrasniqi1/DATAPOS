@@ -53,6 +53,8 @@ import {
   FileDown
 } from 'lucide-react';
 import InvoiceA4 from '../components/InvoiceA4';
+import ThermalReceipt from '../components/ThermalReceipt';
+import { Checkbox } from '../components/ui/checkbox';
 
 const POS = () => {
   const { user, logout } = useAuth();
