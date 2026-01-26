@@ -1605,6 +1605,12 @@ const POS = () => {
               </div>
             )}
           </div>
+          {/* Printer selection info */}
+          <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 mt-2">
+            <p className="text-sm text-blue-700">
+              <span className="font-medium">💡 Udhëzim:</span> Kur klikoni "Printo", do të hapet dialogu i printimit ku mund të zgjidhni printerin tuaj të preferuar nga lista e printerëve të instaluar.
+            </p>
+          </div>
           <div className="flex gap-2 mt-2">
             <Button variant="outline" className="flex-1" onClick={() => setShowReceiptPreview(false)}>
               Mbyll
@@ -1632,6 +1638,12 @@ const POS = () => {
               </Button>
             </DialogTitle>
           </DialogHeader>
+          {/* Printer selection info for A4 */}
+          <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 -mt-2 mb-2">
+            <p className="text-sm text-blue-700">
+              <span className="font-medium">💡 Udhëzim:</span> Kur klikoni "Printo", do të hapet dialogu ku mund të zgjidhni printerin dhe madhësinë e letrës (A4).
+            </p>
+          </div>
           <div className="border rounded-lg overflow-hidden">
             <InvoiceA4 ref={invoiceRef} sale={currentSaleForPrint} companyInfo={companySettings} />
           </div>
