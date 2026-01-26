@@ -164,14 +164,14 @@ const POS = () => {
     }
   };
 
+  // Filter products for dialog - show all products, highlight zero stock
   const filteredProducts = products.filter(p => {
     const searchTerm = (showProductSearch ? dialogSearch : search).toLowerCase().trim();
-    if (!searchTerm) return p.current_stock > 0;
+    if (!searchTerm) return true; // Show all products when no search
     return (
-      (p.name?.toLowerCase().includes(searchTerm) ||
+      p.name?.toLowerCase().includes(searchTerm) ||
       p.barcode?.toLowerCase().includes(searchTerm) ||
-      p.barcode?.includes(searchTerm)) && 
-      p.current_stock > 0
+      p.barcode?.includes(searchTerm)
     );
   });
 
