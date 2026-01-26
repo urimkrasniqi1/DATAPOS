@@ -84,6 +84,7 @@ const POS = () => {
   const [showBuyerForm, setShowBuyerForm] = useState(false);
   const [currentSaleForPrint, setCurrentSaleForPrint] = useState(null);
   const [companySettings, setCompanySettings] = useState(null);
+  const [printReceipt, setPrintReceipt] = useState(true); // Default: print receipt
   const [buyerInfo, setBuyerInfo] = useState({
     name: '',
     address: '',
@@ -93,6 +94,7 @@ const POS = () => {
   });
   const searchRef = useRef(null);
   const invoiceRef = useRef(null);
+  const thermalReceiptRef = useRef(null);
 
   useEffect(() => {
     loadData();
