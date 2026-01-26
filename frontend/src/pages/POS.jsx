@@ -175,15 +175,20 @@ const POS = () => {
     );
   });
 
-  // Products for main search (showing dropdown)
+  // Products for main search (showing dropdown) - show all products including zero stock
   const mainSearchResults = search.trim() ? products.filter(p => 
     (p.name?.toLowerCase().includes(search.toLowerCase().trim()) ||
     p.barcode?.toLowerCase().includes(search.toLowerCase().trim()) ||
-    p.barcode?.includes(search.trim())) && 
-    p.current_stock > 0
+    p.barcode?.includes(search.trim()))
   ) : [];
 
   const addToCart = useCallback((product) => {
+    // Check if product has stock
+    if (product.current_stock <= 0) {
+      toast.error(`Produkti "${product.name}" nuk ka stok!`);
+      return;
+    }
+    
     setCart(prevCart => {
       const existing = prevCart.find(item => item.product_id === product.id);
       if (existing) {
@@ -208,6 +213,8 @@ const POS = () => {
       }];
     });
     setShowProductSearch(false);
+    setSearch('');
+    setShowSearchResults(false);
   }, [applyNoVat]);
 
   const updateQuantity = (productId, delta) => {
