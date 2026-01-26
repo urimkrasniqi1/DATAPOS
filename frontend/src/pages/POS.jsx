@@ -1098,11 +1098,19 @@ const POS = () => {
                 <div className="relative">
                   <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[#00B9D7] font-bold">€</span>
                   <Input
+                    ref={cashInputRef}
                     type="text"
                     value={cashAmount}
                     onChange={(e) => setCashAmount(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' && parseFloat(cashAmount) >= cartTotals.total) {
+                        e.preventDefault();
+                        handlePayment();
+                      }
+                    }}
                     className="pl-8 h-12 text-xl font-semibold"
-                    placeholder="0.00"
+                    placeholder="Shkruaj shumën e paguar..."
+                    autoFocus
                     data-testid="cash-amount-input"
                   />
                 </div>
