@@ -808,9 +808,7 @@ async def create_sale(sale_data: SaleCreate, current_user: dict = Depends(get_cu
         if not product:
             raise HTTPException(status_code=404, detail=f"Produkti {item_data.product_id} nuk u gjet")
         
-        # Check stock
-        if product.get("current_stock", 0) < item_data.quantity:
-            raise HTTPException(status_code=400, detail=f"Stok i pamjaftueshëm për {product.get('name', 'produkt')}")
+        # Allow selling without stock - no stock check (negative stock allowed)
         
         item_subtotal = item_data.quantity * item_data.unit_price
         item_discount = item_subtotal * (item_data.discount_percent / 100)
@@ -834,7 +832,7 @@ async def create_sale(sale_data: SaleCreate, current_user: dict = Depends(get_cu
         total_discount += item_discount
         total_vat += item_vat
         
-        # Update stock
+        # Update stock (can go negative)
         new_stock = product.get("current_stock", 0) - item_data.quantity
         await db.products.update_one(
             {"id": item_data.product_id},
