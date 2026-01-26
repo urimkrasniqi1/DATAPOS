@@ -721,12 +721,12 @@ const POS = () => {
                 {mainSearchResults.map((product) => (
                   <div
                     key={product.id}
-                    className="p-3 hover:bg-[#E0F7FA] cursor-pointer border-b border-gray-100 last:border-b-0"
+                    className={`p-3 cursor-pointer border-b border-gray-100 last:border-b-0 ${
+                      product.current_stock > 0 ? 'hover:bg-[#E0F7FA]' : 'bg-gray-50 opacity-70'
+                    }`}
                     onMouseDown={(e) => {
                       e.preventDefault();
                       addToCart(product);
-                      setSearch('');
-                      setShowSearchResults(false);
                     }}
                   >
                     <div className="flex justify-between items-center">
@@ -736,7 +736,9 @@ const POS = () => {
                       </div>
                       <div className="text-right">
                         <p className="font-bold text-[#E53935]">€{(product.sale_price || 0).toFixed(2)}</p>
-                        <p className="text-xs text-gray-400">Stok: {product.current_stock}</p>
+                        <p className={`text-xs ${product.current_stock > 0 ? 'text-green-600' : 'text-red-500 font-semibold'}`}>
+                          {product.current_stock > 0 ? `Stok: ${product.current_stock}` : 'Pa stok!'}
+                        </p>
                       </div>
                     </div>
                   </div>
