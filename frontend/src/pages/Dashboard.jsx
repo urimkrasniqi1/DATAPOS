@@ -712,6 +712,154 @@ const Dashboard = () => {
           )}
         </DialogContent>
       </Dialog>
+
+      {/* Backups Dialog */}
+      <Dialog open={showBackupsDialog} onOpenChange={setShowBackupsDialog}>
+        <DialogContent className="sm:max-w-2xl">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 text-blue-600">
+              <RotateCcw className="h-5 w-5" />
+              Backup-et e Ruajtura
+            </DialogTitle>
+          </DialogHeader>
+
+          {backupsLoading ? (
+            <div className="flex items-center justify-center py-8">
+              <div className="spinner" />
+            </div>
+          ) : backups.length === 0 ? (
+            <div className="text-center py-8 text-gray-500">
+              <RotateCcw className="h-12 w-12 mx-auto mb-3 opacity-30" />
+              <p>Nuk ka backup të ruajtura</p>
+              <p className="text-sm mt-1">Backup-et krijohen automatikisht kur bëni reset</p>
+            </div>
+          ) : (
+            <div className="max-h-96 overflow-y-auto space-y-3">
+              {backups.map((backup) => (
+                <div
+                  key={backup.id}
+                  className={`p-4 border rounded-lg ${backup.restored_at ? 'bg-green-50 border-green-200' : 'bg-gray-50'}`}
+                >
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <span className={`px-2 py-0.5 text-xs rounded-full ${
+                          backup.reset_type === 'all' ? 'bg-red-100 text-red-700' :
+                          backup.reset_type === 'daily' ? 'bg-orange-100 text-orange-700' :
+                          'bg-blue-100 text-blue-700'
+                        }`}>
+                          {getResetTypeText(backup.reset_type)}
+                        </span>
+                        {backup.restored_at && (
+                          <span className="px-2 py-0.5 text-xs bg-green-100 text-green-700 rounded-full">
+                            Rikthyer
+                          </span>
+                        )}
+                      </div>
+                      <p className="text-sm font-medium mt-1">
+                        {new Date(backup.created_at).toLocaleString('sq-AL')}
+                      </p>
+                      <p className="text-xs text-gray-500">
+                        Nga: {backup.created_by_name}
+                      </p>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-sm">
+                        <span className="font-medium">{backup.deleted_counts?.sales || 0}</span> shitje
+                      </p>
+                      <p className="text-xs text-gray-500">
+                        {backup.deleted_counts?.cash_drawers || 0} arka
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex gap-2 mt-3">
+                    {!backup.restored_at && (
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        className="border-green-500 text-green-600 hover:bg-green-50"
+                        onClick={() => openRestoreDialog(backup)}
+                      >
+                        <RotateCcw className="h-3 w-3 mr-1" />
+                        Rikthe
+                      </Button>
+                    )}
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className="border-red-300 text-red-500 hover:bg-red-50"
+                      onClick={() => deleteBackup(backup.id)}
+                    >
+                      <Trash2 className="h-3 w-3 mr-1" />
+                      Fshi
+                    </Button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowBackupsDialog(false)}>
+              Mbyll
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Restore Confirmation Dialog */}
+      <Dialog open={showRestoreDialog} onOpenChange={setShowRestoreDialog}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 text-green-600">
+              <RotateCcw className="h-5 w-5" />
+              Rikthe Backup-in
+            </DialogTitle>
+          </DialogHeader>
+
+          <div className="space-y-4">
+            <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
+              <p className="text-sm text-blue-800">
+                Do të rikthehen të dhënat nga backup i datës:
+              </p>
+              <p className="text-sm font-medium text-blue-900 mt-1">
+                {selectedBackup && new Date(selectedBackup.created_at).toLocaleString('sq-AL')}
+              </p>
+              <p className="text-xs text-blue-700 mt-2">
+                {selectedBackup?.deleted_counts?.sales || 0} shitje, {selectedBackup?.deleted_counts?.cash_drawers || 0} arka
+              </p>
+            </div>
+
+            <div className="space-y-2">
+              <label className="text-sm font-medium flex items-center gap-2">
+                <Lock className="h-4 w-4" />
+                Fjalëkalimi i Administratorit
+              </label>
+              <Input
+                type="password"
+                placeholder="Shkruani fjalëkalimin..."
+                value={restorePassword}
+                onChange={(e) => setRestorePassword(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && executeRestore()}
+                autoFocus
+              />
+            </div>
+
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setShowRestoreDialog(false)}>
+                Anulo
+              </Button>
+              <Button
+                onClick={executeRestore}
+                disabled={backupsLoading}
+                className="bg-green-600 hover:bg-green-700"
+              >
+                {backupsLoading ? 'Duke rikthyer...' : 'Konfirmo Rikthimin'}
+              </Button>
+            </DialogFooter>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
