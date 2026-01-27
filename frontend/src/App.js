@@ -225,6 +225,11 @@ const AppRoutes = () => {
             <AuditLogs />
           </ProtectedRoute>
         } />
+        <Route path="super-admin" element={
+          <ProtectedRoute allowedRoles={['super_admin']}>
+            <SuperAdmin />
+          </ProtectedRoute>
+        } />
       </Route>
 
       <Route path="*" element={<Navigate to="/dashboard" replace />} />
