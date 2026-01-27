@@ -475,6 +475,27 @@ class ResetDataRequest(BaseModel):
     reset_type: str = "all"  # "all", "daily", "user_specific"
     reset_options: Optional[Dict] = None  # Additional options like date range
 
+# Comment Templates Models
+class CommentTemplateCreate(BaseModel):
+    title: str
+    content: str
+    is_default: bool = False
+    is_active: bool = True
+
+class CommentTemplateUpdate(BaseModel):
+    title: Optional[str] = None
+    content: Optional[str] = None
+    is_default: Optional[bool] = None
+    is_active: Optional[bool] = None
+
+class CommentTemplateResponse(BaseModel):
+    id: str
+    title: str
+    content: str
+    is_default: bool
+    is_active: bool
+    created_at: str
+
 # ============ HELPER FUNCTIONS ============
 def hash_password(password: str) -> str:
     return pwd_context.hash(password)
