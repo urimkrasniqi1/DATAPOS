@@ -52,6 +52,14 @@ const Dashboard = () => {
   const [usersForReset, setUsersForReset] = useState([]);
   const [selectedUsers, setSelectedUsers] = useState([]);
   const [resetLoading, setResetLoading] = useState(false);
+  
+  // Backup functionality states
+  const [showBackupsDialog, setShowBackupsDialog] = useState(false);
+  const [backups, setBackups] = useState([]);
+  const [backupsLoading, setBackupsLoading] = useState(false);
+  const [showRestoreDialog, setShowRestoreDialog] = useState(false);
+  const [selectedBackup, setSelectedBackup] = useState(null);
+  const [restorePassword, setRestorePassword] = useState('');
 
   useEffect(() => {
     loadData();
