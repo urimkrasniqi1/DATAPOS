@@ -438,9 +438,191 @@ const Dashboard = () => {
               <TrendingUp className="h-5 w-5" />
               Shiko Raportet
             </Button>
+            
+            {/* Admin Reset Options - Only visible to admins */}
+            {user?.role === 'admin' && (
+              <>
+                <div className="border-t pt-3 mt-3">
+                  <p className="text-xs text-gray-500 mb-2 font-medium">Veprime Administrative</p>
+                </div>
+                <Button
+                  variant="outline"
+                  className="w-full justify-start gap-3 h-12 border-orange-300 text-orange-600 hover:bg-orange-50"
+                  onClick={() => openResetDialog('daily')}
+                  data-testid="quick-action-reset-daily"
+                >
+                  <Calendar className="h-5 w-5" />
+                  Reseto Ditën (0)
+                </Button>
+                <Button
+                  variant="outline"
+                  className="w-full justify-start gap-3 h-12 border-red-300 text-red-600 hover:bg-red-50"
+                  onClick={() => openResetDialog('user_specific')}
+                  data-testid="quick-action-reset-users"
+                >
+                  <Users className="h-5 w-5" />
+                  Reseto Përdorues
+                </Button>
+                <Button
+                  variant="outline"
+                  className="w-full justify-start gap-3 h-12 border-red-500 text-red-700 hover:bg-red-100"
+                  onClick={() => openResetDialog('all')}
+                  data-testid="quick-action-reset-all"
+                >
+                  <Trash2 className="h-5 w-5" />
+                  Reseto Të Gjitha
+                </Button>
+              </>
+            )}
           </CardContent>
         </Card>
       </div>
+
+      {/* Reset Dialog */}
+      <Dialog open={showResetDialog} onOpenChange={setShowResetDialog}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 text-red-600">
+              <RotateCcw className="h-5 w-5" />
+              Reseto Të Dhënat
+            </DialogTitle>
+          </DialogHeader>
+
+          {/* Step 1: Password Verification */}
+          {resetStep === 1 && (
+            <div className="space-y-4">
+              <div className="p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+                <p className="text-sm text-yellow-800">
+                  <strong>Kujdes!</strong> Jeni duke bërë: <strong>{getResetTypeLabel()}</strong>
+                </p>
+                <p className="text-xs text-yellow-700 mt-1">
+                  Kjo veprim nuk mund të kthehet mbrapsht.
+                </p>
+              </div>
+              
+              <div className="space-y-2">
+                <label className="text-sm font-medium flex items-center gap-2">
+                  <Lock className="h-4 w-4" />
+                  Fjalëkalimi i Administratorit
+                </label>
+                <Input
+                  type="password"
+                  placeholder="Shkruani fjalëkalimin..."
+                  value={resetPassword}
+                  onChange={(e) => setResetPassword(e.target.value)}
+                  onKeyDown={(e) => e.key === 'Enter' && verifyPassword()}
+                  autoFocus
+                />
+              </div>
+              
+              <DialogFooter>
+                <Button variant="outline" onClick={() => setShowResetDialog(false)}>
+                  Anulo
+                </Button>
+                <Button 
+                  onClick={verifyPassword} 
+                  disabled={resetLoading}
+                  className="bg-red-600 hover:bg-red-700"
+                >
+                  {resetLoading ? 'Duke verifikuar...' : 'Vazhdo'}
+                </Button>
+              </DialogFooter>
+            </div>
+          )}
+
+          {/* Step 2: User Selection (only for user_specific) */}
+          {resetStep === 2 && (
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <p className="text-sm text-gray-600">Zgjidhni përdoruesit për reset:</p>
+                <Button variant="ghost" size="sm" onClick={selectAllUsers}>
+                  {selectedUsers.length === usersForReset.length ? 'Hiq të gjitha' : 'Zgjidh të gjitha'}
+                </Button>
+              </div>
+              
+              <div className="max-h-64 overflow-y-auto space-y-2 border rounded-lg p-2">
+                {usersForReset.map((u) => (
+                  <div
+                    key={u.id}
+                    className={`flex items-center gap-3 p-3 rounded-lg cursor-pointer transition-colors ${
+                      selectedUsers.includes(u.id) ? 'bg-red-50 border border-red-200' : 'bg-gray-50 hover:bg-gray-100'
+                    }`}
+                    onClick={() => toggleUserSelection(u.id)}
+                  >
+                    <Checkbox
+                      checked={selectedUsers.includes(u.id)}
+                      className="border-red-500 data-[state=checked]:bg-red-500"
+                    />
+                    <div className="flex-1">
+                      <p className="font-medium">{u.full_name || u.username}</p>
+                      <p className="text-xs text-gray-500">{u.role}</p>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-sm font-semibold">€{u.total_sales.toFixed(2)}</p>
+                      <p className="text-xs text-gray-500">{u.sales_count} shitje</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+              
+              <DialogFooter>
+                <Button variant="outline" onClick={() => setResetStep(1)}>
+                  Mbrapa
+                </Button>
+                <Button 
+                  onClick={() => setResetStep(3)} 
+                  disabled={selectedUsers.length === 0}
+                  className="bg-red-600 hover:bg-red-700"
+                >
+                  Vazhdo ({selectedUsers.length} zgjedhur)
+                </Button>
+              </DialogFooter>
+            </div>
+          )}
+
+          {/* Step 3: Final Confirmation */}
+          {resetStep === 3 && (
+            <div className="space-y-4">
+              <div className="p-4 bg-red-50 border border-red-200 rounded-lg">
+                <p className="text-sm text-red-800 font-medium">
+                  Jeni i sigurt që doni të vazhdoni?
+                </p>
+                <p className="text-xs text-red-700 mt-2">
+                  Do të fshihen: <strong>{getResetTypeLabel()}</strong>
+                </p>
+                {resetType === 'user_specific' && (
+                  <p className="text-xs text-red-700">
+                    Përdorues të zgjedhur: {selectedUsers.length}
+                  </p>
+                )}
+                {resetType === 'daily' && (
+                  <p className="text-xs text-red-700">
+                    Shitjet dhe arkat e sotme do të fshihen
+                  </p>
+                )}
+                {resetType === 'all' && (
+                  <p className="text-xs text-red-700">
+                    TË GJITHA shitjet, arkat dhe lëvizjet e stokut do të fshihen
+                  </p>
+                )}
+              </div>
+              
+              <DialogFooter>
+                <Button variant="outline" onClick={() => setResetStep(resetType === 'user_specific' ? 2 : 1)}>
+                  Mbrapa
+                </Button>
+                <Button 
+                  onClick={executeReset} 
+                  disabled={resetLoading}
+                  className="bg-red-600 hover:bg-red-700"
+                >
+                  {resetLoading ? 'Duke resetuar...' : 'Konfirmo Resetimin'}
+                </Button>
+              </DialogFooter>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
