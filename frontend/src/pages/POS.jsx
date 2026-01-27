@@ -1703,19 +1703,38 @@ const POS = () => {
                   )}
                 </div>
 
+                {/* === COMMENT SECTION === */}
+                {receiptComment && (
+                  <div style={{ 
+                    borderTop: '1px dashed #000', 
+                    paddingTop: '6px', 
+                    marginTop: '4px',
+                    fontSize: '9px'
+                  }}>
+                    <div style={{ fontWeight: 'bold', marginBottom: '2px' }}>SHËNIM:</div>
+                    <div style={{ 
+                      fontStyle: 'italic', 
+                      wordBreak: 'break-word',
+                      whiteSpace: 'pre-wrap'
+                    }}>
+                      {receiptComment}
+                    </div>
+                  </div>
+                )}
+
                 {/* === FOOTER === */}
                 <div style={{ 
                   borderTop: '1px dashed #000', 
                   paddingTop: '6px', 
-                  marginTop: '4px', 
+                  marginTop: '6px', 
                   textAlign: 'center' 
                 }}>
-                  <div style={{ fontSize: '10px', fontWeight: 'bold' }}>★ Faleminderit! ★</div>
-                  <div style={{ fontSize: '8px', color: '#666', marginTop: '2px' }}>Mirë se vini përsëri</div>
-                  <div style={{ fontSize: '7px', color: '#999', marginTop: '6px', letterSpacing: '1px' }}>
-                    ================================
+                  <div style={{ fontSize: '11px', fontWeight: 'bold' }}>★ Faleminderit! ★</div>
+                  <div style={{ fontSize: '9px', color: '#666', marginTop: '2px' }}>Mirë se vini përsëri</div>
+                  <div style={{ fontSize: '8px', color: '#999', marginTop: '8px', letterSpacing: '0.5px' }}>
+                    ════════════════════════════════
                   </div>
-                  <div style={{ fontSize: '7px', color: '#999' }}>
+                  <div style={{ fontSize: '8px', color: '#666' }}>
                     {companySettings?.company_name || 'Mobilshopurimi'} POS
                   </div>
                 </div>
@@ -1723,9 +1742,9 @@ const POS = () => {
             )}
           </div>
           {/* Printer selection info */}
-          <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 mt-2">
-            <p className="text-sm text-blue-700">
-              <span className="font-medium">💡 Udhëzim:</span> Kur klikoni "Printo", do të hapet dialogu i printimit ku mund të zgjidhni printerin tuaj të preferuar nga lista e printerëve të instaluar.
+          <div className="bg-blue-50 border border-blue-200 rounded-lg p-2 mt-2">
+            <p className="text-xs text-blue-700">
+              <span className="font-medium">💡</span> Kur klikoni "Printo", zgjidhni printerin nga dialogu.
             </p>
           </div>
           <div className="flex gap-2 mt-2">
