@@ -1698,6 +1698,19 @@ async def reset_data(
     if not admin or not verify_password(request.admin_password, admin.get("password_hash", "")):
         raise HTTPException(status_code=401, detail="Fjalëkalimi i gabuar")
     
+    # Create backup before reset
+    backup_id = str(uuid.uuid4())
+    backup_data = {
+        "id": backup_id,
+        "reset_type": request.reset_type,
+        "user_ids": request.user_ids,
+        "created_by": current_user["id"],
+        "created_at": datetime.now(timezone.utc).isoformat(),
+        "sales": [],
+        "cash_drawers": [],
+        "stock_movements": []
+    }
+    
     deleted_sales = 0
     deleted_movements = 0
     deleted_drawers = 0
@@ -1705,6 +1718,14 @@ async def reset_data(
     if request.reset_type == "daily":
         # Reset only today's data
         today = datetime.now(timezone.utc).replace(hour=0, minute=0, second=0, microsecond=0).isoformat()
+        
+        # Backup today's sales before deleting
+        sales_to_backup = await db.sales.find({"created_at": {"$gte": today}}, {"_id": 0}).to_list(10000)
+        backup_data["sales"] = sales_to_backup
+        
+        # Backup today's cash drawers
+        drawers_to_backup = await db.cash_drawers.find({"opened_at": {"$gte": today}}, {"_id": 0}).to_list(1000)
+        backup_data["cash_drawers"] = drawers_to_backup
         
         # Delete today's sales
         result = await db.sales.delete_many({"created_at": {"$gte": today}})
@@ -1717,6 +1738,14 @@ async def reset_data(
     elif request.reset_type == "user_specific" and request.user_ids:
         # Reset specific users' data
         for user_id in request.user_ids:
+            # Backup user's sales
+            user_sales = await db.sales.find({"user_id": user_id}, {"_id": 0}).to_list(10000)
+            backup_data["sales"].extend(user_sales)
+            
+            # Backup user's cash drawers
+            user_drawers = await db.cash_drawers.find({"user_id": user_id}, {"_id": 0}).to_list(1000)
+            backup_data["cash_drawers"].extend(user_drawers)
+            
             # Query by user_id (the field used in sales and cash_drawers collections)
             result = await db.sales.delete_many({"user_id": user_id})
             deleted_sales += result.deleted_count
@@ -1725,6 +1754,16 @@ async def reset_data(
             deleted_drawers += result.deleted_count
             
     elif request.reset_type == "all":
+        # Backup all data before deleting
+        all_sales = await db.sales.find({}, {"_id": 0}).to_list(100000)
+        backup_data["sales"] = all_sales
+        
+        all_drawers = await db.cash_drawers.find({}, {"_id": 0}).to_list(10000)
+        backup_data["cash_drawers"] = all_drawers
+        
+        all_movements = await db.stock_movements.find({}, {"_id": 0}).to_list(100000)
+        backup_data["stock_movements"] = all_movements
+        
         # Reset all sales data
         result = await db.sales.delete_many({})
         deleted_sales = result.deleted_count
@@ -1736,6 +1775,14 @@ async def reset_data(
         result = await db.stock_movements.delete_many({})
         deleted_movements = result.deleted_count
     
+    # Save backup to database
+    backup_data["deleted_counts"] = {
+        "sales": deleted_sales,
+        "cash_drawers": deleted_drawers,
+        "stock_movements": deleted_movements
+    }
+    await db.reset_backups.insert_one(backup_data)
+    
     # Log the reset action
     await log_audit(
         current_user["id"], 
@@ -1743,6 +1790,7 @@ async def reset_data(
         "system", 
         request.reset_type,
         {
+            "backup_id": backup_id,
             "deleted_sales": deleted_sales,
             "deleted_drawers": deleted_drawers,
             "deleted_movements": deleted_movements,
@@ -1754,6 +1802,7 @@ async def reset_data(
     return {
         "success": True,
         "message": "Të dhënat u resetuan me sukses",
+        "backup_id": backup_id,
         "deleted": {
             "sales": deleted_sales,
             "cash_drawers": deleted_drawers,
