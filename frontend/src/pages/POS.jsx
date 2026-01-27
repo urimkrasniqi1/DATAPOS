@@ -1537,10 +1537,10 @@ const POS = () => {
 
       {/* Thermal Receipt Preview Dialog */}
       <Dialog open={showReceiptPreview} onOpenChange={setShowReceiptPreview}>
-        <DialogContent className="sm:max-w-xs">
+        <DialogContent className="sm:max-w-md">
           <DialogHeader>
             <DialogTitle className="flex items-center justify-between">
-              <span>Kupon Shitje</span>
+              <span>Kupon Shitje (8cm x 10cm)</span>
               <Button
                 onClick={executeThermalPrint}
                 className="bg-[#E53935] hover:bg-[#D32F2F]"
@@ -1551,13 +1551,31 @@ const POS = () => {
               </Button>
             </DialogTitle>
           </DialogHeader>
-          <div className="border rounded-lg overflow-auto max-h-[60vh] bg-white">
+          
+          {/* Comment input field */}
+          <div className="space-y-2">
+            <Label htmlFor="receiptComment" className="text-sm font-medium">
+              Koment shtesë për kuponin (opsional)
+            </Label>
+            <Textarea
+              id="receiptComment"
+              placeholder="Shkruani një koment që do të shfaqet në kupon..."
+              value={receiptComment}
+              onChange={(e) => setReceiptComment(e.target.value)}
+              className="h-16 text-sm resize-none"
+              maxLength={150}
+            />
+            <p className="text-xs text-gray-500">{receiptComment.length}/150 karaktere</p>
+          </div>
+
+          <div className="border rounded-lg overflow-auto max-h-[55vh] bg-white">
             {receiptDataForPrint && (
               <div id="thermal-receipt-print" style={{ 
                 fontFamily: "'Courier New', 'Lucida Console', monospace", 
                 fontSize: '11px', 
-                width: '58mm', 
-                maxWidth: '58mm',
+                width: '80mm', 
+                maxWidth: '80mm',
+                minHeight: '100mm',
                 margin: '0 auto',
                 padding: '3mm',
                 backgroundColor: '#fff',
