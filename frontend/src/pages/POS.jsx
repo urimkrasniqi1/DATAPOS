@@ -1824,48 +1824,72 @@ const POS = () => {
                 {/* === COMMENT SECTION === */}
                 {showCommentOnReceipt && receiptComment && (
                   <div style={{ 
-                    borderTop: '1px dashed #000', 
-                    paddingTop: '6px', 
-                    marginTop: '4px',
-                    fontSize: '9px'
+                    border: '1px solid #000',
+                    padding: '8px',
+                    marginBottom: '8px',
+                    backgroundColor: '#fffef0'
                   }}>
-                    <div style={{ fontWeight: 'bold', marginBottom: '2px' }}>SHËNIM:</div>
+                    <div style={{ fontWeight: 'bold', marginBottom: '4px', fontSize: '10px' }}>📝 SHËNIM / VËREJTJE:</div>
                     <div style={{ 
-                      fontStyle: 'italic', 
+                      fontSize: '10px',
                       wordBreak: 'break-word',
-                      whiteSpace: 'pre-wrap'
+                      whiteSpace: 'pre-wrap',
+                      lineHeight: '1.5'
                     }}>
                       {receiptComment}
                     </div>
                   </div>
                 )}
 
-                {/* === FOOTER === */}
+                {/* === FOOTER - FISCAL STYLE === */}
                 <div style={{ 
-                  borderTop: '1px dashed #000', 
-                  paddingTop: '6px', 
-                  marginTop: '6px', 
+                  borderTop: '2px solid #000', 
+                  paddingTop: '10px', 
+                  marginTop: '10px', 
                   textAlign: 'center' 
                 }}>
-                  <div style={{ fontSize: '11px', fontWeight: 'bold' }}>★ Faleminderit! ★</div>
-                  <div style={{ fontSize: '9px', color: '#666', marginTop: '2px' }}>Mirë se vini përsëri</div>
-                  <div style={{ fontSize: '8px', color: '#999', marginTop: '8px', letterSpacing: '0.5px' }}>
-                    ════════════════════════════════
+                  <div style={{ fontSize: '14px', fontWeight: 'bold', marginBottom: '4px' }}>
+                    ★ ★ ★  FALEMINDERIT  ★ ★ ★
                   </div>
-                  <div style={{ fontSize: '8px', color: '#666' }}>
-                    {companySettings?.company_name || 'Mobilshopurimi'} POS
+                  <div style={{ fontSize: '11px', marginBottom: '8px' }}>
+                    Ju mirëpresim përsëri!
+                  </div>
+                  
+                  <div style={{ 
+                    fontSize: '9px', 
+                    color: '#666', 
+                    borderTop: '1px dashed #999',
+                    paddingTop: '8px',
+                    marginTop: '8px'
+                  }}>
+                    <div style={{ marginBottom: '2px' }}>Ky kupon nuk është fiskal</div>
+                    <div style={{ marginBottom: '2px' }}>Ruajeni për evidencë</div>
+                    {companySettings?.website && (
+                      <div style={{ marginBottom: '2px' }}>{companySettings.website}</div>
+                    )}
+                  </div>
+                  
+                  <div style={{ 
+                    fontSize: '8px', 
+                    color: '#999', 
+                    marginTop: '10px',
+                    letterSpacing: '1px'
+                  }}>
+                    ═══════════════════════════════════════
+                  </div>
+                  <div style={{ fontSize: '9px', color: '#666', marginTop: '4px' }}>
+                    {companySettings?.company_name || 'Mobilshopurimi'} POS System
+                  </div>
+                  <div style={{ fontSize: '8px', color: '#999' }}>
+                    Printuar më: {new Date().toLocaleString('sq-AL')}
                   </div>
                 </div>
               </div>
             )}
           </div>
-          {/* Printer selection info */}
-          <div className="bg-blue-50 border border-blue-200 rounded-lg p-2 mt-2">
-            <p className="text-xs text-blue-700">
-              <span className="font-medium">💡</span> Kur klikoni "Printo", zgjidhni printerin nga dialogu.
-            </p>
-          </div>
-          <div className="flex gap-2 mt-2">
+          
+          {/* Bottom actions */}
+          <div className="flex gap-2 pt-2 border-t">
             <Button variant="outline" className="flex-1" onClick={() => setShowReceiptPreview(false)}>
               Mbyll
             </Button>
