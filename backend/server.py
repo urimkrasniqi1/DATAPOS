@@ -468,6 +468,13 @@ class VATRateUpdate(BaseModel):
     is_default: Optional[bool] = None
     is_active: Optional[bool] = None
 
+# Reset Data Models
+class ResetDataRequest(BaseModel):
+    admin_password: str
+    user_ids: Optional[List[str]] = None  # If None, reset all users
+    reset_type: str = "all"  # "all", "daily", "user_specific"
+    reset_options: Optional[Dict] = None  # Additional options like date range
+
 # ============ HELPER FUNCTIONS ============
 def hash_password(password: str) -> str:
     return pwd_context.hash(password)
