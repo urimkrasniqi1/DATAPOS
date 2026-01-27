@@ -1639,8 +1639,8 @@ const POS = () => {
               <div id="thermal-receipt-print" style={{ 
                 fontFamily: "'Courier New', 'Lucida Console', monospace", 
                 fontSize: '12px', 
-                width: '90mm', 
-                maxWidth: '90mm',
+                width: '110mm', 
+                maxWidth: '110mm',
                 minHeight: '140mm',
                 margin: '0 auto',
                 padding: '5mm',
