@@ -759,7 +759,14 @@ const Settings = () => {
           <Card className="border-0 shadow-sm">
             <CardHeader className="flex flex-row items-center justify-between">
               <CardTitle>Depot / Magazinat</CardTitle>
-              <Button className="bg-[#E53935] hover:bg-[#D32F2F]">
+              <Button 
+                className="bg-[#E53935] hover:bg-[#D32F2F]"
+                onClick={() => {
+                  setEditingWarehouse(null);
+                  setWarehouseForm({ name: '', code: '', address: '', phone: '', is_active: true, is_default: false });
+                  setShowWarehouseDialog(true);
+                }}
+              >
                 <Plus className="h-4 w-4 mr-2" />
                 Shto Depo
               </Button>
@@ -769,18 +776,49 @@ const Settings = () => {
                 <TableHeader>
                   <TableRow>
                     <TableHead>Emri</TableHead>
-                    <TableHead>Filiali</TableHead>
+                    <TableHead>Kodi</TableHead>
                     <TableHead>Adresa</TableHead>
+                    <TableHead>Telefoni</TableHead>
                     <TableHead>Statusi</TableHead>
                     <TableHead className="text-right">Veprime</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  <TableRow>
-                    <TableCell colSpan={5} className="text-center py-8 text-gray-500">
-                      Nuk ka depo të regjistruara
-                    </TableCell>
-                  </TableRow>
+                  {warehouses.map((warehouse) => (
+                    <TableRow key={warehouse.id}>
+                      <TableCell className="font-medium">
+                        {warehouse.name}
+                        {warehouse.is_default && (
+                          <span className="ml-2 px-2 py-0.5 rounded-full text-xs bg-blue-100 text-blue-700">
+                            Default
+                          </span>
+                        )}
+                      </TableCell>
+                      <TableCell>{warehouse.code || '-'}</TableCell>
+                      <TableCell>{warehouse.address || '-'}</TableCell>
+                      <TableCell>{warehouse.phone || '-'}</TableCell>
+                      <TableCell>
+                        <span className={`px-2 py-1 rounded-full text-xs ${warehouse.is_active ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
+                          {warehouse.is_active ? 'Aktiv' : 'Joaktiv'}
+                        </span>
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <Button variant="ghost" size="icon" onClick={() => handleEditWarehouse(warehouse)}>
+                          <Edit2 className="h-4 w-4" />
+                        </Button>
+                        <Button variant="ghost" size="icon" className="text-red-500" onClick={() => handleDeleteWarehouse(warehouse.id)}>
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                  {warehouses.length === 0 && (
+                    <TableRow>
+                      <TableCell colSpan={6} className="text-center py-8 text-gray-500">
+                        Nuk ka depo të regjistruara
+                      </TableCell>
+                    </TableRow>
+                  )}
                 </TableBody>
               </Table>
             </CardContent>
