@@ -1103,6 +1103,80 @@ async def get_sales_report(
         "daily_breakdown": [{"date": k, **v} for k, v in sorted(daily_sales.items())]
     }
 
+@api_router.get("/reports/profit-loss")
+async def get_profit_loss_report(
+    start_date: str = Query(...),
+    end_date: str = Query(...),
+    branch_id: Optional[str] = None,
+    current_user: dict = Depends(require_role([UserRole.ADMIN, UserRole.MANAGER]))
+):
+    """Calculate profit/loss report based on sales and purchase prices"""
+    query = {"created_at": {"$gte": start_date, "$lte": end_date}}
+    if branch_id:
+        query["branch_id"] = branch_id
+    
+    sales = await db.sales.find(query, {"_id": 0}).to_list(100000)
+    
+    total_revenue = 0
+    total_cost = 0
+    total_vat = 0
+    total_discount = 0
+    
+    # Get product purchase prices
+    product_ids = set()
+    for sale in sales:
+        for item in sale.get("items", []):
+            product_ids.add(item.get("product_id"))
+    
+    products = await db.products.find({"product_id": {"$in": list(product_ids)}}, {"_id": 0}).to_list(100000)
+    product_prices = {p["product_id"]: p.get("purchase_price", 0) or 0 for p in products}
+    
+    # Calculate totals
+    for sale in sales:
+        total_revenue += sale.get("grand_total", 0)
+        total_vat += sale.get("total_vat", 0)
+        total_discount += sale.get("total_discount", 0)
+        
+        for item in sale.get("items", []):
+            purchase_price = product_prices.get(item.get("product_id"), 0)
+            quantity = item.get("quantity", 0)
+            total_cost += purchase_price * quantity
+    
+    gross_profit = total_revenue - total_cost
+    net_profit = gross_profit - total_vat
+    profit_margin = (gross_profit / total_revenue * 100) if total_revenue > 0 else 0
+    
+    # Daily profit breakdown
+    daily_profit = {}
+    for sale in sales:
+        date = sale["created_at"][:10]
+        if date not in daily_profit:
+            daily_profit[date] = {"revenue": 0, "cost": 0, "profit": 0}
+        
+        sale_revenue = sale.get("grand_total", 0)
+        sale_cost = 0
+        for item in sale.get("items", []):
+            purchase_price = product_prices.get(item.get("product_id"), 0)
+            sale_cost += purchase_price * item.get("quantity", 0)
+        
+        daily_profit[date]["revenue"] += sale_revenue
+        daily_profit[date]["cost"] += sale_cost
+        daily_profit[date]["profit"] += sale_revenue - sale_cost
+    
+    return {
+        "period": {"start": start_date, "end": end_date},
+        "summary": {
+            "total_revenue": round(total_revenue, 2),
+            "total_cost": round(total_cost, 2),
+            "gross_profit": round(gross_profit, 2),
+            "total_vat": round(total_vat, 2),
+            "net_profit": round(net_profit, 2),
+            "profit_margin": round(profit_margin, 2),
+            "total_transactions": len(sales)
+        },
+        "daily_breakdown": [{"date": k, **v} for k, v in sorted(daily_profit.items())]
+    }
+
 @api_router.get("/reports/stock")
 async def get_stock_report(
     branch_id: Optional[str] = None,
