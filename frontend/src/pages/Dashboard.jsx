@@ -552,6 +552,15 @@ const Dashboard = () => {
                   <Trash2 className="h-5 w-5" />
                   Reseto Të Gjitha
                 </Button>
+                <Button
+                  variant="outline"
+                  className="w-full justify-start gap-3 h-12 border-blue-400 text-blue-600 hover:bg-blue-50"
+                  onClick={openBackupsDialog}
+                  data-testid="quick-action-backups"
+                >
+                  <RotateCcw className="h-5 w-5" />
+                  Shiko Backup-et
+                </Button>
               </>
             )}
           </CardContent>
