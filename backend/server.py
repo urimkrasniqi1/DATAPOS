@@ -1662,6 +1662,72 @@ async def delete_vat_rate(
     await log_audit(current_user["id"], "delete", "vat_rate", vat_id)
     return {"message": "Norma e TVSH u fshi me sukses"}
 
+# ============ COMMENT TEMPLATES ROUTES ============
+@api_router.get("/comment-templates", response_model=List[CommentTemplateResponse])
+async def get_comment_templates(
+    current_user: dict = Depends(get_current_user)
+):
+    """Get all comment templates"""
+    templates = await db.comment_templates.find({}, {"_id": 0}).sort("created_at", -1).to_list(100)
+    return templates
+
+@api_router.post("/comment-templates", response_model=CommentTemplateResponse)
+async def create_comment_template(
+    template: CommentTemplateCreate,
+    current_user: dict = Depends(require_role([UserRole.ADMIN, UserRole.MANAGER]))
+):
+    """Create a new comment template"""
+    template_data = template.model_dump()
+    template_data["id"] = str(uuid.uuid4())
+    template_data["created_at"] = datetime.now(timezone.utc).isoformat()
+    template_data["created_by"] = current_user["id"]
+    
+    # If this is default, unset other defaults
+    if template_data.get("is_default"):
+        await db.comment_templates.update_many({}, {"$set": {"is_default": False}})
+    
+    await db.comment_templates.insert_one(template_data)
+    await log_audit(current_user["id"], "create", "comment_template", template_data["id"])
+    
+    return CommentTemplateResponse(**template_data)
+
+@api_router.put("/comment-templates/{template_id}", response_model=CommentTemplateResponse)
+async def update_comment_template(
+    template_id: str,
+    template: CommentTemplateUpdate,
+    current_user: dict = Depends(require_role([UserRole.ADMIN, UserRole.MANAGER]))
+):
+    """Update a comment template"""
+    existing = await db.comment_templates.find_one({"id": template_id})
+    if not existing:
+        raise HTTPException(status_code=404, detail="Template nuk u gjet")
+    
+    update_data = {k: v for k, v in template.model_dump().items() if v is not None}
+    
+    # If setting as default, unset other defaults
+    if update_data.get("is_default"):
+        await db.comment_templates.update_many({"id": {"$ne": template_id}}, {"$set": {"is_default": False}})
+    
+    await db.comment_templates.update_one({"id": template_id}, {"$set": update_data})
+    
+    updated = await db.comment_templates.find_one({"id": template_id}, {"_id": 0})
+    await log_audit(current_user["id"], "update", "comment_template", template_id)
+    
+    return CommentTemplateResponse(**updated)
+
+@api_router.delete("/comment-templates/{template_id}")
+async def delete_comment_template(
+    template_id: str,
+    current_user: dict = Depends(require_role([UserRole.ADMIN, UserRole.MANAGER]))
+):
+    """Delete a comment template"""
+    result = await db.comment_templates.delete_one({"id": template_id})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Template nuk u gjet")
+    
+    await log_audit(current_user["id"], "delete", "comment_template", template_id)
+    return {"message": "Template u fshi me sukses"}
+
 # ============ DATA RESET ROUTES ============
 @api_router.post("/admin/verify-password")
 async def verify_admin_password(
