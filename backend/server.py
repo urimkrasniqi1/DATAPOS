@@ -519,9 +519,25 @@ async def generate_receipt_number(branch_id: str = None) -> str:
 # ============ AUTH ROUTES ============
 @api_router.post("/auth/login", response_model=TokenResponse)
 async def login(request: LoginRequest):
+    # First try to find by username
     user = await db.users.find_one({"username": request.username}, {"_id": 0})
-    if not user or not verify_password(request.password, user.get("password_hash", "")):
+    
+    # If not found by username, try to find by PIN (for PIN login)
+    if not user:
+        user = await db.users.find_one({"pin": request.username}, {"_id": 0})
+        if user and request.password == request.username:
+            # PIN login successful (PIN used as both username and password)
+            pass
+        else:
+            user = None
+    else:
+        # Regular username login - verify password
+        if not verify_password(request.password, user.get("password_hash", "")):
+            raise HTTPException(status_code=401, detail="Username ose fjalëkalim i gabuar")
+    
+    if not user:
         raise HTTPException(status_code=401, detail="Username ose fjalëkalim i gabuar")
+    
     if not user.get("is_active", True):
         raise HTTPException(status_code=403, detail="Llogaria është e çaktivizuar")
     
@@ -537,7 +553,8 @@ async def login(request: LoginRequest):
             role=user["role"],
             branch_id=user.get("branch_id"),
             is_active=user["is_active"],
-            created_at=user["created_at"]
+            created_at=user["created_at"],
+            pin=user.get("pin")
         )
     )
 
