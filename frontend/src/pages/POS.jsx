@@ -311,6 +311,20 @@ const POS = () => {
     setShowReceiptPreview(true);
   };
 
+  // Save comment as default for future receipts
+  const saveCommentAsDefault = () => {
+    localStorage.setItem('receiptDefaultComment', receiptComment);
+    setSavedReceiptComment(receiptComment);
+    toast.success('Komenti u ruajt si default!');
+  };
+
+  // Clear saved comment
+  const clearSavedComment = () => {
+    localStorage.removeItem('receiptDefaultComment');
+    setSavedReceiptComment('');
+    toast.success('Komenti default u fshi!');
+  };
+
   // Execute the actual print using iframe (more reliable, no popup blockers)
   const executeThermalPrint = () => {
     const printArea = document.getElementById('thermal-receipt-print');
@@ -325,7 +339,7 @@ const POS = () => {
     printFrame.style.position = 'absolute';
     printFrame.style.top = '-10000px';
     printFrame.style.left = '-10000px';
-    printFrame.style.width = '80mm';
+    printFrame.style.width = '90mm';
     printFrame.style.height = '0';
     
     // Remove any existing print frame
@@ -342,30 +356,29 @@ const POS = () => {
       <!DOCTYPE html>
       <html>
         <head>
-          <title>Kupon</title>
+          <title>Kupon Shitje</title>
           <style>
             * { margin: 0; padding: 0; box-sizing: border-box; }
             body { 
               font-family: 'Courier New', 'Lucida Console', monospace; 
-              font-size: 11px; 
-              line-height: 1.3;
-              width: 80mm;
-              max-width: 80mm;
-              min-height: 100mm;
-              padding: 3mm;
+              font-size: 12px; 
+              line-height: 1.4;
+              width: 90mm;
+              max-width: 90mm;
+              min-height: 140mm;
+              padding: 4mm;
               background: white;
               color: #000;
             }
             div { box-sizing: border-box; }
             @media print {
               @page { 
-                size: 80mm 100mm; 
+                size: 90mm auto; 
                 margin: 0; 
               }
               html, body { 
-                width: 80mm !important;
-                max-width: 80mm !important;
-                min-height: 100mm !important;
+                width: 90mm !important;
+                max-width: 90mm !important;
                 -webkit-print-color-adjust: exact;
                 print-color-adjust: exact;
               }
