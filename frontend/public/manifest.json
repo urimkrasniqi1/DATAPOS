@@ -1,0 +1,24 @@
+{
+  "short_name": "Mobilshopurimi",
+  "name": "Mobilshopurimi POS",
+  "description": "Point of Sale System - Sistem për menaxhimin e shitjeve",
+  "icons": [
+    {
+      "src": "https://customer-assets.emergentagent.com/job_supermarket-pos-11/artifacts/mcfwxd72_mobilshopurimi%20logo.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "https://customer-assets.emergentagent.com/job_supermarket-pos-11/artifacts/mcfwxd72_mobilshopurimi%20logo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "start_url": ".",
+  "display": "fullscreen",
+  "orientation": "landscape",
+  "theme_color": "#1E3A5F",
+  "background_color": "#FFF8F0"
+}
