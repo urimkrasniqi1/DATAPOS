@@ -970,7 +970,14 @@ const Settings = () => {
                 <CardTitle>Normat e TVSH-së</CardTitle>
                 <CardDescription>Menaxho normat e tatimit mbi vlerën e shtuar</CardDescription>
               </div>
-              <Button className="bg-[#E53935] hover:bg-[#D32F2F]">
+              <Button 
+                className="bg-[#E53935] hover:bg-[#D32F2F]"
+                onClick={() => {
+                  setEditingVat(null);
+                  setVatForm({ name: '', rate: 18, code: '', is_default: false, is_active: true });
+                  setShowVatDialog(true);
+                }}
+              >
                 <Plus className="h-4 w-4 mr-2" />
                 Shto Normë
               </Button>
@@ -980,8 +987,10 @@ const Settings = () => {
                 <TableHeader>
                   <TableRow>
                     <TableHead>Emri</TableHead>
+                    <TableHead>Kodi</TableHead>
                     <TableHead>Norma (%)</TableHead>
                     <TableHead>Default</TableHead>
+                    <TableHead>Statusi</TableHead>
                     <TableHead className="text-right">Veprime</TableHead>
                   </TableRow>
                 </TableHeader>
@@ -989,24 +998,37 @@ const Settings = () => {
                   {vatRates.map((vat) => (
                     <TableRow key={vat.id}>
                       <TableCell className="font-medium">{vat.name}</TableCell>
+                      <TableCell>{vat.code || '-'}</TableCell>
                       <TableCell>{vat.rate}%</TableCell>
                       <TableCell>
                         {vat.is_default && (
-                          <span className="px-2 py-1 rounded-full text-xs bg-green-100 text-green-700">
+                          <span className="px-2 py-1 rounded-full text-xs bg-blue-100 text-blue-700">
                             Default
                           </span>
                         )}
                       </TableCell>
+                      <TableCell>
+                        <span className={`px-2 py-1 rounded-full text-xs ${vat.is_active ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
+                          {vat.is_active ? 'Aktiv' : 'Joaktiv'}
+                        </span>
+                      </TableCell>
                       <TableCell className="text-right">
-                        <Button variant="ghost" size="icon">
+                        <Button variant="ghost" size="icon" onClick={() => handleEditVat(vat)}>
                           <Edit2 className="h-4 w-4" />
                         </Button>
-                        <Button variant="ghost" size="icon" className="text-red-500">
+                        <Button variant="ghost" size="icon" className="text-red-500" onClick={() => handleDeleteVat(vat.id)}>
                           <Trash2 className="h-4 w-4" />
                         </Button>
                       </TableCell>
                     </TableRow>
                   ))}
+                  {vatRates.length === 0 && (
+                    <TableRow>
+                      <TableCell colSpan={6} className="text-center py-8 text-gray-500">
+                        Nuk ka norma TVSH të regjistruara
+                      </TableCell>
+                    </TableRow>
+                  )}
                 </TableBody>
               </Table>
             </CardContent>
