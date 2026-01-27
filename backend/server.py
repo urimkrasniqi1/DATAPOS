@@ -1313,41 +1313,147 @@ async def export_pdf_report(
     current_user: dict = Depends(require_role([UserRole.ADMIN, UserRole.MANAGER]))
 ):
     buffer = io.BytesIO()
-    doc = SimpleDocTemplate(buffer, pagesize=A4)
+    doc = SimpleDocTemplate(buffer, pagesize=A4, topMargin=30, bottomMargin=30)
     elements = []
     styles = getSampleStyleSheet()
     
-    title = f"Raport {report_type.capitalize()}"
-    elements.append(Paragraph(title, styles['Heading1']))
-    elements.append(Spacer(1, 12))
+    # Get company info
+    company = await db.settings.find_one({"type": "company"}, {"_id": 0})
+    company_name = company.get("company_name", "iPOS") if company else "iPOS"
+    
+    # Header with company name
+    elements.append(Paragraph(f"<b>{company_name}</b>", styles['Heading1']))
+    elements.append(Spacer(1, 6))
+    
+    # Report title and date range
+    report_titles = {
+        "sales": "Raport Shitjesh",
+        "stock": "Raport Stoku",
+        "cashier": "Raport Arkëtarësh",
+        "profit": "Raport Fitimi/Humbje"
+    }
+    title = report_titles.get(report_type, f"Raport {report_type.capitalize()}")
+    elements.append(Paragraph(f"<b>{title}</b>", styles['Heading2']))
+    
+    if start_date and end_date:
+        elements.append(Paragraph(f"Periudha: {start_date} - {end_date}", styles['Normal']))
+    elements.append(Paragraph(f"Gjeneruar: {datetime.now().strftime('%d/%m/%Y %H:%M')}", styles['Normal']))
+    elements.append(Spacer(1, 20))
     
     if report_type == "sales" and start_date and end_date:
-        query = {"created_at": {"$gte": start_date, "$lte": end_date}}
+        query = {"created_at": {"$gte": start_date, "$lte": end_date + "T23:59:59"}}
         if branch_id:
             query["branch_id"] = branch_id
-        sales = await db.sales.find(query, {"_id": 0}).to_list(10000)
+        sales = await db.sales.find(query, {"_id": 0}).sort("created_at", -1).to_list(10000)
         
-        data = [["Data", "Nr. Faturës", "Totali", "Metoda"]]
-        for sale in sales:
+        # Summary section
+        total_sales = sum(s.get("grand_total", 0) for s in sales)
+        total_vat = sum(s.get("vat_total", 0) for s in sales)
+        cash_sales = sum(s.get("grand_total", 0) for s in sales if s.get("payment_method") == "cash")
+        card_sales = sum(s.get("grand_total", 0) for s in sales if s.get("payment_method") in ["card", "bank"])
+        
+        summary_data = [
+            ["PËRMBLEDHJE", ""],
+            ["Numri i Transaksioneve", str(len(sales))],
+            ["Të Ardhura Totale", f"€{total_sales:.2f}"],
+            ["TVSH Total", f"€{total_vat:.2f}"],
+            ["Pagesa Cash", f"€{cash_sales:.2f}"],
+            ["Pagesa Kartë/Bank", f"€{card_sales:.2f}"],
+        ]
+        
+        summary_table = Table(summary_data, colWidths=[200, 150])
+        summary_table.setStyle(TableStyle([
+            ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor('#00a79d')),
+            ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
+            ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+            ('ALIGN', (0, 0), (-1, -1), 'LEFT'),
+            ('ALIGN', (1, 0), (1, -1), 'RIGHT'),
+            ('GRID', (0, 0), (-1, -1), 0.5, colors.grey),
+            ('FONTSIZE', (0, 0), (-1, -1), 10),
+        ]))
+        elements.append(summary_table)
+        elements.append(Spacer(1, 20))
+        
+        # Sales detail table
+        elements.append(Paragraph("<b>Detajet e Shitjeve</b>", styles['Heading3']))
+        elements.append(Spacer(1, 10))
+        
+        data = [["#", "Data", "Nr. Faturës", "Totali", "TVSH", "Metoda"]]
+        for i, sale in enumerate(sales, 1):
             data.append([
+                str(i),
                 sale["created_at"][:10],
-                sale["receipt_number"],
-                f"€{sale['grand_total']:.2f}",
-                sale["payment_method"]
+                sale.get("receipt_number", "-"),
+                f"€{sale.get('grand_total', 0):.2f}",
+                f"€{sale.get('vat_total', 0):.2f}",
+                sale.get("payment_method", "-")
             ])
         
-        table = Table(data)
-        table.setStyle(TableStyle([
-            ('BACKGROUND', (0, 0), (-1, 0), colors.grey),
+        if len(data) > 1:
+            table = Table(data, colWidths=[30, 80, 100, 80, 60, 80])
+            table.setStyle(TableStyle([
+                ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor('#00a79d')),
+                ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
+                ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+                ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+                ('FONTSIZE', (0, 0), (-1, 0), 10),
+                ('FONTSIZE', (0, 1), (-1, -1), 9),
+                ('BOTTOMPADDING', (0, 0), (-1, 0), 10),
+                ('GRID', (0, 0), (-1, -1), 0.5, colors.grey),
+                ('ROWBACKGROUNDS', (0, 1), (-1, -1), [colors.white, colors.HexColor('#f5f5f5')]),
+            ]))
+            elements.append(table)
+        else:
+            elements.append(Paragraph("Nuk ka shitje në këtë periudhë.", styles['Normal']))
+    
+    elif report_type == "stock":
+        products = await db.products.find({}, {"_id": 0}).sort("name", 1).to_list(10000)
+        
+        # Summary
+        total_products = len(products)
+        low_stock = len([p for p in products if (p.get("current_stock", 0) or 0) < 10])
+        total_value = sum((p.get("current_stock", 0) or 0) * (p.get("purchase_price", 0) or 0) for p in products)
+        
+        summary_data = [
+            ["PËRMBLEDHJE STOKU", ""],
+            ["Numri i Produkteve", str(total_products)],
+            ["Produkte me Stok të Ulët (<10)", str(low_stock)],
+            ["Vlera Totale e Stokut", f"€{total_value:.2f}"],
+        ]
+        
+        summary_table = Table(summary_data, colWidths=[200, 150])
+        summary_table.setStyle(TableStyle([
+            ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor('#00a79d')),
             ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
-            ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
             ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
-            ('FONTSIZE', (0, 0), (-1, 0), 12),
-            ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
-            ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
-            ('GRID', (0, 0), (-1, -1), 1, colors.black)
+            ('GRID', (0, 0), (-1, -1), 0.5, colors.grey),
         ]))
-        elements.append(table)
+        elements.append(summary_table)
+        elements.append(Spacer(1, 20))
+        
+        # Stock detail table
+        data = [["Emri", "Barkodi", "Stoku", "Ç. Blerjes", "Ç. Shitjes"]]
+        for p in products:
+            data.append([
+                (p.get("name", "-"))[:30],
+                p.get("barcode", "-"),
+                str(p.get("current_stock", 0) or 0),
+                f"€{p.get('purchase_price', 0) or 0:.2f}",
+                f"€{p.get('sale_price', 0) or 0:.2f}",
+            ])
+        
+        if len(data) > 1:
+            table = Table(data, colWidths=[150, 100, 60, 70, 70])
+            table.setStyle(TableStyle([
+                ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor('#00a79d')),
+                ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
+                ('ALIGN', (2, 0), (-1, -1), 'RIGHT'),
+                ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+                ('FONTSIZE', (0, 0), (-1, -1), 9),
+                ('GRID', (0, 0), (-1, -1), 0.5, colors.grey),
+                ('ROWBACKGROUNDS', (0, 1), (-1, -1), [colors.white, colors.HexColor('#f5f5f5')]),
+            ]))
+            elements.append(table)
     
     doc.build(elements)
     buffer.seek(0)
