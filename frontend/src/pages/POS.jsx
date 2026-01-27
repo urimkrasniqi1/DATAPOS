@@ -1628,7 +1628,7 @@ const POS = () => {
 
       {/* Thermal Receipt Preview Dialog - Fiscal Style */}
       <Dialog open={showReceiptPreview} onOpenChange={setShowReceiptPreview}>
-        <DialogContent className="sm:max-w-xl max-h-[95vh] overflow-hidden flex flex-col">
+        <DialogContent className="sm:max-w-lg max-h-[90vh] overflow-hidden flex flex-col">
           <DialogHeader className="pb-2">
             <DialogTitle className="flex items-center justify-between">
               <span>Kupon Shitje</span>
