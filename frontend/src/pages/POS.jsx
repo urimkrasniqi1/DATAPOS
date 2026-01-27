@@ -545,11 +545,19 @@ const POS = () => {
 
     // Create hidden iframe for printing (more reliable than window.open)
     const printFrame = document.createElement('iframe');
+    printFrame.id = 'a4-print-frame';
     printFrame.style.position = 'absolute';
     printFrame.style.top = '-10000px';
     printFrame.style.left = '-10000px';
     printFrame.style.width = '210mm';
     printFrame.style.height = '0';
+    
+    // Remove any existing print frame
+    const existingFrame = document.getElementById('a4-print-frame');
+    if (existingFrame) {
+      existingFrame.remove();
+    }
+    
     document.body.appendChild(printFrame);
 
     const printDocument = printFrame.contentDocument || printFrame.contentWindow.document;
@@ -587,10 +595,11 @@ const POS = () => {
       }
       // Remove iframe after print dialog closes
       setTimeout(() => {
-        if (printFrame.parentNode) {
-          document.body.removeChild(printFrame);
+        const frame = document.getElementById('a4-print-frame');
+        if (frame) {
+          frame.remove();
         }
-      }, 1000);
+      }, 2000);
     }, 800);
     
     toast.success('Fatura po dërgohet për printim...');
