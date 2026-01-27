@@ -298,18 +298,26 @@ const POS = () => {
     setShowReceiptPreview(true);
   };
 
-  // Execute the actual print
+  // Execute the actual print using iframe (more reliable, no popup blockers)
   const executeThermalPrint = () => {
     const printArea = document.getElementById('thermal-receipt-print');
-    if (!printArea) return;
-
-    const printWindow = window.open('', 'PRINT', 'height=600,width=350');
-    if (!printWindow) {
-      toast.error('Lejo popup-et për printim');
+    if (!printArea) {
+      toast.error('Gabim: Kuponi nuk u gjet');
       return;
     }
 
-    printWindow.document.write(`
+    // Create hidden iframe for printing
+    const printFrame = document.createElement('iframe');
+    printFrame.style.position = 'absolute';
+    printFrame.style.top = '-10000px';
+    printFrame.style.left = '-10000px';
+    printFrame.style.width = '80mm';
+    printFrame.style.height = '0';
+    document.body.appendChild(printFrame);
+
+    const printDocument = printFrame.contentDocument || printFrame.contentWindow.document;
+    
+    printDocument.write(`
       <!DOCTYPE html>
       <html>
         <head>
@@ -361,16 +369,29 @@ const POS = () => {
       </html>
     `);
     
-    printWindow.document.close();
-    printWindow.focus();
+    printDocument.close();
     
-    setTimeout(() => {
-      printWindow.print();
-      printWindow.close();
-    }, 250);
+    // Wait for content to load, then print
+    printFrame.onload = () => {
+      try {
+        printFrame.contentWindow.focus();
+        printFrame.contentWindow.print();
+      } catch (e) {
+        console.error('Print error:', e);
+        toast.error('Gabim gjatë printimit. Provoni përsëri.');
+      }
+      // Remove iframe after a delay to ensure print dialog has opened
+      setTimeout(() => {
+        document.body.removeChild(printFrame);
+      }, 1000);
+    };
     
-    setShowReceiptPreview(false);
-    toast.success('Kuponi po printohet...');
+    // Trigger load manually if already loaded
+    if (printFrame.contentDocument.readyState === 'complete') {
+      printFrame.onload();
+    }
+    
+    toast.success('Kuponi po dërgohet për printim...');
   };
 
   const handlePayment = async () => {
