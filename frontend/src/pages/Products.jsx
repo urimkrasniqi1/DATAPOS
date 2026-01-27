@@ -124,7 +124,7 @@ const Products = () => {
       sale_price: product.sale_price?.toString() || '',
       category: product.category || '',
       subcategory: product.subcategory || '',
-      vat_rate: product.vat_rate?.toString() || '20',
+      vat_rate: product.vat_rate?.toString() || '0',
       expiry_date: product.expiry_date || '',
       supplier: product.supplier || '',
       unit: product.unit || 'copë',
