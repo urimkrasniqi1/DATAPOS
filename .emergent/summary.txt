@@ -3,92 +3,103 @@ The user, a Software Architect, requested the design and technical logic for a P
 
 **PRODUCT REQUIREMENTS:**
 -   **Architecture:** Frontend SPA, Backend REST/GraphQL, DB, Auth Service, Reporting Service.
--   **Authentication & Authorization:** JWT-based login, role-based access (admin, manager, cashier), and audit logs.
--   **Product Module:** All product fields must be optional except for a unique .
--   **Stock Management:** Accurate stock tracking, prevention of negative stock without authorization (later reversed by user to allow negative stock), and immutable history of stock movements.
--   **Sales Flow:** Technical flow from opening a cash drawer to finalizing a sale.
--   **Cash Drawer Management:** Logic for opening/closing the drawer and managing balances.
--   **Reporting:** Sales, profit/loss, stock, and cashier performance reports with PDF/Excel export.
--   **Database Design:** Key tables, relationships, and indexes.
--   **Security & Stability:** Backup, recovery, data integrity, and concurrency handling.
--   **Technology Stack:** A realistic stack (Backend, Frontend, DB, etc.).
--   **UI Constraints:** The user provides UI for login, checkout, and sale completion. The agent designs the rest.
+-   **Authentication & Authorization:** JWT-based login, role-based access (admin, manager, cashier). A new PIN-based login for cashiers was added.
+-   **Product Module:** All product fields optional except for a unique .
+-   **Stock Management:** Accurate stock tracking.
+-   **Sales Flow & Cash Drawer:** Logic for opening a cash drawer to finalizing a sale.
+-   **Reporting:** Sales, profit/loss, stock, and cashier performance reports.
+-   **Database Design:** Key tables and relationships.
+-   **Technology Stack:** React, FastAPI, MongoDB.
+-   **UI Constraints:** Iterative UI changes based on user feedback.
 -   **New Requests during session:**
-    -   Convert the web app into a desktop  application using Electron.
-    -   Rebrand the application to Mobilshopurimi.
-    -   Change login from email-based to username-based.
-    -   Implement A4 and thermal (80mm) receipt printing.
-    -   Connect company data from a new Settings page to the A4 invoice.
-    -   Allow manual entry of buyer details for the A4 invoice.
-    -   Allow sales of products even if they are out of stock.
+    -   Rebrand from Mobilshopurimi to iPOS with a new logo.
+    -   Change login to a PIN-based screen for cashiers, with a separate view for admin login.
+    -   Implement a professional thermal receipt with a tear-off section for the cashier.
+    -   Implement a direct printing option that skips the preview dialog.
+    -   Change the application's color theme to cream and teal ().
+    -   Configure the PWA to always open at the login screen.
+    -   Implement numerous keyboard shortcuts for the POS screen (F-keys, Ctrl combos).
+    -   Fix a bug where the admin login form fields would lose focus.
+    -   Update admin credentials.
 
 **User's preferred language**: Albanian (Shqip)
 
 **what currently exists?**
-A full-stack Point of Sale (POS) application built with a FastAPI backend, React frontend, and MongoDB database. The application has been rebranded to Mobilshopurimi.
+A full-stack Point of Sale (POS) application built with a FastAPI backend, React frontend, and MongoDB, packaged as an Electron desktop app. The application has been rebranded to iPOS with a new logo and a cream/teal color theme.
 
--   **Backend**: A monolithic  file handles all API endpoints, including authentication, CRUD operations for users and products, sales processing, and a new endpoint for managing company settings. It has been modified to support username-based authentication and to allow sales of out-of-stock products.
--   **Frontend**: A React application using  for Electron compatibility. Key features include:
-    -   **Authentication**: A username/password login page. Role-based access redirects cashiers directly to the POS screen.
-    -   **POS Screen**: A comprehensive interface for sales, product search (by name/barcode), and cart management. It now supports selling out-of-stock items (with a warning), and the F2 key opens the payment modal with the amount field auto-focused.
-    -   **Printing**:
-        -   **A4 Invoice**: Can be generated with company data pulled from settings and manually entered buyer data.
-        -   **Thermal Receipt (80mm)**: A print preview for an 80mm non-fiscal coupon is shown after a sale is completed, with an option to print.
-    -   **Settings Page**: A multi-tab page where the Company Info tab is now functional and saves data to the backend. Other tabs remain UI-only.
--   **Desktop Application**: The project is configured with **Electron** to build a standalone Windows () application. Instructions have been provided to the user in the  file.
+-   **Backend**: A monolithic  handles all API endpoints, including a login system that now supports both username/password and numeric PINs. The user model has been updated to include an optional  field.
+-   **Frontend**: A React application configured as a Progressive Web App (PWA) to ensure it always opens on the login page.
+    -   **Authentication**: A redesigned login screen features a large numeric keypad for PIN entry (for cashiers) and a link to a separate form for administrator login (username/password).
+    -   **POS Screen**: A comprehensive sales interface. Implementation of keyboard shortcuts is in progress.
+    -   **Printing**: A browser-based print function () generates a professional thermal receipt, which includes a new tear-off section for the cashier's records. A direct print checkbox allows users to bypass the receipt preview modal.
+    -   **Branding**: The old Mobilshopurimi logo and text have been replaced with a new iPOS logo and updated color scheme () throughout the application.
+    -   **User Management**: The Add/Edit User dialog in the settings now includes a field to set a numeric PIN for users.
 
 **Last working item**:
-    - Last item agent was working: The user asked to add an option to display and select from a list of printers connected to the PC. The agent explained that for security reasons, a web browser cannot directly list system printers, but the standard browser print dialog (triggered by ) allows the user to select one. The agent was about to propose improvements to the printing workflow based on this constraint.
-    - Status: NOT STARTED
+    - Last item agent was working: Implementing a comprehensive set of keyboard shortcuts for the POS screen as requested by the user via a PDF file. The agent added a  hook in  to listen for key presses (F1, F4, F6, F9, F10, F12, Ctrl+1, etc.).
+    - Status: IN PROGRESS
     - Agent Testing Done: N
-    - Which testing method agent to use? manual testing by screenshot tool
+    - Which testing method agent to use? frontend testing agent
     - User Testing Done: N
 
 **All Pending/In progress Issue list**:
-  - Issue 1: Improve the printing experience (Priority: P0)
+  - Issue 1: The keyboard shortcut implementation is incomplete. (Priority: P0)
 
   Issues Detail:
   - Issue 1: 
-     - Attempted fixes: None. The agent only provided an explanation of browser limitations regarding printer access.
-     - Next debug checklist:
-        1.  Reassure the user that the standard print dialog is the correct and secure way to select a printer in a web/Electron environment.
-        2.  Propose adding a small, helpful text note within the UI (e.g., in the Settings page or as a tooltip on print buttons) to inform the user that they can choose their desired printer from the browser's pop-up dialog. Example text: Kur klikoni Printo, do të hapet një dialog ku mund të zgjidhni printerin tuaj.
-        3.  Verify that both the A4 invoice and thermal receipt print dialogs are triggered correctly and consistently.
-     - Why fix this issue and what will be achieved with the fix? This will manage user expectations about printer selection and provide a clear, user-friendly printing workflow within the technical constraints of the platform.
-     - Status:  NOT STARTED
+     - Attempted fixes: An  hook with a  statement for different keys was added to .
+     - Next debug checklist: with file & method reference
+        1.  In , declare the missing state variables required by the new shortcut functions, such as  and . Initialize them to .
+        2.  Ensure the functions called by the shortcuts (e.g., , , ) exist and are correctly implemented.
+        3.  Add visual feedback for the new shortcuts where appropriate (e.g., adding labels like F4 to buttons).
+        4.  Thoroughly test each shortcut to ensure it triggers the correct action without unintended side effects.
+     - Why fix this issue and what will be achieved with the fix? This will significantly speed up the workflow for cashiers, fulfilling a key user request for efficiency.
+     - Status:  IN PROGRESS
      - Is recurring issue? N
      - Should Test frontend/backend/both after fix? Should Test frontend
      - Blocked on other issue: None
 
 **In progress Task List**:
-- None
+  - Task 1: Complete Keyboard Shortcut Implementation (Priority: P0)
+
+ Task Detail:
+  - Task 1: 
+     - Where to resume: .
+     - What will be achieved with this? A fully functional set of keyboard shortcuts for all major POS actions, making the application faster for power users.
+     - Status:  IN PROGRESS
+     - Should Test frontend/backend/both after fix? Should Test frontend
+     - Blocked on something: None
 
 **Upcoming and Future Tasks**
     Upcoming Tasks:
-    - **P0: Implement Backend for Settings Page**: While the Company Info tab is done, the backend logic for the other tabs in  (e.g., Parapagesa for POS settings like default tax rates, receipt options) needs to be implemented.
-    - **P1: Implement Reporting Functionality**: The  page is a placeholder. The backend needs to be developed to aggregate data for sales, profit/loss, and stock. The frontend needs to be built to display this data with filters.
-    - **P2: PDF/Excel Export**: Implement the requested functionality to export reports from the reporting page once it's built.
+    - **P1: True Silent Printing**: The user wants printing to happen without any dialogs. The current direct print still shows the browser's printer selection dialog. The agent should configure the Electron app to use its  printing capability.
+    - **P2: User-Customizable Comment Templates**: A UI in the Settings page where the user can manage their own comment templates for receipts.
 
     Future Tasks:
-    - **Direct Thermal Printer Integration**: The current implementation uses a print preview. A future enhancement could involve direct communication with a thermal printer using a library like QZ Tray, which would require installing a small service on the client PC but would enable silent/automatic printing. This should be proposed as a significant new feature.
+    - **P0: CRITICAL Refactoring**: This is the most urgent technical priority.
+        - **Backend**: Break down the monolithic  (>1300 lines) into a modular structure using FastAPI's  (e.g., , , etc.).
+        - **Frontend**: Decompose the massive  component (>2100 lines) into smaller, focused components and custom hooks (e.g., , , ).
+    - **P2: Direct Thermal Printer Integration**: Propose using a library like QZ Tray for true silent printing on the web version, which would require a small service installation on the client's PC.
 
 **Completed work in this session**
-- **Username-Based Authentication**: Migrated the entire login and user management system from email to username.
-- **Desktop App Setup**: Configured the project with Electron to create a standalone  installer.
-- **Rebranding**: Changed the application's name and logo to Mobilshopurimi across all relevant components.
-- **Advanced Printing Features**:
-    - Implemented A4 invoice generation with dynamic company and buyer data.
-    - Implemented an 80mm thermal receipt with a print-preview dialog.
-- **Functional Settings Backend**: Created API endpoints and frontend logic to save and retrieve Company Info from the settings page.
-- **Out-of-Stock Sales**: Modified the system to allow selling products with zero or negative stock, as requested by the user.
-- **POS Workflow Enhancements**:
-    - Finalized the cashier flow (redirect on login, buttons after drawer close).
-    - Improved the payment process by auto-focusing the amount field when F2 is pressed.
-- **UI/UX Fixes**: Removed demo credentials and an unnecessary branding panel from the login page for a cleaner design.
-- **Bug Fix**: Resolved an issue where products with zero stock were not appearing in search results.
+- **New Login Experience**:
+  - Implemented a PIN-based login screen with a numeric keypad.
+  - Added a separate Login as Administrator view.
+  - Fixed a critical bug where the admin login form would lose focus while typing.
+- **Branding and UI Overhaul**:
+  - Replaced the old logo and name with a new iPOS logo throughout the application.
+  - Changed the primary application color from dark blue to a user-specified teal ().
+- **User and Auth Enhancements**:
+  - Added a  field to the user model (frontend and backend) and included it in the Add User form.
+  - Updated the main administrator credentials and created a backup hint admin user, debugging a complex login issue caused by a database name mismatch.
+- **Receipt and Printing Improvements**:
+  - Redesigned the thermal receipt to include a tear-off section for the cashier, containing a summary of the sale.
+  - Refined the receipt layout multiple times to make it more compact, per user requests.
+- **PWA Configuration**:
+  - Modified  and  to ensure the PWA always opens at the  route and clears its state upon closing.
 
 **Earlier issues found/mentioned but not fixed**
-   - None
+   - The critical need to refactor  and  was identified in previous sessions and remains the most significant piece of technical debt. The files have continued to grow, making maintenance and new feature development increasingly difficult.
 
 **Known issue recurrence from previous fork**
   - None
@@ -100,74 +111,67 @@ A full-stack Point of Sale (POS) application built with a FastAPI backend, React
 - **Frontend**: React, Tailwind CSS, shadcn/ui
 - **Backend**: FastAPI, Python
 - **Database**: MongoDB
-- **Authentication**: JSON Web Tokens (JWT) with Role-Based Access Control (RBAC)
-- **Desktop App**: Electron, electron-builder
-- **Routing**:  (for Electron compatibility)
+- **Authentication**: JWT,  for hashing. The system now supports dual login methods (PIN vs. password).
+- **Desktop App**: Electron
+- **PWA**: Using  () and  event listener to control application start and session cleanup.
+- **React State Management**: Refactored the Login component to avoid re-rendering issues that caused focus loss, demonstrating an understanding of component lifecycle.
 
 **key DB schema**
   - **users**: 
   - **products**: 
   - **sales**: 
-  - **settings**: A single-document collection storing 
+  - **settings**: Multi-purpose collection for company, POS, warehouse, and VAT settings.
 
 **changes in tech stack**
-  - **Electron** and **electron-builder** were added to the frontend to facilitate the creation of a desktop application.
+  - No new technologies, but the PWA functionality was significantly enhanced via .
 
 **All files of reference**
-- : Contains all backend logic. Has grown significantly.
-- : The core frontend component, now over 1500 lines.
-- : Manages routing and auth state; switched to .
-- : Partially implemented settings page.
-- : Updated for username login and UI cleanup.
-- : Updated for username-based user management.
-- : New component for A4 printing.
-- : New component for 80mm receipt printing.
-- : New file for Electron's main process.
-- : Updated with Electron dependencies and build scripts.
-- : New markdown file with build instructions.
+- : Heavily modified for receipt design, printing logic, and keyboard shortcuts.
+- : Completely rewritten to support the new PIN pad and admin login flows.
+- : Overhauled for the new teal color theme.
+- : Updated with the new iPOS logo and colors.
+- : Modified to add the  field to the user creation form.
+- : Modified to support PIN login and add the  field to user CRUD operations.
+- : Updated for PWA start behavior, new logos, and theme color.
+- : Logic added to handle PWA lifecycle and session cleanup.
 
 **Areas that need refactoring**:
-- ****: This single file now exceeds 1200 lines and is unmanageable. It desperately needs to be broken down into a modular structure using FastAPI's  (e.g., , , ) and Pydantic models moved to a  directory.
-- ****: This component has become extremely large and complex, handling state and logic for the cart, product search, payment modals, A4 invoice form, and thermal receipt preview. This logic should be extracted into custom hooks (e.g., , , ) and smaller, focused components to improve maintainability.
+- ****: Critically needs to be broken down into a modular structure using . The single file is unmaintainable.
+- ****: This component is over 2100 lines. It MUST be decomposed into smaller components and custom hooks (, , , ).
 
 **key api endpoints**
-- : User authentication (now uses ).
-- : CRUD for users (now uses ).
-- : Create a new sale (now allows negative stock).
-- :  and  endpoints to manage company information.
+- : Modified to handle both  and  fields for authentication.
+- :  and  endpoints modified to handle the new  field.
 
 **Critical Info for New Agent**
 - **Language**: The user communicates exclusively in **Albanian (Shqip)**. All UI text and communication must be in Albanian.
-- **Desktop Build**: The project is now configured with Electron. Any changes to routing or environment variables must maintain compatibility. The primary router is .
-- **Printing Mechanism**: Printing is handled via . The agent cannot directly query or list system printers. The current approach is to show a preview dialog and let the user select the printer from the standard browser print modal.
-- **Out-of-Stock Sales**: The system is intentionally configured to allow sales of products with zero or negative stock. Do not fix this behavior, as it was a specific user request.
+- **Refactoring is Urgent**: The  and  files are extremely large and complex. Proposing a refactoring task should be a high priority after the current issue is resolved.
+- **DB_NAME Discrepancy**: During debugging, it was found that manual scripts were using a different database name than the one configured in the backend's environment (). Be aware of this when running any manual DB scripts.
+- **True Silent Printing**: The user desires true silent printing (no dialogs at all). The current implementation still opens the browser's print dialog. The next step should be to leverage Electron's native printing capabilities ().
 
 **documents and test reports created in this job**
-  - /app/memory/PRD.md
-  - /app/INSTALIMI_DESKTOP.md
+  - /app/memory/PRD.md (updated)
 
 **Last 10 User Messages and any pending HUMAN messages**
-- 10.  (Can you add the option to show and select printers...) - **PENDING (Current Task)**
-- 9.  (Can you fix the problem since the paper cannot be printed) - **Completed**
-- 8.  (Can you calculate these paper dimensions... and make a non-fiscal coupon...) - **Completed**
-- 7.  (How long can a link stay active and how many credits are used?) - **Answered**
-- 6.  (On the receipt printing for change, after pressing F2...) - **Completed**
-- 5.  (Can you also allow out-of-stock sales...) - **Completed**
-- 4.  (Can you fix the problem since when I add products... it doesn't appear) - **Completed**
-- 3.  (Can you fix the problem when I set the company data in admin...) - **Completed**
-- 2.  (Can you remove the logo from the login dashboard...) - **Completed**
-- 1.  (I can send the logos you should use and the name of the POS...) - **Completed**
+- 10. User asks to make the QR code area on the receipt even narrower without changing QR code dimensions. - **Completed**.
+- 9. User requests that the PWA, when closed, fully terminates and re-opens at the login screen instead of resuming the last session. - **Completed**.
+- 8. User provides a PDF with a list of keyboard shortcuts (F-keys, Ctrl combos) to be implemented on the POS screen. - **IN PROGRESS**.
+- 7. User asks to implement a tear-off section on the receipt for the cashier's records. - **Completed**.
+- 6. User reports a bug where they cannot type in the password field on the admin login page because focus keeps jumping back to the username field. - **Completed**.
+- 5. User reports the same focus-loss bug again, indicating the first fix was not sufficient. - **Completed**.
+- 4. User reports being unable to log in after deployment. - **Completed** (resolved by having user clear cache).
+- 3. User provides new admin credentials ( / ) and requests the old ones be kept as a hint. - **Completed**.
+- 2. User requests to revert the dark theme design change. - **Completed**.
+- 1. User asks to change the application's primary color from dark blue to teal (). - **Completed**.
 
 **Project Health Check:**
-- **Broken**:
-    - None.
-- **Mocked**:
-    - The  page is partially mocked. Tabs other than Company Info (like POS Settings) are UI-only.
-    - The  page is a placeholder with no backend logic or UI components.
+- **Broken**: None.
+- **Mocked**: None.
+- **Technical Debt**: **VERY HIGH**. The two core files,  and , are monolithic and urgently require refactoring to ensure project maintainability.
 
 **3rd Party Integrations**
-- **Electron**: Added to the project for building a desktop  application.
-- **OpenAI GPT**: Playbook was retrieved in a previous session but is not implemented. It is intended to use the **Emergent LLM Key**.
+- **Electron**: Used for building the desktop  application. Silent printing feature is available but not yet configured.
+- **OpenAI GPT**: Playbook exists but is not implemented. Uses **Emergent LLM Key**.
 
 **Testing status**
   - Testing agent used after significant changes: NO
@@ -179,11 +183,13 @@ A full-stack Point of Sale (POS) application built with a FastAPI backend, React
 -   **Admin**:
     -   Username: 
     -   Password: 
--   **Cashier**:
+-   **Hint Admin (Backup)**:
     -   Username: 
     -   Password: 
+-   **Cashier (Example)**:
+    -   Create a new user with role arketar and a numeric PIN (e.g., ).
 
 **What agent forgot to execute**
-- The major refactoring of  and  that was noted as necessary in the initial handoff summary was not performed. These files have grown even larger and more complex, increasing technical debt.
-- Full implementation of the  page is still pending. Only one tab is functional.
-- The  page and its associated export functionality have not been started.</analysis>
+-   The agent started implementing the keyboard shortcuts but did not declare the necessary state variables (, ) in  to make the functionality complete.
+-   The critical refactoring of  and  has been postponed again, despite being a high-priority technical debt item.
+-   The user's request for true silent printing was only partially addressed with a browser-level fix. The Electron-specific implementation for 100% silent printing has not been done.</analysis>
