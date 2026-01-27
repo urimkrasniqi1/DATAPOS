@@ -2102,18 +2102,18 @@ const POS = () => {
                   </div>
                 </div>
 
-                {/* QR Code Section - Clean design */}
+                {/* QR Code Section - Compact design */}
                 <div style={{ 
                   textAlign: 'center', 
-                  margin: '12px 0',
-                  padding: '8px'
+                  margin: '8px 0',
+                  padding: '4px'
                 }}>
                   <img 
                     src="https://customer-assets.emergentagent.com/job_supermarket-pos-12/artifacts/ewy3j4rc_qr%20code.png" 
                     alt="QR Code" 
                     style={{ 
-                      width: '40mm', 
-                      height: '40mm', 
+                      width: '30mm', 
+                      height: '30mm', 
                       maxWidth: '100%',
                       objectFit: 'contain'
                     }} 
