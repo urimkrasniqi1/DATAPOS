@@ -228,7 +228,6 @@ const Login = () => {
               onChange={(e) => setUsername(e.target.value)}
               className="pl-10 h-12 bg-gray-50 border-gray-200 rounded-xl focus:ring-[#00a79d] focus:border-[#00a79d]"
               required
-              autoFocus
               data-testid="login-username-input"
             />
           </div>
