@@ -611,6 +611,183 @@ async def generate_receipt_number(branch_id: str = None) -> str:
     count = await db.sales.count_documents({"receipt_number": {"$regex": f"^{prefix}"}})
     return f"{prefix}-{str(count + 1).zfill(4)}"
 
+# Helper to get tenant from request header or subdomain
+async def get_tenant_from_request(tenant_id: Optional[str] = None):
+    """Get tenant info - used for branding"""
+    if not tenant_id:
+        return None
+    tenant = await db.tenants.find_one({"id": tenant_id}, {"_id": 0})
+    return tenant
+
+# ============ TENANT ROUTES (Super Admin Only) ============
+@api_router.get("/tenants", response_model=List[TenantResponse])
+async def get_all_tenants(
+    current_user: dict = Depends(get_current_user)
+):
+    """Get all tenants - Super Admin only"""
+    if current_user.get("role") != UserRole.SUPER_ADMIN:
+        raise HTTPException(status_code=403, detail="Vetëm Super Admin mund të shohë të gjitha firmat")
+    
+    tenants = await db.tenants.find({}, {"_id": 0}).sort("created_at", -1).to_list(1000)
+    
+    # Enrich with counts
+    for tenant in tenants:
+        tenant["users_count"] = await db.users.count_documents({"tenant_id": tenant["id"]})
+        tenant["sales_count"] = await db.sales.count_documents({"tenant_id": tenant["id"]})
+    
+    return tenants
+
+@api_router.post("/tenants", response_model=TenantResponse)
+async def create_tenant(
+    tenant: TenantCreate,
+    current_user: dict = Depends(get_current_user)
+):
+    """Create a new tenant - Super Admin only"""
+    if current_user.get("role") != UserRole.SUPER_ADMIN:
+        raise HTTPException(status_code=403, detail="Vetëm Super Admin mund të krijojë firma të reja")
+    
+    # Check if tenant name already exists
+    existing = await db.tenants.find_one({"name": tenant.name.lower()})
+    if existing:
+        raise HTTPException(status_code=400, detail="Emri i firmës ekziston tashmë")
+    
+    # Check if email already exists
+    existing_email = await db.tenants.find_one({"email": tenant.email.lower()})
+    if existing_email:
+        raise HTTPException(status_code=400, detail="Email-i ekziston tashmë")
+    
+    tenant_id = str(uuid.uuid4())
+    tenant_data = {
+        "id": tenant_id,
+        "name": tenant.name.lower(),
+        "company_name": tenant.company_name,
+        "email": tenant.email.lower(),
+        "phone": tenant.phone,
+        "address": tenant.address,
+        "logo_url": tenant.logo_url,
+        "primary_color": tenant.primary_color,
+        "secondary_color": tenant.secondary_color,
+        "stripe_payment_link": tenant.stripe_payment_link,
+        "status": TenantStatus.TRIAL,
+        "subscription_expires": None,
+        "created_at": datetime.now(timezone.utc).isoformat(),
+        "created_by": current_user["id"]
+    }
+    
+    await db.tenants.insert_one(tenant_data)
+    
+    # Create admin user for the tenant
+    admin_user = {
+        "id": str(uuid.uuid4()),
+        "username": tenant.admin_username,
+        "password_hash": hash_password(tenant.admin_password),
+        "full_name": tenant.admin_full_name,
+        "role": UserRole.ADMIN,
+        "tenant_id": tenant_id,
+        "is_active": True,
+        "created_at": datetime.now(timezone.utc).isoformat()
+    }
+    await db.users.insert_one(admin_user)
+    
+    await log_audit(current_user["id"], "create", "tenant", tenant_id)
+    
+    return TenantResponse(**tenant_data, users_count=1, sales_count=0)
+
+@api_router.get("/tenants/{tenant_id}", response_model=TenantResponse)
+async def get_tenant(
+    tenant_id: str,
+    current_user: dict = Depends(get_current_user)
+):
+    """Get tenant details - Super Admin only"""
+    if current_user.get("role") != UserRole.SUPER_ADMIN:
+        raise HTTPException(status_code=403, detail="Vetëm Super Admin mund të shohë detajet e firmës")
+    
+    tenant = await db.tenants.find_one({"id": tenant_id}, {"_id": 0})
+    if not tenant:
+        raise HTTPException(status_code=404, detail="Firma nuk u gjet")
+    
+    tenant["users_count"] = await db.users.count_documents({"tenant_id": tenant_id})
+    tenant["sales_count"] = await db.sales.count_documents({"tenant_id": tenant_id})
+    
+    return TenantResponse(**tenant)
+
+@api_router.put("/tenants/{tenant_id}", response_model=TenantResponse)
+async def update_tenant(
+    tenant_id: str,
+    tenant: TenantUpdate,
+    current_user: dict = Depends(get_current_user)
+):
+    """Update tenant - Super Admin only"""
+    if current_user.get("role") != UserRole.SUPER_ADMIN:
+        raise HTTPException(status_code=403, detail="Vetëm Super Admin mund të përditësojë firmën")
+    
+    existing = await db.tenants.find_one({"id": tenant_id})
+    if not existing:
+        raise HTTPException(status_code=404, detail="Firma nuk u gjet")
+    
+    update_data = {k: v for k, v in tenant.model_dump().items() if v is not None}
+    if update_data:
+        await db.tenants.update_one({"id": tenant_id}, {"$set": update_data})
+    
+    updated = await db.tenants.find_one({"id": tenant_id}, {"_id": 0})
+    updated["users_count"] = await db.users.count_documents({"tenant_id": tenant_id})
+    updated["sales_count"] = await db.sales.count_documents({"tenant_id": tenant_id})
+    
+    await log_audit(current_user["id"], "update", "tenant", tenant_id)
+    
+    return TenantResponse(**updated)
+
+@api_router.delete("/tenants/{tenant_id}")
+async def delete_tenant(
+    tenant_id: str,
+    current_user: dict = Depends(get_current_user)
+):
+    """Delete tenant and all its data - Super Admin only"""
+    if current_user.get("role") != UserRole.SUPER_ADMIN:
+        raise HTTPException(status_code=403, detail="Vetëm Super Admin mund të fshijë firmën")
+    
+    existing = await db.tenants.find_one({"id": tenant_id})
+    if not existing:
+        raise HTTPException(status_code=404, detail="Firma nuk u gjet")
+    
+    # Delete all tenant data
+    await db.users.delete_many({"tenant_id": tenant_id})
+    await db.products.delete_many({"tenant_id": tenant_id})
+    await db.sales.delete_many({"tenant_id": tenant_id})
+    await db.branches.delete_many({"tenant_id": tenant_id})
+    await db.cash_drawers.delete_many({"tenant_id": tenant_id})
+    await db.stock_movements.delete_many({"tenant_id": tenant_id})
+    await db.settings.delete_many({"tenant_id": tenant_id})
+    await db.tenants.delete_one({"id": tenant_id})
+    
+    await log_audit(current_user["id"], "delete", "tenant", tenant_id)
+    
+    return {"message": "Firma dhe të gjitha të dhënat u fshinë me sukses"}
+
+@api_router.get("/tenant/public/{tenant_name}", response_model=TenantPublicInfo)
+async def get_tenant_public_info(tenant_name: str):
+    """Get public tenant info for branding - No auth required"""
+    tenant = await db.tenants.find_one({"name": tenant_name.lower()}, {"_id": 0})
+    if not tenant:
+        # Return default branding if tenant not found
+        return TenantPublicInfo(
+            id="default",
+            name="default",
+            company_name="MobilshopurimiPOS",
+            logo_url="https://customer-assets.emergentagent.com/job_retailsys-1/artifacts/9i1h1bxb_logo%20icon.png",
+            primary_color="#00a79d",
+            secondary_color="#f3f4f6"
+        )
+    
+    return TenantPublicInfo(
+        id=tenant["id"],
+        name=tenant["name"],
+        company_name=tenant["company_name"],
+        logo_url=tenant.get("logo_url"),
+        primary_color=tenant.get("primary_color", "#00a79d"),
+        secondary_color=tenant.get("secondary_color", "#f3f4f6")
+    )
+
 # ============ AUTH ROUTES ============
 @api_router.post("/auth/login", response_model=TokenResponse)
 async def login(request: LoginRequest):
