@@ -1423,19 +1423,19 @@ async def get_dashboard_stats(
     total_transactions = len(sales_today)
     
     # Low stock products
-    low_stock_query = {"current_stock": {"$lt": 10}}
+    low_stock_query = {"current_stock": {"$lt": 10}, **tenant_filter}
     if branch_id:
         low_stock_query["branch_id"] = branch_id
     low_stock_count = await db.products.count_documents(low_stock_query)
     
     # Total products
-    product_query = {}
+    product_query = {**tenant_filter}
     if branch_id:
         product_query["branch_id"] = branch_id
     total_products = await db.products.count_documents(product_query)
     
     # Recent sales
-    recent_sales = await db.sales.find(query if branch_id else {}, {"_id": 0}).sort("created_at", -1).to_list(10)
+    recent_sales = await db.sales.find({**query}, {"_id": 0}).sort("created_at", -1).to_list(10)
     
     return {
         "total_sales_today": round(total_sales, 2),
@@ -1453,7 +1453,8 @@ async def get_sales_report(
     user_id: Optional[str] = None,
     current_user: dict = Depends(require_role([UserRole.ADMIN, UserRole.MANAGER]))
 ):
-    query = {"created_at": {"$gte": start_date, "$lte": end_date}}
+    tenant_filter = get_tenant_filter(current_user)
+    query = {"created_at": {"$gte": start_date, "$lte": end_date}, **tenant_filter}
     if branch_id:
         query["branch_id"] = branch_id
     if user_id:
@@ -1565,7 +1566,8 @@ async def get_stock_report(
     category: Optional[str] = None,
     current_user: dict = Depends(require_role([UserRole.ADMIN, UserRole.MANAGER]))
 ):
-    query = {}
+    tenant_filter = get_tenant_filter(current_user)
+    query = {**tenant_filter}
     if branch_id:
         query["branch_id"] = branch_id
     if category:
@@ -1597,7 +1599,8 @@ async def get_cashier_performance(
     branch_id: Optional[str] = None,
     current_user: dict = Depends(require_role([UserRole.ADMIN, UserRole.MANAGER]))
 ):
-    query = {"created_at": {"$gte": start_date, "$lte": end_date}}
+    tenant_filter = get_tenant_filter(current_user)
+    query = {"created_at": {"$gte": start_date, "$lte": end_date}, **tenant_filter}
     if branch_id:
         query["branch_id"] = branch_id
     
@@ -1616,7 +1619,7 @@ async def get_cashier_performance(
     # Get user names
     result = []
     for user_id, stats in user_stats.items():
-        user = await db.users.find_one({"id": user_id}, {"_id": 0, "full_name": 1})
+        user = await db.users.find_one({"id": user_id, **tenant_filter}, {"_id": 0, "full_name": 1})
         result.append({
             "user_id": user_id,
             "user_name": user.get("full_name", "Unknown") if user else "Unknown",
