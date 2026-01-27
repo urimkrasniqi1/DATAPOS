@@ -15,16 +15,16 @@ const Login = () => {
   const { login } = useAuth();
   const navigate = useNavigate();
 
-  // Handle PIN login (for cashiers)
+  // Handle PIN login (for cashiers) - redirects to POS/Arka
   const handlePinLogin = async () => {
     if (pin.length < 1) return;
     setLoading(true);
-    // Try to login with PIN as password and a default pattern
-    // The PIN could be the user's password
+    // Try to login with PIN as both username and password
     const result = await login(pin, pin);
     setLoading(false);
     if (result.success) {
-      navigate('/dashboard');
+      // PIN login goes directly to POS/Arka
+      navigate('/pos');
     } else {
       setPin('');
     }
