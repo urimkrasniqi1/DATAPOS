@@ -314,7 +314,7 @@ const POS = () => {
     printFrame.style.position = 'absolute';
     printFrame.style.top = '-10000px';
     printFrame.style.left = '-10000px';
-    printFrame.style.width = '58mm';
+    printFrame.style.width = '80mm';
     printFrame.style.height = '0';
     
     // Remove any existing print frame
@@ -338,21 +338,23 @@ const POS = () => {
               font-family: 'Courier New', 'Lucida Console', monospace; 
               font-size: 11px; 
               line-height: 1.3;
-              width: 58mm;
-              max-width: 58mm;
-              padding: 2mm;
+              width: 80mm;
+              max-width: 80mm;
+              min-height: 100mm;
+              padding: 3mm;
               background: white;
               color: #000;
             }
             div { box-sizing: border-box; }
             @media print {
               @page { 
-                size: 58mm auto; 
+                size: 80mm 100mm; 
                 margin: 0; 
               }
               html, body { 
-                width: 58mm !important;
-                max-width: 58mm !important;
+                width: 80mm !important;
+                max-width: 80mm !important;
+                min-height: 100mm !important;
                 -webkit-print-color-adjust: exact;
                 print-color-adjust: exact;
               }
