@@ -1366,7 +1366,7 @@ async def get_sales(
     limit: int = 100,
     current_user: dict = Depends(get_current_user)
 ):
-    query = {}
+    query = get_tenant_filter(current_user)  # Filter by tenant
     if branch_id:
         query["branch_id"] = branch_id
     if user_id:
@@ -1381,7 +1381,8 @@ async def get_sales(
 
 @api_router.get("/sales/{sale_id}", response_model=SaleResponse)
 async def get_sale(sale_id: str, current_user: dict = Depends(get_current_user)):
-    sale = await db.sales.find_one({"id": sale_id}, {"_id": 0})
+    query = {"id": sale_id, **get_tenant_filter(current_user)}
+    sale = await db.sales.find_one(query, {"_id": 0})
     if not sale:
         raise HTTPException(status_code=404, detail="Shitja nuk u gjet")
     return SaleResponse(**sale)
