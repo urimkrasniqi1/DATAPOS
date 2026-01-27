@@ -65,6 +65,19 @@ const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    // Check if this is a fresh app start (PWA)
+    const isNewSession = sessionStorage.getItem('ipos_session_active') !== 'true';
+    
+    if (isNewSession) {
+      // Clear previous session data for fresh start
+      localStorage.removeItem('t3next_token');
+      localStorage.removeItem('t3next_user');
+      sessionStorage.setItem('ipos_session_active', 'true');
+      setLoading(false);
+      return;
+    }
+    
+    // Restore session if exists
     const savedUser = localStorage.getItem('t3next_user');
     const savedToken = localStorage.getItem('t3next_token');
     if (savedUser && savedToken) {
@@ -73,12 +86,36 @@ const AuthProvider = ({ children }) => {
     setLoading(false);
   }, []);
 
+  // Clear session when app is closed/hidden
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'hidden') {
+        // Mark session for reset on next open
+        sessionStorage.removeItem('ipos_session_active');
+      }
+    };
+
+    const handleBeforeUnload = () => {
+      // Clear session on close
+      sessionStorage.removeItem('ipos_session_active');
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    window.addEventListener('beforeunload', handleBeforeUnload);
+
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
+  }, []);
+
   const login = async (username, password) => {
     try {
       const response = await api.post('/auth/login', { username, password });
       const { access_token, user: userData } = response.data;
       localStorage.setItem('t3next_token', access_token);
       localStorage.setItem('t3next_user', JSON.stringify(userData));
+      sessionStorage.setItem('ipos_session_active', 'true');
       setUser(userData);
       toast.success('Mirësevini!');
       return { success: true };
@@ -92,6 +129,7 @@ const AuthProvider = ({ children }) => {
   const logout = useCallback(() => {
     localStorage.removeItem('t3next_token');
     localStorage.removeItem('t3next_user');
+    sessionStorage.removeItem('ipos_session_active');
     setUser(null);
     toast.info('U çkyçët me sukses');
   }, []);
