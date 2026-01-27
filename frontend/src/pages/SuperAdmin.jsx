@@ -642,6 +642,168 @@ const SuperAdmin = () => {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* Add User Dialog */}
+      <Dialog open={showUserDialog} onOpenChange={setShowUserDialog}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <UserPlus className="h-5 w-5" />
+              Shto Përdorues për {selectedTenant?.company_name}
+            </DialogTitle>
+          </DialogHeader>
+          
+          <div className="space-y-4">
+            <div>
+              <Label>Emri i Plotë *</Label>
+              <Input
+                value={userFormData.full_name}
+                onChange={(e) => setUserFormData({...userFormData, full_name: e.target.value})}
+                placeholder="Emri Mbiemri"
+              />
+            </div>
+            
+            <div>
+              <Label>Username *</Label>
+              <Input
+                value={userFormData.username}
+                onChange={(e) => setUserFormData({...userFormData, username: e.target.value})}
+                placeholder="username"
+              />
+            </div>
+            
+            <div>
+              <Label>Fjalëkalimi *</Label>
+              <div className="relative">
+                <Input
+                  type={showPassword ? "text" : "password"}
+                  value={userFormData.password}
+                  onChange={(e) => setUserFormData({...userFormData, password: e.target.value})}
+                  placeholder="••••••••"
+                />
+                <button 
+                  type="button"
+                  className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                  onClick={() => setShowPassword(!showPassword)}
+                >
+                  {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                </button>
+              </div>
+            </div>
+            
+            <div>
+              <Label>PIN (Opsional - për kyçje të shpejtë)</Label>
+              <Input
+                value={userFormData.pin}
+                onChange={(e) => setUserFormData({...userFormData, pin: e.target.value.replace(/\D/g, '').slice(0, 4)})}
+                placeholder="4 shifra"
+                maxLength={4}
+              />
+            </div>
+            
+            <div>
+              <Label>Roli *</Label>
+              <Select 
+                value={userFormData.role} 
+                onValueChange={(value) => setUserFormData({...userFormData, role: value})}
+              >
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="admin">Administrator</SelectItem>
+                  <SelectItem value="cashier">Arkëtar</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+          
+          <DialogFooter className="mt-6">
+            <Button variant="outline" onClick={() => setShowUserDialog(false)}>Anulo</Button>
+            <Button 
+              onClick={handleCreateUser} 
+              className="bg-[#00a79d] hover:bg-[#008f86]"
+              disabled={loading || !userFormData.username || !userFormData.password || !userFormData.full_name}
+            >
+              {loading ? 'Duke krijuar...' : 'Krijo Përdoruesin'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Users List Dialog */}
+      <Dialog open={showUsersListDialog} onOpenChange={setShowUsersListDialog}>
+        <DialogContent className="sm:max-w-2xl max-h-[80vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Users className="h-5 w-5" />
+              Përdoruesit e {selectedTenant?.company_name}
+            </DialogTitle>
+          </DialogHeader>
+          
+          <div className="space-y-3">
+            {tenantUsers.length === 0 ? (
+              <p className="text-center text-gray-500 py-8">Nuk ka përdorues</p>
+            ) : (
+              tenantUsers.map((u) => (
+                <div key={u.id} className="flex items-center justify-between p-3 border rounded-lg">
+                  <div className="flex items-center gap-3">
+                    <div className={`h-10 w-10 rounded-full flex items-center justify-center text-white font-medium ${u.role === 'admin' ? 'bg-purple-500' : 'bg-blue-500'}`}>
+                      {u.full_name?.charAt(0) || u.username?.charAt(0) || '?'}
+                    </div>
+                    <div>
+                      <p className="font-medium">{u.full_name || u.username}</p>
+                      <div className="flex items-center gap-2 text-sm text-gray-500">
+                        <span className="flex items-center gap-1">
+                          <Key className="h-3 w-3" /> {u.username}
+                        </span>
+                        {u.pin && (
+                          <span className="text-xs bg-gray-100 px-2 py-0.5 rounded">PIN: {u.pin}</span>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className={`px-2 py-1 text-xs rounded ${u.role === 'admin' ? 'bg-purple-100 text-purple-700' : 'bg-blue-100 text-blue-700'}`}>
+                      {u.role === 'admin' ? 'Admin' : 'Arkëtar'}
+                    </span>
+                    <Button 
+                      variant="ghost" 
+                      size="sm"
+                      onClick={() => copyToClipboard(`Username: ${u.username}\nPassword: (të njëjtin që vendosët)\n${u.pin ? `PIN: ${u.pin}` : ''}`)}
+                      title="Kopjo kredencialet"
+                    >
+                      <Copy className="h-4 w-4" />
+                    </Button>
+                    <Button 
+                      variant="ghost" 
+                      size="sm"
+                      className="text-red-500 hover:bg-red-50"
+                      onClick={() => handleDeleteUser(u.id)}
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
+          
+          <DialogFooter className="mt-4">
+            <Button variant="outline" onClick={() => setShowUsersListDialog(false)}>Mbyll</Button>
+            <Button 
+              onClick={() => {
+                setShowUsersListDialog(false);
+                openUserDialog(selectedTenant);
+              }}
+              className="bg-[#00a79d] hover:bg-[#008f86]"
+            >
+              <UserPlus className="h-4 w-4 mr-2" />
+              Shto Përdorues të Ri
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
