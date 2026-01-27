@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Inter:wght@400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -12,40 +12,79 @@ body {
 }
 
 h1, h2, h3, h4, h5, h6 {
-    font-family: 'Manrope', sans-serif;
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
 }
 
 code {
     font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New", monospace;
 }
 
+/* ===== PROFESSIONAL POS DARK THEME ===== */
+/* Color Palette:
+   - Background: #1a1d23 (charcoal)
+   - Surface: #22262e (dark gray)
+   - Surface Light: #2a2f38
+   - Primary Blue: #3b82f6 (action buttons)
+   - Success Green: #22c55e (payments)
+   - Error Red: #ef4444 (errors, delete)
+   - Warning Amber: #f59e0b (alerts)
+   - Text Primary: #f1f5f9
+   - Text Secondary: #94a3b8
+   - Border: #374151
+*/
+
 @layer base {
     :root {
-        --background: 36 100% 97%;
-        --foreground: 222.2 84% 4.9%;
-        --card: 36 60% 98%;
-        --card-foreground: 222.2 84% 4.9%;
-        --popover: 36 60% 99%;
-        --popover-foreground: 222.2 84% 4.9%;
-        --primary: 213 55% 25%;
+        /* Dark Mode (Default for POS) */
+        --background: 220 15% 13%;
+        --foreground: 210 40% 96%;
+        --card: 220 13% 16%;
+        --card-foreground: 210 40% 96%;
+        --popover: 220 13% 18%;
+        --popover-foreground: 210 40% 96%;
+        --primary: 217 91% 60%;
         --primary-foreground: 0 0% 100%;
-        --secondary: 213 45% 35%;
-        --secondary-foreground: 0 0% 100%;
-        --muted: 36 30% 94%;
-        --muted-foreground: 215.4 16.3% 46.9%;
-        --accent: 213 40% 92%;
-        --accent-foreground: 222.2 47.4% 11.2%;
-        --destructive: 0 84.2% 60.2%;
-        --destructive-foreground: 210 40% 98%;
-        --border: 36 20% 88%;
-        --input: 36 20% 88%;
-        --ring: 213 55% 25%;
+        --secondary: 220 13% 20%;
+        --secondary-foreground: 210 40% 96%;
+        --muted: 220 13% 20%;
+        --muted-foreground: 215 20% 65%;
+        --accent: 220 13% 22%;
+        --accent-foreground: 210 40% 96%;
+        --destructive: 0 84% 60%;
+        --destructive-foreground: 0 0% 100%;
+        --border: 220 13% 26%;
+        --input: 220 13% 20%;
+        --ring: 217 91% 60%;
         --radius: 0.5rem;
-        --chart-1: 213 55% 25%;
-        --chart-2: 213 45% 45%;
-        --chart-3: 142 76% 36%;
-        --chart-4: 38 92% 50%;
-        --chart-5: 221 83% 53%;
+        --chart-1: 217 91% 60%;
+        --chart-2: 142 71% 45%;
+        --chart-3: 38 92% 50%;
+        --chart-4: 0 84% 60%;
+        --chart-5: 262 83% 58%;
+    }
+
+    /* Light Mode for Admin/Reports */
+    .light-mode {
+        --background: 0 0% 98%;
+        --foreground: 220 15% 13%;
+        --card: 0 0% 100%;
+        --card-foreground: 220 15% 13%;
+        --popover: 0 0% 100%;
+        --popover-foreground: 220 15% 13%;
+        --primary: 217 91% 50%;
+        --primary-foreground: 0 0% 100%;
+        --secondary: 220 14% 96%;
+        --secondary-foreground: 220 15% 13%;
+        --muted: 220 14% 96%;
+        --muted-foreground: 220 9% 46%;
+        --accent: 220 14% 96%;
+        --accent-foreground: 220 15% 13%;
+        --destructive: 0 84% 60%;
+        --destructive-foreground: 0 0% 100%;
+        --border: 220 13% 91%;
+        --input: 220 13% 91%;
+        --ring: 217 91% 50%;
     }
 }
 
@@ -58,58 +97,265 @@ code {
     }
 }
 
-/* Custom Scrollbar */
+/* Custom Scrollbar - Dark Theme */
 ::-webkit-scrollbar {
-    width: 6px;
-    height: 6px;
+    width: 8px;
+    height: 8px;
 }
 
 ::-webkit-scrollbar-track {
-    background: #f1f5f9;
+    background: #1a1d23;
 }
 
 ::-webkit-scrollbar-thumb {
-    background: #cbd5e1;
-    border-radius: 3px;
+    background: #374151;
+    border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-    background: #94a3b8;
+    background: #4b5563;
 }
 
-/* Mobilshopurimi Brand Styles - Dark Blue Theme */
-.t3next-primary {
-    background-color: #1E3A5F;
+/* ===== POS ACTION BUTTONS ===== */
+
+/* Primary Action (Checkout, Save, Confirm) - Blue */
+.pos-btn-primary {
+    @apply flex items-center justify-center font-semibold rounded-lg transition-all duration-150;
+    background-color: #3b82f6;
+    color: white;
+    min-height: 48px;
+    padding: 12px 24px;
 }
 
-.t3next-primary:hover {
-    background-color: #152C4A;
+.pos-btn-primary:hover {
+    background-color: #2563eb;
 }
 
-.t3next-secondary {
-    background-color: #2E5A8F;
-}
-
-.t3next-secondary:hover {
-    background-color: #264B78;
-}
-
-/* Table row hover */
-.table-row-hover:hover {
-    background-color: rgba(30, 58, 95, 0.08);
-}
-
-/* POS Numpad Button */
-.numpad-btn {
-    @apply flex items-center justify-center text-xl font-semibold rounded-lg border border-gray-200 bg-white hover:bg-gray-50 active:bg-gray-100 transition-all duration-150;
-    height: 60px;
-}
-
-.numpad-btn:active {
+.pos-btn-primary:active {
+    background-color: #1d4ed8;
     transform: scale(0.98);
 }
 
-/* Animations */
+/* Success Action (Payment Complete) - Green */
+.pos-btn-success {
+    @apply flex items-center justify-center font-semibold rounded-lg transition-all duration-150;
+    background-color: #22c55e;
+    color: white;
+    min-height: 48px;
+    padding: 12px 24px;
+}
+
+.pos-btn-success:hover {
+    background-color: #16a34a;
+}
+
+.pos-btn-success:active {
+    background-color: #15803d;
+    transform: scale(0.98);
+}
+
+/* Danger Action (Delete, Cancel) - Red */
+.pos-btn-danger {
+    @apply flex items-center justify-center font-semibold rounded-lg transition-all duration-150;
+    background-color: #ef4444;
+    color: white;
+    min-height: 48px;
+    padding: 12px 24px;
+}
+
+.pos-btn-danger:hover {
+    background-color: #dc2626;
+}
+
+.pos-btn-danger:active {
+    background-color: #b91c1c;
+    transform: scale(0.98);
+}
+
+/* Warning Action - Amber */
+.pos-btn-warning {
+    @apply flex items-center justify-center font-semibold rounded-lg transition-all duration-150;
+    background-color: #f59e0b;
+    color: #1a1d23;
+    min-height: 48px;
+    padding: 12px 24px;
+}
+
+.pos-btn-warning:hover {
+    background-color: #d97706;
+}
+
+/* Secondary/Neutral Button */
+.pos-btn-secondary {
+    @apply flex items-center justify-center font-semibold rounded-lg transition-all duration-150;
+    background-color: #2a2f38;
+    color: #f1f5f9;
+    border: 1px solid #374151;
+    min-height: 48px;
+    padding: 12px 24px;
+}
+
+.pos-btn-secondary:hover {
+    background-color: #374151;
+}
+
+.pos-btn-secondary:active {
+    background-color: #4b5563;
+    transform: scale(0.98);
+}
+
+/* ===== POS NUMPAD ===== */
+.numpad-btn {
+    @apply flex items-center justify-center text-xl font-semibold rounded-lg transition-all duration-150;
+    background-color: #2a2f38;
+    color: #f1f5f9;
+    border: 1px solid #374151;
+    height: 64px;
+    min-width: 64px;
+}
+
+.numpad-btn:hover {
+    background-color: #374151;
+}
+
+.numpad-btn:active {
+    background-color: #4b5563;
+    transform: scale(0.97);
+}
+
+/* ===== POS CARD STYLES ===== */
+.pos-card {
+    background-color: #22262e;
+    border: 1px solid #374151;
+    border-radius: 8px;
+}
+
+.pos-card-header {
+    background-color: #2a2f38;
+    border-bottom: 1px solid #374151;
+    padding: 12px 16px;
+    border-radius: 8px 8px 0 0;
+}
+
+/* ===== STATUS INDICATORS ===== */
+.status-success {
+    background-color: rgba(34, 197, 94, 0.15);
+    color: #22c55e;
+    border: 1px solid rgba(34, 197, 94, 0.3);
+}
+
+.status-warning {
+    background-color: rgba(245, 158, 11, 0.15);
+    color: #f59e0b;
+    border: 1px solid rgba(245, 158, 11, 0.3);
+}
+
+.status-error {
+    background-color: rgba(239, 68, 68, 0.15);
+    color: #ef4444;
+    border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+.status-info {
+    background-color: rgba(59, 130, 246, 0.15);
+    color: #3b82f6;
+    border: 1px solid rgba(59, 130, 246, 0.3);
+}
+
+/* ===== TABLE STYLES ===== */
+.pos-table {
+    background-color: #22262e;
+    border: 1px solid #374151;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.pos-table-header {
+    background-color: #2a2f38;
+    color: #94a3b8;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 11px;
+    letter-spacing: 0.5px;
+}
+
+.pos-table-row {
+    border-bottom: 1px solid #374151;
+    transition: background-color 0.15s;
+}
+
+.pos-table-row:hover {
+    background-color: #2a2f38;
+}
+
+.pos-table-row:last-child {
+    border-bottom: none;
+}
+
+/* ===== INPUT STYLES ===== */
+.pos-input {
+    background-color: #2a2f38;
+    border: 1px solid #374151;
+    color: #f1f5f9;
+    border-radius: 6px;
+    padding: 12px 16px;
+    font-size: 14px;
+    transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.pos-input:focus {
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+}
+
+.pos-input::placeholder {
+    color: #6b7280;
+}
+
+/* ===== SIDEBAR STYLES ===== */
+.pos-sidebar {
+    background-color: #1a1d23;
+    border-right: 1px solid #374151;
+}
+
+.pos-sidebar-item {
+    color: #94a3b8;
+    padding: 12px 16px;
+    border-radius: 6px;
+    transition: all 0.15s;
+}
+
+.pos-sidebar-item:hover {
+    background-color: #2a2f38;
+    color: #f1f5f9;
+}
+
+.pos-sidebar-item.active {
+    background-color: #3b82f6;
+    color: white;
+}
+
+/* ===== MODAL/DIALOG STYLES ===== */
+.pos-modal {
+    background-color: #22262e;
+    border: 1px solid #374151;
+    border-radius: 12px;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+}
+
+.pos-modal-header {
+    border-bottom: 1px solid #374151;
+    padding: 16px 20px;
+}
+
+.pos-modal-footer {
+    border-top: 1px solid #374151;
+    padding: 16px 20px;
+    background-color: #2a2f38;
+}
+
+/* ===== ANIMATIONS ===== */
 @keyframes slideIn {
     from {
         opacity: 0;
@@ -146,8 +392,8 @@ code {
 
 /* Loading spinner */
 .spinner {
-    border: 3px solid #f3f3f3;
-    border-top: 3px solid #1E3A5F;
+    border: 3px solid #374151;
+    border-top: 3px solid #3b82f6;
     border-radius: 50%;
     width: 24px;
     height: 24px;
@@ -157,4 +403,49 @@ code {
 @keyframes spin {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
+}
+
+/* ===== UTILITY CLASSES ===== */
+.text-success { color: #22c55e; }
+.text-warning { color: #f59e0b; }
+.text-error { color: #ef4444; }
+.text-info { color: #3b82f6; }
+.text-muted { color: #94a3b8; }
+
+.bg-surface { background-color: #22262e; }
+.bg-surface-light { background-color: #2a2f38; }
+.bg-surface-dark { background-color: #1a1d23; }
+
+.border-subtle { border-color: #374151; }
+
+/* ===== LARGE TOUCH TARGETS ===== */
+.touch-target {
+    min-height: 48px;
+    min-width: 48px;
+}
+
+.touch-target-lg {
+    min-height: 56px;
+    min-width: 56px;
+}
+
+/* ===== LEGACY COMPATIBILITY ===== */
+.t3next-primary {
+    background-color: #3b82f6;
+}
+
+.t3next-primary:hover {
+    background-color: #2563eb;
+}
+
+.t3next-secondary {
+    background-color: #2a2f38;
+}
+
+.t3next-secondary:hover {
+    background-color: #374151;
+}
+
+.table-row-hover:hover {
+    background-color: #2a2f38;
 }
