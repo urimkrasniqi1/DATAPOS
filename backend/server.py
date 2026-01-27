@@ -881,7 +881,8 @@ async def get_me(current_user: dict = Depends(get_current_user)):
         branch_id=current_user.get("branch_id"),
         is_active=current_user["is_active"],
         created_at=current_user["created_at"],
-        pin=current_user.get("pin")
+        pin=current_user.get("pin"),
+        tenant_id=current_user.get("tenant_id")
     )
 
 # ============ USER ROUTES ============
