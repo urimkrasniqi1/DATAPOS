@@ -920,7 +920,7 @@ const POS = () => {
       if (e.key === 'F4') {
         e.preventDefault();
         if (cart.length > 0) {
-          setShowA4Invoice(true);
+          setShowInvoiceA4(true);
         } else {
           toast.error('Shporta është bosh');
         }
