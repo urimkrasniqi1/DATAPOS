@@ -133,6 +133,14 @@ Sistema POS (Point of Sale) për markete dhe supermarkete me mbështetje multi-f
 - Rregulluar printimi i kuponit termik dhe faturës A4 duke përdorur iframe të fshehur në vend të window.open()
 - Metoda e re e printimit nuk bllokohet nga popup blockers
 - Shtuar mesazhe të sakta gabimi dhe suksesi gjatë printimit
+- Kupon fiskal-style me logo, dimensione 110mm x 140mm
+- Template komentesh (Garanci 12 muaj, Pa kthim, Zbritje speciale, etj.)
+- Mundësi për të ruajtur komentin si default
+- **Backend për Settings page**:
+  - GET/PUT /api/settings/pos - Cilësimet e POS
+  - CRUD /api/warehouses - Menaxhimi i depove
+  - CRUD /api/vat-rates - Normat e TVSH (3 default: 18%, 8%, 0%)
+- **Frontend Settings tabs funksionale**: DEPOT, TVSH me dialog add/edit
 
 ## Previous Updates (January 26, 2025)
 - Shtuar tekst informues për zgjedhjen e printerit në dialogun e kuponit termik
