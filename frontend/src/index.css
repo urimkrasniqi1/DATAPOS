@@ -27,9 +27,9 @@ code {
         --card-foreground: 222.2 84% 4.9%;
         --popover: 36 60% 99%;
         --popover-foreground: 222.2 84% 4.9%;
-        --primary: 213 55% 25%;
+        --primary: 175 100% 33%;
         --primary-foreground: 0 0% 100%;
-        --secondary: 213 45% 35%;
+        --secondary: 175 100% 38%;
         --secondary-foreground: 0 0% 100%;
         --muted: 36 30% 94%;
         --muted-foreground: 215.4 16.3% 46.9%;
@@ -39,10 +39,10 @@ code {
         --destructive-foreground: 210 40% 98%;
         --border: 36 20% 88%;
         --input: 36 20% 88%;
-        --ring: 213 55% 25%;
+        --ring: 175 100% 33%;
         --radius: 0.5rem;
-        --chart-1: 213 55% 25%;
-        --chart-2: 213 45% 45%;
+        --chart-1: 175 100% 33%;
+        --chart-2: 175 80% 45%;
         --chart-3: 142 76% 36%;
         --chart-4: 38 92% 50%;
         --chart-5: 221 83% 53%;
@@ -77,26 +77,26 @@ code {
     background: #94a3b8;
 }
 
-/* Mobilshopurimi Brand Styles - Dark Blue Theme */
+/* Mobilshopurimi Brand Styles - Teal Theme */
 .t3next-primary {
-    background-color: #1E3A5F;
+    background-color: #00a79d;
 }
 
 .t3next-primary:hover {
-    background-color: #152C4A;
+    background-color: #008f86;
 }
 
 .t3next-secondary {
-    background-color: #2E5A8F;
+    background-color: #00c4b8;
 }
 
 .t3next-secondary:hover {
-    background-color: #264B78;
+    background-color: #00a79d;
 }
 
 /* Table row hover */
 .table-row-hover:hover {
-    background-color: rgba(30, 58, 95, 0.08);
+    background-color: rgba(0, 167, 157, 0.08);
 }
 
 /* POS Numpad Button */
@@ -147,7 +147,7 @@ code {
 /* Loading spinner */
 .spinner {
     border: 3px solid #f3f3f3;
-    border-top: 3px solid #1E3A5F;
+    border-top: 3px solid #00a79d;
     border-radius: 50%;
     width: 24px;
     height: 24px;
