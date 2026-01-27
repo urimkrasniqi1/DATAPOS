@@ -9,171 +9,71 @@ Sistema POS (Point of Sale) multi-tenant SaaS për kompani të ndryshme. Çdo ko
 3. **Menaxher** - Menaxhon produktet, stokun, sheh raporte brenda firmës
 4. **Arkëtar** - Kryen shitje, hap/mbyll arkën brenda firmës
 
-## Core Architecture
-- **Multi-Tenancy**: Të dhënat izolohen me `tenant_id` në çdo koleksion
-- **Role-Based Access**: `super_admin`, `admin`, `manager`, `cashier`
-- **Data Isolation**: Funksioni `get_tenant_filter(current_user)` kthen filtrin e tenant-it për çdo query
-- **Data Creation**: Funksioni `add_tenant_id(doc, current_user)` shton tenant_id para insertimit
-
 ## What's Been Implemented (January 2025)
+
+### Backend Refactoring (COMPLETE - January 27, 2025)
+**server.py refaktoruar nga 2700+ rreshta në 68 rreshta!**
+
+Struktura e re modulare:
+```
+/app/backend/
+├── server.py          # 68 lines - Main app, routers registration
+├── database.py        # 13 lines - MongoDB connection
+├── models.py          # 525 lines - All Pydantic models
+├── auth.py            # 93 lines - JWT, password hashing, dependencies
+└── routers/
+    ├── auth.py        # 82 lines - /api/auth/*
+    ├── tenants.py     # 161 lines - /api/tenants/* (Super Admin)
+    ├── users.py       # 106 lines - /api/users/*
+    ├── branches.py    # 70 lines - /api/branches/*
+    ├── products.py    # 126 lines - /api/products/*
+    ├── stock.py       # 77 lines - /api/stock/*
+    ├── cashier.py     # 124 lines - /api/cashier/*
+    ├── sales.py       # 160 lines - /api/sales/*
+    ├── reports.py     # 506 lines - /api/reports/* + PDF/Excel export
+    ├── settings.py    # 352 lines - Settings, warehouses, VAT, templates
+    └── admin.py       # 316 lines - Reset data, backups, audit, init
+```
 
 ### Multi-Tenant System (COMPLETE)
 - [x] Tenant model me branding (logo, ngjyra, emri kompanisë)
 - [x] Super Admin role dhe dashboard (`/super-admin`)
 - [x] Tenant CRUD (Create, Read, Update, Delete) nga Super Admin
 - [x] Automatic admin user creation kur krijohet tenant
-- [x] **Data Isolation**: Të gjitha koleksionet filtrohen me `tenant_id`:
-  - [x] Products
-  - [x] Sales  
-  - [x] Users
-  - [x] Branches
-  - [x] Cash Drawers
-  - [x] Stock Movements
-  - [x] Settings (company, POS)
-  - [x] Warehouses
-  - [x] VAT Rates
-  - [x] Comment Templates
-  - [x] Backups
+- [x] **Data Isolation**: Të gjitha koleksionet filtrohen me `tenant_id`
 - [x] Super Admin can see all tenants, tenant admin sees only own data
 - [x] Tenant status management (Active, Trial, Suspended)
 - [x] Stripe payment link storage per tenant
-
-### Backend (FastAPI + MongoDB)
-- [x] Auth: JWT login with username, role-based access
-- [x] Users CRUD with role management (tenant-isolated)
-- [x] Branches CRUD (tenant-isolated)
-- [x] Products CRUD with ALL optional fields (tenant-isolated)
-- [x] Stock management with movement history (tenant-isolated)
-- [x] Cash drawer sessions (tenant-isolated)
-- [x] Sales transactions (tenant-isolated)
-- [x] Reports: dashboard, sales, profit/loss, stock, cashier performance (tenant-isolated)
-- [x] PDF/Excel export (tenant-isolated)
-- [x] Audit logging
-- [x] Settings API: Company info, POS settings (tenant-isolated)
-- [x] Warehouses (tenant-isolated)
-- [x] VAT rates (tenant-isolated)
-- [x] Comment templates (tenant-isolated)
-- [x] Data reset and backup system (tenant-isolated)
 
 ### Frontend (React + Shadcn UI)
 - [x] Login page with PIN and admin login
 - [x] Dashboard with KPIs, charts, quick actions
 - [x] POS/Checkout page with thermal receipt printing
-- [x] Products management page
-- [x] Stock management with movements
-- [x] Users management
-- [x] Branches management
+- [x] Products, Stock, Users, Branches management
 - [x] Reports with date filters, charts, PDF/Excel export
 - [x] Settings page (Company, POS, Warehouses, VAT)
-- [x] Audit logs page
-- [x] **Super Admin Dashboard** (`/super-admin`):
-  - [x] View all tenants with stats
-  - [x] Create new tenant (with automatic admin creation)
-  - [x] Edit tenant (name, branding, status)
-  - [x] Delete tenant (with confirmation)
-  - [x] Status management (Active/Trial/Suspended)
+- [x] **Super Admin Dashboard** (`/super-admin`) - Tenant management
 - [x] Albanian language interface
 - [x] PWA support
 
-### Receipt & Printing
-- [x] Professional FISCAL-style thermal receipt (80mm)
-- [x] Company logo on receipt
-- [x] Comment templates for receipt
-- [x] Direct print toggle
-- [x] A4 Invoice printing
-- [x] QR Code for contact
-
-### Additional Features
-- [x] Keyboard shortcuts (F1-F12, Delete)
-- [x] Data reset and automatic backup system
-- [x] Exportable reports (PDF/Excel)
-
-## API Endpoints
-
-### Tenant Management (Super Admin Only)
-- GET /api/tenants - List all tenants
-- POST /api/tenants - Create new tenant
-- GET /api/tenants/{id} - Get tenant details
-- PUT /api/tenants/{id} - Update tenant
-- DELETE /api/tenants/{id} - Delete tenant and all data
-- GET /api/tenant/public/{name} - Get public tenant branding
-
-### Authentication
-- POST /api/auth/login - Login (returns JWT with tenant_id)
-- GET /api/auth/me - Get current user info
-
-### Data Endpoints (Tenant-Isolated)
-- CRUD /api/users
-- CRUD /api/branches
-- CRUD /api/products
-- CRUD /api/warehouses
-- CRUD /api/vat-rates
-- CRUD /api/comment-templates
-- POST /api/sales
-- GET /api/sales
-- POST /api/cashier/open, /api/cashier/close
-- GET /api/reports/dashboard, /api/reports/sales, /api/reports/stock
-- GET /api/reports/export/pdf, /api/reports/export/excel
-- POST /api/admin/reset-data
-- GET /api/admin/backups
-
-## Database Schema
-
-### tenants
-```json
-{
-  "id": "uuid",
-  "name": "company-slug",
-  "company_name": "Company Name",
-  "email": "admin@company.com",
-  "phone": "...",
-  "address": "...",
-  "logo_url": "...",
-  "primary_color": "#00a79d",
-  "secondary_color": "#f3f4f6",
-  "stripe_payment_link": "...",
-  "status": "active|trial|suspended",
-  "subscription_expires": "...",
-  "created_at": "..."
-}
-```
-
-### users (tenant-isolated)
-```json
-{
-  "id": "uuid",
-  "username": "...",
-  "password_hash": "...",
-  "role": "super_admin|admin|manager|cashier",
-  "tenant_id": "uuid or null for super_admin",
-  "pin": "...",
-  "is_active": true
-}
-```
-
-### All other collections
-All include `tenant_id` field for data isolation.
-
 ## Demo Credentials
-- **Super Admin**: superadmin / super@admin123
-- **Tenant Admin (example)**: admin_testfirma / password123
+- **Super Admin**: `superadmin` / `super@admin123`
+- **Tenant Admin (example)**: `admin_testfirma` / `password123`
 
 ## Test Results (January 27, 2025)
-- Backend: 13/13 tests passed (100%)
-- Frontend: All features working
-- Tenant isolation: Verified - tenants cannot see each other's data
+- Backend refactoring: SUCCESS - All endpoints working
+- Multi-tenant isolation: VERIFIED - Tenants cannot see each other's data
+- Frontend: All pages functional
 
 ## Prioritized Backlog
 
 ### P0 (Critical) - DONE
 - [x] Multi-tenant data isolation
 - [x] Super Admin dashboard
-- [x] Tenant CRUD
-- [x] All endpoints tenant-filtered
+- [x] Backend refactoring (server.py)
 
 ### P1 (High) - TODO
-- [ ] **Refactor backend/server.py** into modular APIRouter structure (2700+ lines)
-- [ ] **Refactor frontend/src/pages/POS.jsx** into smaller components (2100+ lines)
+- [ ] **Refactor frontend POS.jsx** (2100+ lines) into smaller components
 - [ ] Frontend dynamic branding (load tenant logo/colors after login)
 
 ### P2 (Medium) - TODO
@@ -190,19 +90,23 @@ All include `tenant_id` field for data isolation.
 ```
 /app
 ├── backend/
-│   └── server.py             # FastAPI app (NEEDS REFACTORING - 2700+ lines)
+│   ├── server.py           # 68 lines - Main entry point
+│   ├── database.py         # MongoDB connection
+│   ├── models.py           # Pydantic models
+│   ├── auth.py             # Authentication utilities
+│   ├── routers/            # API endpoints (modular)
+│   └── server_old.py       # Backup of old monolithic file
 ├── frontend/
 │   ├── public/
-│   │   └── index.html, manifest.json
 │   └── src/
-│       ├── App.js            # Routing
+│       ├── App.js
 │       ├── components/
-│       │   ├── MainLayout.jsx  # Sidebar with super admin link
-│       │   └── InvoiceA4.jsx
+│       │   ├── MainLayout.jsx
+│       │   └── ui/          # Shadcn components
 │       └── pages/
 │           ├── Login.jsx
 │           ├── Dashboard.jsx
-│           ├── POS.jsx       # NEEDS REFACTORING - 2100+ lines
+│           ├── POS.jsx      # NEEDS REFACTORING - 2100+ lines
 │           ├── Products.jsx
 │           ├── Stock.jsx
 │           ├── Users.jsx
@@ -210,7 +114,30 @@ All include `tenant_id` field for data isolation.
 │           ├── Reports.jsx
 │           ├── Settings.jsx
 │           ├── AuditLogs.jsx
-│           └── SuperAdmin.jsx  # NEW: Tenant management
+│           └── SuperAdmin.jsx
 └── memory/
     └── PRD.md
 ```
+
+## API Endpoints Summary
+All endpoints are prefixed with `/api`
+
+| Router | Prefix | Description |
+|--------|--------|-------------|
+| auth | /auth | Login, user info |
+| tenants | /tenants | Super Admin tenant management |
+| users | /users | User CRUD |
+| branches | /branches | Branch CRUD |
+| products | /products | Product CRUD |
+| stock | /stock | Stock movements |
+| cashier | /cashier | Cash drawer operations |
+| sales | /sales | Sales transactions |
+| reports | /reports | Dashboard, reports, PDF/Excel |
+| settings | /settings | Company & POS settings |
+| warehouses | /warehouses | Warehouse CRUD |
+| vat-rates | /vat-rates | VAT rate CRUD |
+| comment-templates | /comment-templates | Receipt templates |
+| admin | /admin | Data reset, backups |
+| audit-logs | /audit-logs | Audit trail |
+| categories | /categories | Product categories |
+| init | /init | Super admin initialization |
