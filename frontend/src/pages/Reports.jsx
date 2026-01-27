@@ -211,6 +211,10 @@ const Reports = () => {
             <DollarSign className="h-4 w-4 mr-2" />
             Shitjet
           </TabsTrigger>
+          <TabsTrigger value="profit" data-testid="profit-report-tab">
+            <TrendingUp className="h-4 w-4 mr-2" />
+            Fitimi
+          </TabsTrigger>
           <TabsTrigger value="stock" data-testid="stock-report-tab">
             <Package className="h-4 w-4 mr-2" />
             Stoku
