@@ -1,16 +1,16 @@
 {
-  "short_name": "iPOS",
-  "name": "iPOS - Point of Sale",
+  "short_name": "MobilshopurimiPOS",
+  "name": "MobilshopurimiPOS - Point of Sale",
   "description": "Point of Sale System - Sistem për menaxhimin e shitjeve",
   "icons": [
     {
-      "src": "https://customer-assets.emergentagent.com/job_supermarket-pos-12/artifacts/qhc6ljlw_pos%201%20logo.png",
+      "src": "https://customer-assets.emergentagent.com/job_retailsys-1/artifacts/9i1h1bxb_logo%20icon.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any maskable"
     },
     {
-      "src": "https://customer-assets.emergentagent.com/job_supermarket-pos-12/artifacts/qhc6ljlw_pos%201%20logo.png",
+      "src": "https://customer-assets.emergentagent.com/job_retailsys-1/artifacts/9i1h1bxb_logo%20icon.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
