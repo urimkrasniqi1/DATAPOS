@@ -975,7 +975,7 @@ const Settings = () => {
               <div>
                 <h4 className="font-medium text-blue-800 mb-1">Si të zgjidhni Printerin?</h4>
                 <p className="text-sm text-blue-700">
-                  Kur klikoni butonin "Printo" në çdo dokument (kupon termik 80mm ose faturë A4), do të hapet një dialog 
+                  Kur klikoni butonin &quot;Printo&quot; në çdo dokument (kupon termik 80mm ose faturë A4), do të hapet një dialog 
                   ku mund të zgjidhni printerin tuaj të preferuar nga lista e të gjithë printerëve të instaluar në kompjuter. 
                   Për printer termik, sigurohuni që të keni konfiguruar madhësinë e letrës si 80mm në cilësimet e printerit.
                 </p>
@@ -983,6 +983,81 @@ const Settings = () => {
             </div>
           </div>
           
+          {/* Comment Templates Section */}
+          <Card className="border-0 shadow-sm mb-6">
+            <CardHeader className="flex flex-row items-center justify-between">
+              <div>
+                <CardTitle className="flex items-center gap-2">
+                  <MessageSquare className="h-5 w-5" />
+                  Komentet e Kuponit
+                </CardTitle>
+                <CardDescription>Menaxho template-t e komenteve për kuponat termike</CardDescription>
+              </div>
+              <Button 
+                className="bg-[#00a79d] hover:bg-[#008f86]"
+                onClick={() => openCommentDialog()}
+              >
+                <Plus className="h-4 w-4 mr-2" />
+                Shto Koment
+              </Button>
+            </CardHeader>
+            <CardContent>
+              {commentTemplates.length === 0 ? (
+                <div className="text-center py-8 text-gray-500">
+                  <MessageSquare className="h-12 w-12 mx-auto mb-3 opacity-30" />
+                  <p>Nuk ka template komentesh</p>
+                  <p className="text-sm mt-1">Shtoni komentet që shfaqen shpesh në kuponat termike</p>
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  {commentTemplates.map((template) => (
+                    <div 
+                      key={template.id}
+                      className={`flex items-center justify-between p-4 border rounded-lg ${
+                        template.is_default ? 'border-[#00a79d] bg-[#00a79d]/5' : 'bg-gray-50'
+                      } ${!template.is_active ? 'opacity-50' : ''}`}
+                    >
+                      <div className="flex-1">
+                        <div className="flex items-center gap-2">
+                          <span className="font-medium">{template.title}</span>
+                          {template.is_default && (
+                            <span className="px-2 py-0.5 text-xs bg-[#00a79d] text-white rounded-full">
+                              Default
+                            </span>
+                          )}
+                          {!template.is_active && (
+                            <span className="px-2 py-0.5 text-xs bg-gray-400 text-white rounded-full">
+                              Jo Aktiv
+                            </span>
+                          )}
+                        </div>
+                        <p className="text-sm text-gray-600 mt-1 line-clamp-2">{template.content}</p>
+                      </div>
+                      <div className="flex gap-2 ml-4">
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => openCommentDialog(template)}
+                        >
+                          <Edit2 className="h-4 w-4" />
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          className="text-red-500 hover:bg-red-50"
+                          onClick={() => handleDeleteComment(template.id)}
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
+          {/* Invoice Templates Section */}
           <Card className="border-0 shadow-sm">
             <CardHeader className="flex flex-row items-center justify-between">
               <div>
