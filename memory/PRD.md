@@ -191,6 +191,15 @@ Sistema POS (Point of Sale) për markete dhe supermarkete me mbështetje multi-f
   - Raport Shitjesh: Transaksione, Të ardhura, TVSH, Cash vs Kartë
   - Raport Stoku: Produktet, Stok i ulët, Vlera totale
 
+- **Multi-Tenant System (SaaS Ready)**:
+  - Super Admin role për menaxhimin e të gjitha firmave
+  - Tenant model me branding (logo, emri, ngjyrat primare/sekondare)
+  - Izolim i të dhënave sipas tenant_id
+  - Statuset: Active, Trial, Suspended
+  - Stripe payment link për çdo firmë
+  - Endpoints: /api/tenants (CRUD), /api/tenant/public/{name} (branding)
+  - Super Admin credentials: superadmin / super@admin123
+
 ## Previous Updates (January 27, 2025)
 - Rregulluar printimi i kuponit termik dhe faturës A4 duke përdorur iframe të fshehur në vend të window.open()
 - Metoda e re e printimit nuk bllokohet nga popup blockers
