@@ -367,7 +367,7 @@ const POS = () => {
     printFrame.style.position = 'absolute';
     printFrame.style.top = '-10000px';
     printFrame.style.left = '-10000px';
-    printFrame.style.width = '110mm';
+    printFrame.style.width = '80mm';
     printFrame.style.height = '0';
     
     // Remove any existing print frame
@@ -388,25 +388,26 @@ const POS = () => {
           <style>
             * { margin: 0; padding: 0; box-sizing: border-box; }
             body { 
-              font-family: 'Segoe UI', Arial, sans-serif; 
+              font-family: 'Courier New', 'Consolas', monospace; 
               font-size: 11px; 
-              line-height: 1.5;
-              width: 110mm;
-              max-width: 110mm;
-              min-height: 150mm;
-              padding: 5mm;
+              line-height: 1.4;
+              width: 80mm;
+              max-width: 80mm;
+              min-height: 180mm;
+              padding: 4mm;
               background: white;
-              color: #1a1a1a;
+              color: #000;
             }
             div { box-sizing: border-box; }
+            img { max-width: 100%; height: auto; }
             @media print {
               @page { 
-                size: 110mm auto; 
+                size: 80mm auto; 
                 margin: 0; 
               }
               html, body { 
-                width: 110mm !important;
-                max-width: 110mm !important;
+                width: 80mm !important;
+                max-width: 80mm !important;
                 -webkit-print-color-adjust: exact;
                 print-color-adjust: exact;
               }
