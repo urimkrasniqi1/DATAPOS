@@ -291,10 +291,12 @@ const POS = () => {
   // State for receipt preview
   const [showReceiptPreview, setShowReceiptPreview] = useState(false);
   const [receiptDataForPrint, setReceiptDataForPrint] = useState(null);
+  const [receiptComment, setReceiptComment] = useState(''); // Extra comment for receipt
 
   // Print thermal receipt - show preview dialog first
   const printThermalReceipt = (saleData) => {
     setReceiptDataForPrint(saleData);
+    setReceiptComment(''); // Reset comment for new receipt
     setShowReceiptPreview(true);
   };
 
