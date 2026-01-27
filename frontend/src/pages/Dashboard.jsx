@@ -76,6 +76,92 @@ const Dashboard = () => {
 
   const formatCurrency = (value) => `€${(value || 0).toFixed(2)}`;
 
+  // Reset functionality
+  const openResetDialog = (type) => {
+    setResetType(type);
+    setResetStep(1);
+    setResetPassword('');
+    setSelectedUsers([]);
+    setShowResetDialog(true);
+  };
+
+  const verifyPassword = async () => {
+    if (!resetPassword) {
+      toast.error('Ju lutem shkruani fjalëkalimin');
+      return;
+    }
+    
+    setResetLoading(true);
+    try {
+      await api.post('/admin/verify-password', { password: resetPassword });
+      
+      if (resetType === 'user_specific') {
+        // Load users for selection
+        const response = await api.get('/admin/users-for-reset');
+        setUsersForReset(response.data);
+        setResetStep(2);
+      } else {
+        // Go directly to confirmation
+        setResetStep(3);
+      }
+    } catch (error) {
+      toast.error(error.response?.data?.detail || 'Fjalëkalimi i gabuar');
+    } finally {
+      setResetLoading(false);
+    }
+  };
+
+  const toggleUserSelection = (userId) => {
+    setSelectedUsers(prev => 
+      prev.includes(userId) 
+        ? prev.filter(id => id !== userId)
+        : [...prev, userId]
+    );
+  };
+
+  const selectAllUsers = () => {
+    if (selectedUsers.length === usersForReset.length) {
+      setSelectedUsers([]);
+    } else {
+      setSelectedUsers(usersForReset.map(u => u.id));
+    }
+  };
+
+  const executeReset = async () => {
+    if (resetType === 'user_specific' && selectedUsers.length === 0) {
+      toast.error('Zgjidhni të paktën një përdorues');
+      return;
+    }
+    
+    setResetLoading(true);
+    try {
+      const response = await api.post('/admin/reset-data', {
+        admin_password: resetPassword,
+        reset_type: resetType,
+        user_ids: resetType === 'user_specific' ? selectedUsers : null
+      });
+      
+      toast.success(
+        `Të dhënat u resetuan: ${response.data.deleted.sales} shitje, ${response.data.deleted.cash_drawers} arka`
+      );
+      setShowResetDialog(false);
+      loadData(); // Refresh dashboard
+    } catch (error) {
+      toast.error(error.response?.data?.detail || 'Gabim gjatë resetimit');
+    } finally {
+      setResetLoading(false);
+    }
+  };
+
+  const getResetTypeLabel = () => {
+    switch (resetType) {
+      case 'all': return 'Të gjitha të dhënat';
+      case 'daily': return 'Përmbledhja e ditës';
+      case 'user_specific': return 'Përdorues të zgjedhur';
+      default: return '';
+    }
+  };
+
   // Mock chart data - in production would come from API
   const salesChartData = [
     { name: 'Hën', sales: 1200 },
