@@ -77,21 +77,21 @@ code {
     background: #94a3b8;
 }
 
-/* t3next Brand Styles */
+/* Mobilshopurimi Brand Styles - Dark Blue Theme */
 .t3next-primary {
-    background-color: #E53935;
+    background-color: #1E3A5F;
 }
 
 .t3next-primary:hover {
-    background-color: #D32F2F;
+    background-color: #152C4A;
 }
 
 .t3next-secondary {
-    background-color: #00B9D7;
+    background-color: #2E5A8F;
 }
 
 .t3next-secondary:hover {
-    background-color: #00ACC1;
+    background-color: #264B78;
 }
 
 /* Table row hover */
