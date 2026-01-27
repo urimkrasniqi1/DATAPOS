@@ -137,12 +137,13 @@ const Settings = () => {
 
   const loadData = async () => {
     try {
-      const [branchesRes, companyRes, posRes, warehousesRes, vatRes] = await Promise.all([
+      const [branchesRes, companyRes, posRes, warehousesRes, vatRes, commentsRes] = await Promise.all([
         api.get('/branches'),
         api.get('/settings/company'),
         api.get('/settings/pos'),
         api.get('/warehouses'),
-        api.get('/vat-rates')
+        api.get('/vat-rates'),
+        api.get('/comment-templates').catch(() => ({ data: [] }))
       ]);
       setBranches(branchesRes.data);
       if (companyRes.data) {
@@ -153,9 +154,62 @@ const Settings = () => {
       }
       setWarehouses(warehousesRes.data || []);
       setVatRates(vatRes.data || []);
+      setCommentTemplates(commentsRes.data || []);
     } catch (error) {
       console.error('Error loading settings:', error);
     }
+  };
+
+  // Comment Templates CRUD
+  const handleSaveComment = async () => {
+    setLoading(true);
+    try {
+      if (editingComment) {
+        await api.put(`/comment-templates/${editingComment.id}`, commentForm);
+        toast.success('Template u përditësua me sukses!');
+      } else {
+        await api.post('/comment-templates', commentForm);
+        toast.success('Template u shtua me sukses!');
+      }
+      setShowCommentDialog(false);
+      loadData();
+    } catch (error) {
+      toast.error('Gabim gjatë ruajtjes së template');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleDeleteComment = async (id) => {
+    if (!window.confirm('Jeni i sigurt që doni të fshini këtë template?')) return;
+    try {
+      await api.delete(`/comment-templates/${id}`);
+      toast.success('Template u fshi me sukses!');
+      loadData();
+    } catch (error) {
+      toast.error('Gabim gjatë fshirjes');
+    }
+  };
+
+  const openCommentDialog = (comment = null) => {
+    if (comment) {
+      setEditingComment(comment);
+      setCommentForm({
+        title: comment.title,
+        content: comment.content,
+        is_default: comment.is_default || false,
+        is_active: comment.is_active !== false
+      });
+    } else {
+      setEditingComment(null);
+      setCommentForm({
+        title: '',
+        content: '',
+        is_default: false,
+        is_active: true
+      });
+    }
+    setShowCommentDialog(true);
   };
 
   const handleSaveCompany = async () => {
