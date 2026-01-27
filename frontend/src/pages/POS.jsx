@@ -1423,7 +1423,7 @@ const POS = () => {
                   </div>
                 ))}
                 {filteredProducts.length === 0 && dialogSearch.trim() && (
-                  <p className="text-center text-gray-400 py-8">Nuk u gjet asnjë produkt për "{dialogSearch}"</p>
+                  <p className="text-center text-gray-400 py-8">Nuk u gjet asnjë produkt për &quot;{dialogSearch}&quot;</p>
                 )}
                 {filteredProducts.length === 0 && !dialogSearch.trim() && (
                   <p className="text-center text-gray-400 py-8">Shkruani emrin ose barkod-in e produktit</p>
