@@ -35,7 +35,12 @@ import {
   CreditCard,
   AlertTriangle,
   CheckCircle,
-  Clock
+  Clock,
+  UserPlus,
+  Key,
+  Copy,
+  Eye,
+  EyeOff
 } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -44,7 +49,12 @@ const SuperAdmin = () => {
   const [tenants, setTenants] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showDialog, setShowDialog] = useState(false);
+  const [showUserDialog, setShowUserDialog] = useState(false);
+  const [showUsersListDialog, setShowUsersListDialog] = useState(false);
+  const [selectedTenant, setSelectedTenant] = useState(null);
+  const [tenantUsers, setTenantUsers] = useState([]);
   const [editingTenant, setEditingTenant] = useState(null);
+  const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
     company_name: '',
@@ -58,6 +68,13 @@ const SuperAdmin = () => {
     admin_username: '',
     admin_password: '',
     admin_full_name: ''
+  });
+  const [userFormData, setUserFormData] = useState({
+    username: '',
+    password: '',
+    full_name: '',
+    role: 'admin',
+    pin: ''
   });
 
   useEffect(() => {
