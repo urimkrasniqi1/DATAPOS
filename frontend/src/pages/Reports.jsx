@@ -122,6 +122,42 @@ const Reports = () => {
     }
   };
 
+  // Quick date range presets
+  const setQuickDateRange = (preset) => {
+    const today = new Date();
+    let from, to = today;
+    
+    switch (preset) {
+      case 'today':
+        from = today;
+        break;
+      case 'yesterday':
+        from = new Date(today.setDate(today.getDate() - 1));
+        to = from;
+        break;
+      case 'week':
+        from = new Date(today.setDate(today.getDate() - 7));
+        to = new Date();
+        break;
+      case 'month':
+        from = new Date(today.setMonth(today.getMonth() - 1));
+        to = new Date();
+        break;
+      case 'quarter':
+        from = new Date(today.setMonth(today.getMonth() - 3));
+        to = new Date();
+        break;
+      case 'year':
+        from = new Date(today.setFullYear(today.getFullYear() - 1));
+        to = new Date();
+        break;
+      default:
+        from = new Date(new Date().setDate(new Date().getDate() - 30));
+    }
+    
+    setDateRange({ from, to });
+  };
+
   const COLORS = ['#00a79d', '#00a79d', '#10B981', '#F59E0B', '#8B5CF6'];
 
   return (
@@ -133,6 +169,38 @@ const Reports = () => {
           <p className="text-gray-500">Analizoni performancën e biznesit</p>
         </div>
         <div className="flex gap-2">
+          {/* Quick Export Dropdown */}
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button variant="outline" className="gap-2">
+                <Download className="h-4 w-4" />
+                Eksporto
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-56 p-2" align="end">
+              <div className="space-y-1">
+                <p className="text-xs font-medium text-gray-500 px-2 py-1">Eksporto PDF</p>
+                <Button 
+                  variant="ghost" 
+                  className="w-full justify-start text-sm h-8"
+                  onClick={() => exportReport('pdf')}
+                >
+                  <FileText className="h-4 w-4 mr-2 text-red-500" />
+                  Periudha Aktuale
+                </Button>
+                <p className="text-xs font-medium text-gray-500 px-2 py-1 mt-2">Eksporto Excel</p>
+                <Button 
+                  variant="ghost" 
+                  className="w-full justify-start text-sm h-8"
+                  onClick={() => exportReport('excel')}
+                >
+                  <FileSpreadsheet className="h-4 w-4 mr-2 text-green-600" />
+                  Periudha Aktuale
+                </Button>
+              </div>
+            </PopoverContent>
+          </Popover>
+          
           <Button
             variant="outline"
             className="gap-2"
@@ -152,6 +220,58 @@ const Reports = () => {
             Excel
           </Button>
         </div>
+      </div>
+
+      {/* Quick Date Range Presets */}
+      <div className="flex flex-wrap gap-2">
+        <Button 
+          variant="outline" 
+          size="sm" 
+          onClick={() => setQuickDateRange('today')}
+          className="text-xs"
+        >
+          Sot
+        </Button>
+        <Button 
+          variant="outline" 
+          size="sm" 
+          onClick={() => setQuickDateRange('yesterday')}
+          className="text-xs"
+        >
+          Dje
+        </Button>
+        <Button 
+          variant="outline" 
+          size="sm" 
+          onClick={() => setQuickDateRange('week')}
+          className="text-xs"
+        >
+          7 ditët e fundit
+        </Button>
+        <Button 
+          variant="outline" 
+          size="sm" 
+          onClick={() => setQuickDateRange('month')}
+          className="text-xs"
+        >
+          30 ditët e fundit
+        </Button>
+        <Button 
+          variant="outline" 
+          size="sm" 
+          onClick={() => setQuickDateRange('quarter')}
+          className="text-xs"
+        >
+          3 muajt e fundit
+        </Button>
+        <Button 
+          variant="outline" 
+          size="sm" 
+          onClick={() => setQuickDateRange('year')}
+          className="text-xs"
+        >
+          1 vit
+        </Button>
       </div>
 
       {/* Filters */}
