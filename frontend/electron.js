@@ -1,4 +1,4 @@
-const { app, BrowserWindow, Menu } = require('electron');
+const { app, BrowserWindow, Menu, ipcMain } = require('electron');
 const path = require('path');
 const { spawn } = require('child_process');
 
@@ -14,11 +14,12 @@ function createWindow() {
     height: 900,
     minWidth: 1024,
     minHeight: 768,
-    title: 't3next POS',
+    title: 'iPOS',
     icon: path.join(__dirname, 'public/favicon.ico'),
     webPreferences: {
       nodeIntegration: false,
       contextIsolation: true,
+      preload: path.join(__dirname, 'preload.js'),
     },
     autoHideMenuBar: true,
   });
@@ -29,7 +30,7 @@ function createWindow() {
   if (isDev) {
     // In development, load from React dev server
     mainWindow.loadURL('http://localhost:3000');
-    mainWindow.webContents.openDevTools();
+    // mainWindow.webContents.openDevTools();
   } else {
     // In production, load the built React app
     mainWindow.loadFile(path.join(__dirname, 'build/index.html'));
@@ -42,6 +43,93 @@ function createWindow() {
   // Maximize on start for POS usage
   mainWindow.maximize();
 }
+
+// Silent printing handler
+ipcMain.handle('silent-print', async (event, options) => {
+  try {
+    const win = BrowserWindow.getFocusedWindow();
+    if (!win) {
+      return { success: false, error: 'No window found' };
+    }
+
+    // Get available printers
+    const printers = await win.webContents.getPrintersAsync();
+    
+    // Find the default printer or specified printer
+    let targetPrinter = printers.find(p => p.isDefault);
+    if (options.printerName) {
+      const specificPrinter = printers.find(p => p.name === options.printerName);
+      if (specificPrinter) {
+        targetPrinter = specificPrinter;
+      }
+    }
+
+    if (!targetPrinter) {
+      return { success: false, error: 'No printer available' };
+    }
+
+    // Print silently
+    await win.webContents.print({
+      silent: true,
+      printBackground: true,
+      deviceName: targetPrinter.name,
+      margins: {
+        marginType: 'none'
+      },
+      pageSize: options.pageSize || 'A4',
+      ...options.printOptions
+    });
+
+    return { success: true, printer: targetPrinter.name };
+  } catch (error) {
+    return { success: false, error: error.message };
+  }
+});
+
+// Get available printers
+ipcMain.handle('get-printers', async () => {
+  try {
+    const win = BrowserWindow.getFocusedWindow();
+    if (!win) {
+      return [];
+    }
+    const printers = await win.webContents.getPrintersAsync();
+    return printers.map(p => ({
+      name: p.name,
+      displayName: p.displayName,
+      isDefault: p.isDefault,
+      status: p.status
+    }));
+  } catch (error) {
+    console.error('Error getting printers:', error);
+    return [];
+  }
+});
+
+// Print to PDF (for preview)
+ipcMain.handle('print-to-pdf', async (event, options) => {
+  try {
+    const win = BrowserWindow.getFocusedWindow();
+    if (!win) {
+      return { success: false, error: 'No window found' };
+    }
+
+    const pdfData = await win.webContents.printToPDF({
+      printBackground: true,
+      margins: {
+        top: 0,
+        bottom: 0,
+        left: 0,
+        right: 0
+      },
+      pageSize: options.pageSize || 'A4',
+    });
+
+    return { success: true, data: pdfData.toString('base64') };
+  } catch (error) {
+    return { success: false, error: error.message };
+  }
+});
 
 function startBackend() {
   if (isDev) {
