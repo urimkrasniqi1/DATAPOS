@@ -1629,7 +1629,7 @@ const POS = () => {
             </div>
             {savedReceiptComment && (
               <p className="text-xs text-green-600 bg-green-50 px-2 py-1 rounded">
-                ✓ Koment default: "{savedReceiptComment.substring(0, 50)}{savedReceiptComment.length > 50 ? '...' : ''}"
+                ✓ Koment default: &quot;{savedReceiptComment.substring(0, 50)}{savedReceiptComment.length > 50 ? '...' : ''}&quot;
               </p>
             )}
           </div>
