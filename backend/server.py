@@ -73,6 +73,7 @@ class UserBase(BaseModel):
     role: UserRole = UserRole.CASHIER
     branch_id: Optional[str] = None
     is_active: bool = True
+    pin: Optional[str] = None
 
 class UserCreate(UserBase):
     password: str
@@ -83,6 +84,7 @@ class UserUpdate(BaseModel):
     branch_id: Optional[str] = None
     is_active: Optional[bool] = None
     password: Optional[str] = None
+    pin: Optional[str] = None
 
 class User(UserBase):
     model_config = ConfigDict(extra="ignore")
@@ -97,6 +99,7 @@ class UserResponse(BaseModel):
     branch_id: Optional[str] = None
     is_active: bool
     created_at: str
+    pin: Optional[str] = None
 
 class LoginRequest(BaseModel):
     username: str
