@@ -100,8 +100,8 @@ const Login = () => {
             {/* Logo */}
             <div className="flex items-center justify-center mb-8">
               <img 
-                src="https://customer-assets.emergentagent.com/job_supermarket-pos-12/artifacts/qhc6ljlw_pos%201%20logo.png" 
-                alt="iPOS" 
+                src="https://customer-assets.emergentagent.com/job_retailsys-1/artifacts/9i1h1bxb_logo%20icon.png" 
+                alt="MobilshopurimiPOS" 
                 className="h-16 object-contain"
               />
             </div>
@@ -208,8 +208,8 @@ const Login = () => {
             {/* Logo */}
             <div className="flex items-center justify-center mb-8">
               <img 
-                src="https://customer-assets.emergentagent.com/job_supermarket-pos-12/artifacts/qhc6ljlw_pos%201%20logo.png" 
-                alt="iPOS" 
+                src="https://customer-assets.emergentagent.com/job_retailsys-1/artifacts/9i1h1bxb_logo%20icon.png" 
+                alt="MobilshopurimiPOS" 
                 className="h-14 object-contain"
               />
             </div>

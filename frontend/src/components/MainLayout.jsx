@@ -82,8 +82,8 @@ const MainLayout = () => {
           </Button>
           <div className="flex items-center gap-2">
             <img 
-              src="https://customer-assets.emergentagent.com/job_supermarket-pos-12/artifacts/qhc6ljlw_pos%201%20logo.png" 
-              alt="iPOS" 
+              src="https://customer-assets.emergentagent.com/job_retailsys-1/artifacts/9i1h1bxb_logo%20icon.png" 
+              alt="MobilshopurimiPOS" 
               className="h-8 object-contain"
             />
           </div>
@@ -121,8 +121,8 @@ const MainLayout = () => {
         {/* Logo */}
         <div className="h-16 flex items-center justify-center border-b border-gray-100">
           <img 
-            src="https://customer-assets.emergentagent.com/job_supermarket-pos-12/artifacts/qhc6ljlw_pos%201%20logo.png" 
-            alt="iPOS" 
+            src="https://customer-assets.emergentagent.com/job_retailsys-1/artifacts/9i1h1bxb_logo%20icon.png" 
+            alt="MobilshopurimiPOS" 
             className="h-10 object-contain"
           />
         </div>
