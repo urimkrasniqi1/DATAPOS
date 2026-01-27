@@ -532,15 +532,23 @@ const POS = () => {
   // Print the invoice
   const executePrint = () => {
     const printContent = invoiceRef.current;
-    if (!printContent) return;
-
-    const printWindow = window.open('', '_blank');
-    if (!printWindow) {
-      toast.error('Lejo popup-et për printim');
+    if (!printContent) {
+      toast.error('Gabim: Fatura nuk u gjet');
       return;
     }
 
-    printWindow.document.write(`
+    // Create hidden iframe for printing (more reliable than window.open)
+    const printFrame = document.createElement('iframe');
+    printFrame.style.position = 'absolute';
+    printFrame.style.top = '-10000px';
+    printFrame.style.left = '-10000px';
+    printFrame.style.width = '210mm';
+    printFrame.style.height = '0';
+    document.body.appendChild(printFrame);
+
+    const printDocument = printFrame.contentDocument || printFrame.contentWindow.document;
+    
+    printDocument.write(`
       <!DOCTYPE html>
       <html>
         <head>
@@ -556,17 +564,30 @@ const POS = () => {
         </head>
         <body>
           ${printContent.outerHTML}
-          <script>
-            setTimeout(() => {
-              window.print();
-              window.close();
-            }, 500);
-          </script>
         </body>
       </html>
     `);
-    printWindow.document.close();
-    toast.success('Fatura po printohet...');
+    
+    printDocument.close();
+    
+    // Wait for content and Tailwind to load, then print
+    setTimeout(() => {
+      try {
+        printFrame.contentWindow.focus();
+        printFrame.contentWindow.print();
+      } catch (e) {
+        console.error('Print error:', e);
+        toast.error('Gabim gjatë printimit. Provoni përsëri.');
+      }
+      // Remove iframe after print dialog closes
+      setTimeout(() => {
+        if (printFrame.parentNode) {
+          document.body.removeChild(printFrame);
+        }
+      }, 1000);
+    }, 800);
+    
+    toast.success('Fatura po dërgohet për printim...');
   };
 
   // View and print recent sale A4
