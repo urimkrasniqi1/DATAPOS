@@ -599,16 +599,35 @@ def require_role(allowed_roles: List[UserRole]):
         return current_user
     return role_checker
 
+def get_tenant_filter(current_user: dict) -> dict:
+    """Get tenant filter for queries - returns empty dict for super_admin"""
+    if current_user.get("role") == UserRole.SUPER_ADMIN or current_user.get("role") == "super_admin":
+        return {}  # Super admin sees all
+    tenant_id = current_user.get("tenant_id")
+    if not tenant_id:
+        return {}  # Legacy users without tenant_id
+    return {"tenant_id": tenant_id}
+
+def add_tenant_id(data: dict, current_user: dict) -> dict:
+    """Add tenant_id to data for create operations"""
+    tenant_id = current_user.get("tenant_id")
+    if tenant_id:
+        data["tenant_id"] = tenant_id
+    return data
+
 async def log_audit(user_id: str, action: str, entity_type: str, entity_id: str, details: dict = None):
     audit = AuditLog(user_id=user_id, action=action, entity_type=entity_type, entity_id=entity_id, details=details)
     doc = audit.model_dump()
     doc['created_at'] = doc['created_at'].isoformat()
     await db.audit_logs.insert_one(doc)
 
-async def generate_receipt_number(branch_id: str = None) -> str:
+async def generate_receipt_number(branch_id: str = None, tenant_id: str = None) -> str:
     today = datetime.now(timezone.utc).strftime("%Y%m%d")
     prefix = f"RCP-{today}"
-    count = await db.sales.count_documents({"receipt_number": {"$regex": f"^{prefix}"}})
+    query = {"receipt_number": {"$regex": f"^{prefix}"}}
+    if tenant_id:
+        query["tenant_id"] = tenant_id
+    count = await db.sales.count_documents(query)
     return f"{prefix}-{str(count + 1).zfill(4)}"
 
 # Helper to get tenant from request header or subdomain
