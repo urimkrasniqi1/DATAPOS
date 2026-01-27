@@ -1,7 +1,7 @@
-# t3next POS System - Product Requirements Document
+# Mobilshopurimi POS System - Product Requirements Document
 
 ## Original Problem Statement
-Sistema POS (Point of Sale) për markete dhe supermarkete me mbështetje multi-filiale. Ndërfaqe në gjuhën shqipe.
+Sistema POS (Point of Sale) për markete dhe supermarkete me mbështetje multi-filiale. Ndërfaqe në gjuhën shqipe. Aplikacioni desktop (.exe) me Electron.
 
 ## User Personas
 1. **Administrator** - Menaxhon sistemin, përdoruesit, degët, raportet
@@ -9,56 +9,56 @@ Sistema POS (Point of Sale) për markete dhe supermarkete me mbështetje multi-f
 3. **Arkëtar** - Kryen shitje, hap/mbyll arkën
 
 ## Core Requirements (Static)
-- Autentifikim JWT me role-based access control
+- Autentifikim JWT me role-based access control (username/password)
 - Regjistrimi i produkteve me të gjitha fushat OPSIONALE përveç ID
 - Menaxhimi i stokut me histori lëvizjesh (IN/OUT)
 - Sesione arke (cash drawer)
 - Transaksione shitjesh
 - Raportim me eksport PDF/Excel
 - Mbështetje multi-filiale
+- Printimi termal dhe A4
 
 ## What's Been Implemented (January 2025)
 
 ### Backend (FastAPI + MongoDB)
-- [x] Auth: JWT login, role-based access (admin, manager, cashier)
+- [x] Auth: JWT login with username (not email), role-based access
 - [x] Users CRUD with role management
 - [x] Branches CRUD for multi-filial support
 - [x] Products CRUD with ALL optional fields except ID
 - [x] Stock management with movement history
 - [x] Cash drawer sessions (open, transaction, close)
-- [x] Sales transactions with stock validation
-- [x] Reports: dashboard, sales, stock, cashier performance
+- [x] Sales transactions (allows out-of-stock sales)
+- [x] Reports: dashboard, sales, profit/loss, stock, cashier performance
 - [x] PDF/Excel export
 - [x] Audit logging for all actions
+- [x] Settings API: Company info, POS settings, Warehouses, VAT rates
 
 ### Frontend (React + Shadcn UI)
-- [x] Login page with t3next branding (red #E53935)
+- [x] Login page with Mobilshopurimi branding (cream/dark-blue theme)
 - [x] Dashboard with KPIs, charts, quick actions
-- [x] POS/Checkout page per user design
+- [x] POS/Checkout page with thermal receipt printing
 - [x] Products management page
 - [x] Stock management with movements
 - [x] Users management
 - [x] Branches management
-- [x] Reports with date filters
-- [x] Settings page (UI only)
+- [x] Reports with date filters and charts
+- [x] Settings page - FULLY FUNCTIONAL (Company, POS, Warehouses, VAT)
 - [x] Audit logs page
 - [x] Albanian language interface
+- [x] PWA support for fullscreen mode
 
-### Cashier Workflow (NEW - January 2025)
-- [x] Cashier redirects directly to /pos on login
-- [x] After closing drawer, shows "Hap Arkën" and "Çkyçu" buttons
-- [x] Fullscreen POS interface for cashier role
+### Receipt Printing Features (January 2025)
+- [x] Professional thermal receipt design (8cm wide)
+- [x] Company logo on receipt
+- [x] Comment templates for receipt
+- [x] Saved default comment feature
+- [x] **Direct print toggle (pa parapamje) - NEW**
+- [x] iframe-based reliable printing mechanism
+- [x] A4 Invoice printing with buyer info form
 
-### Invoice A4 Printing (NEW - January 2025)
-- [x] A4 Invoice component with company info, items, totals
-- [x] "Printo A4" button in POS sidebar
-- [x] View and print recent sales from Documents dialog
-- [x] Print preview with print functionality
-
-### Design Implementation
-- [x] t3next branding (red #E53935, teal #00B9D7)
-- [x] User-provided designs for Login, Checkout, Payment modal
-- [x] Sidebar navigation
+### Design & UX
+- [x] Mobilshopurimi rebranding (cream #f5f0e8, dark-blue #1E3A5F)
+- [x] F2 shortcut label on payment button
 - [x] Responsive design
 
 ## Prioritized Backlog
@@ -70,11 +70,13 @@ Sistema POS (Point of Sale) për markete dhe supermarkete me mbështetje multi-f
 - Stock management ✓
 - Cashier workflow ✓
 - Invoice A4 printing ✓
+- Settings backend ✓
+- Direct print toggle ✓
 
-### P1 (High)
-- [ ] Settings page backend implementation
-- [ ] Real-time stock alerts
-- [ ] Thermal receipt printer integration
+### P1 (High) - REFACTORING NEEDED
+- [ ] Refactor backend/server.py into modular APIRouter structure
+- [ ] Refactor frontend/src/pages/POS.jsx into smaller components/hooks
+- [ ] User-customizable comment templates in Settings
 
 ### P2 (Medium)
 - [ ] OpenAI GPT integration for analytics
