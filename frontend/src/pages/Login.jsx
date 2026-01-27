@@ -17,7 +17,7 @@ const Login = () => {
 
   // Handle PIN login (for cashiers)
   const handlePinLogin = async () => {
-    if (pin.length < 4) return;
+    if (pin.length < 1) return;
     setLoading(true);
     // Try to login with PIN as password and a default pattern
     // The PIN could be the user's password
