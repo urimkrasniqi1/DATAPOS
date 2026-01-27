@@ -2331,59 +2331,59 @@ async def reset_data(
         today = datetime.now(timezone.utc).replace(hour=0, minute=0, second=0, microsecond=0).isoformat()
         
         # Backup today's sales before deleting
-        sales_to_backup = await db.sales.find({"created_at": {"$gte": today}}, {"_id": 0}).to_list(10000)
+        sales_to_backup = await db.sales.find({"created_at": {"$gte": today}, **tenant_filter}, {"_id": 0}).to_list(10000)
         backup_data["sales"] = sales_to_backup
         
         # Backup today's cash drawers
-        drawers_to_backup = await db.cash_drawers.find({"opened_at": {"$gte": today}}, {"_id": 0}).to_list(1000)
+        drawers_to_backup = await db.cash_drawers.find({"opened_at": {"$gte": today}, **tenant_filter}, {"_id": 0}).to_list(1000)
         backup_data["cash_drawers"] = drawers_to_backup
         
         # Delete today's sales
-        result = await db.sales.delete_many({"created_at": {"$gte": today}})
+        result = await db.sales.delete_many({"created_at": {"$gte": today}, **tenant_filter})
         deleted_sales = result.deleted_count
         
         # Close and delete today's cash drawers
-        result = await db.cash_drawers.delete_many({"opened_at": {"$gte": today}})
+        result = await db.cash_drawers.delete_many({"opened_at": {"$gte": today}, **tenant_filter})
         deleted_drawers = result.deleted_count
         
     elif request.reset_type == "user_specific" and request.user_ids:
         # Reset specific users' data
         for user_id in request.user_ids:
             # Backup user's sales
-            user_sales = await db.sales.find({"user_id": user_id}, {"_id": 0}).to_list(10000)
+            user_sales = await db.sales.find({"user_id": user_id, **tenant_filter}, {"_id": 0}).to_list(10000)
             backup_data["sales"].extend(user_sales)
             
             # Backup user's cash drawers
-            user_drawers = await db.cash_drawers.find({"user_id": user_id}, {"_id": 0}).to_list(1000)
+            user_drawers = await db.cash_drawers.find({"user_id": user_id, **tenant_filter}, {"_id": 0}).to_list(1000)
             backup_data["cash_drawers"].extend(user_drawers)
             
             # Query by user_id (the field used in sales and cash_drawers collections)
-            result = await db.sales.delete_many({"user_id": user_id})
+            result = await db.sales.delete_many({"user_id": user_id, **tenant_filter})
             deleted_sales += result.deleted_count
             
-            result = await db.cash_drawers.delete_many({"user_id": user_id})
+            result = await db.cash_drawers.delete_many({"user_id": user_id, **tenant_filter})
             deleted_drawers += result.deleted_count
             
     elif request.reset_type == "all":
         # Backup all data before deleting
-        all_sales = await db.sales.find({}, {"_id": 0}).to_list(100000)
+        all_sales = await db.sales.find(tenant_filter, {"_id": 0}).to_list(100000)
         backup_data["sales"] = all_sales
         
-        all_drawers = await db.cash_drawers.find({}, {"_id": 0}).to_list(10000)
+        all_drawers = await db.cash_drawers.find(tenant_filter, {"_id": 0}).to_list(10000)
         backup_data["cash_drawers"] = all_drawers
         
-        all_movements = await db.stock_movements.find({}, {"_id": 0}).to_list(100000)
+        all_movements = await db.stock_movements.find(tenant_filter, {"_id": 0}).to_list(100000)
         backup_data["stock_movements"] = all_movements
         
-        # Reset all sales data
-        result = await db.sales.delete_many({})
+        # Reset all sales data for this tenant
+        result = await db.sales.delete_many(tenant_filter)
         deleted_sales = result.deleted_count
         
-        result = await db.cash_drawers.delete_many({})
+        result = await db.cash_drawers.delete_many(tenant_filter)
         deleted_drawers = result.deleted_count
         
         # Reset stock movements (optional - keep products but clear movement history)
-        result = await db.stock_movements.delete_many({})
+        result = await db.stock_movements.delete_many(tenant_filter)
         deleted_movements = result.deleted_count
     
     # Save backup to database
