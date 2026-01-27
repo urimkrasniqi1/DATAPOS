@@ -1685,9 +1685,22 @@ const POS = () => {
                 lineHeight: '1.4',
                 border: '1px solid #ddd'
               }}>
-                {/* === FISCAL-STYLE HEADER === */}
+                {/* === FISCAL-STYLE HEADER WITH LOGO === */}
                 <div style={{ textAlign: 'center', paddingBottom: '8px', marginBottom: '8px', borderBottom: '2px solid #000' }}>
-                  <div style={{ fontSize: '18px', fontWeight: 'bold', letterSpacing: '2px', marginBottom: '4px' }}>
+                  {/* Logo */}
+                  <div style={{ marginBottom: '8px' }}>
+                    <img 
+                      src="https://customer-assets.emergentagent.com/job_supermarket-pos-11/artifacts/mcfwxd72_mobilshopurimi%20logo.png" 
+                      alt="Mobilshopurimi" 
+                      style={{ 
+                        height: '50px', 
+                        maxWidth: '180px',
+                        objectFit: 'contain',
+                        margin: '0 auto'
+                      }} 
+                    />
+                  </div>
+                  <div style={{ fontSize: '16px', fontWeight: 'bold', letterSpacing: '2px', marginBottom: '4px' }}>
                     {companySettings?.company_name || 'MOBILSHOPURIMI'}
                   </div>
                   {companySettings?.address && (
