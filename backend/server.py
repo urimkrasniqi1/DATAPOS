@@ -1955,14 +1955,17 @@ async def get_audit_logs(
 # ============ CATEGORIES ROUTES ============
 @api_router.get("/categories")
 async def get_categories(current_user: dict = Depends(get_current_user)):
-    products = await db.products.find({}, {"_id": 0, "category": 1}).to_list(100000)
+    tenant_filter = get_tenant_filter(current_user)
+    products = await db.products.find(tenant_filter, {"_id": 0, "category": 1}).to_list(100000)
     categories = list(set(p.get("category") for p in products if p.get("category")))
     return sorted(categories)
 
 # ============ COMPANY SETTINGS ROUTES ============
 @api_router.get("/settings/company")
 async def get_company_settings(current_user: dict = Depends(get_current_user)):
-    settings = await db.settings.find_one({"type": "company"}, {"_id": 0})
+    tenant_filter = get_tenant_filter(current_user)
+    settings_query = {"type": "company", **tenant_filter} if tenant_filter else {"type": "company"}
+    settings = await db.settings.find_one(settings_query, {"_id": 0})
     if not settings:
         # Return default settings
         return CompanySettings().model_dump()
@@ -1973,8 +1976,11 @@ async def update_company_settings(
     settings: CompanySettingsUpdate,
     current_user: dict = Depends(require_role([UserRole.ADMIN]))
 ):
+    tenant_filter = get_tenant_filter(current_user)
+    settings_query = {"type": "company", **tenant_filter} if tenant_filter else {"type": "company"}
+    
     # Get existing settings or create new
-    existing = await db.settings.find_one({"type": "company"})
+    existing = await db.settings.find_one(settings_query)
     
     if existing:
         current_data = existing.get("data", {})
@@ -1983,28 +1989,32 @@ async def update_company_settings(
         current_data.update(update_data)
         
         await db.settings.update_one(
-            {"type": "company"},
+            settings_query,
             {"$set": {"data": current_data, "updated_at": datetime.now(timezone.utc).isoformat()}}
         )
     else:
         # Create new settings document
-        await db.settings.insert_one({
+        new_settings = {
             "type": "company",
             "data": settings.model_dump(),
             "created_at": datetime.now(timezone.utc).isoformat(),
             "updated_at": datetime.now(timezone.utc).isoformat()
-        })
+        }
+        new_settings = add_tenant_id(new_settings, current_user)  # Add tenant_id
+        await db.settings.insert_one(new_settings)
     
     await log_audit(current_user["id"], "update_settings", "company", "company")
     
     # Return updated settings
-    updated = await db.settings.find_one({"type": "company"}, {"_id": 0})
+    updated = await db.settings.find_one(settings_query, {"_id": 0})
     return updated.get("data", {})
 
 # ============ POS SETTINGS ROUTES ============
 @api_router.get("/settings/pos")
 async def get_pos_settings(current_user: dict = Depends(get_current_user)):
-    settings = await db.settings.find_one({"type": "pos"}, {"_id": 0})
+    tenant_filter = get_tenant_filter(current_user)
+    settings_query = {"type": "pos", **tenant_filter} if tenant_filter else {"type": "pos"}
+    settings = await db.settings.find_one(settings_query, {"_id": 0})
     if not settings:
         return POSSettings().model_dump()
     return settings.get("data", POSSettings().model_dump())
@@ -2014,7 +2024,9 @@ async def update_pos_settings(
     settings: POSSettingsUpdate,
     current_user: dict = Depends(require_role([UserRole.ADMIN]))
 ):
-    existing = await db.settings.find_one({"type": "pos"})
+    tenant_filter = get_tenant_filter(current_user)
+    settings_query = {"type": "pos", **tenant_filter} if tenant_filter else {"type": "pos"}
+    existing = await db.settings.find_one(settings_query)
     
     if existing:
         current_data = existing.get("data", {})
@@ -2022,16 +2034,18 @@ async def update_pos_settings(
         current_data.update(update_data)
         
         await db.settings.update_one(
-            {"type": "pos"},
+            settings_query,
             {"$set": {"data": current_data, "updated_at": datetime.now(timezone.utc).isoformat()}}
         )
     else:
-        await db.settings.insert_one({
+        new_settings = {
             "type": "pos",
             "data": settings.model_dump(),
             "created_at": datetime.now(timezone.utc).isoformat(),
             "updated_at": datetime.now(timezone.utc).isoformat()
-        })
+        }
+        new_settings = add_tenant_id(new_settings, current_user)  # Add tenant_id
+        await db.settings.insert_one(new_settings)
     
     await log_audit(current_user["id"], "update_settings", "pos", "pos")
     updated = await db.settings.find_one({"type": "pos"}, {"_id": 0})
