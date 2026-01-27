@@ -58,10 +58,12 @@ Sistema POS (Point of Sale) për markete dhe supermarkete me mbështetje multi-f
 - [x] **QR Code for contact (WhatsApp, Viber, Thirrje)** - NEW
 
 ### Design & UX
-- [x] Mobilshopurimi rebranding (cream #f5f0e8, dark-blue #1E3A5F)
-- [x] F2 shortcut label on payment button
+- [x] iPOS rebranding (teal #00a79d)
+- [x] Keyboard shortcut labels on POS buttons (F2, F4, F6, F12, Del)
+- [x] PIN-based login for cashiers + Admin login form
 - [x] Responsive design
 - [x] Courier/monospace font for fiscal receipt look
+- [x] Thermal receipt with tear-off section for cashier
 
 ## Prioritized Backlog
 
@@ -76,6 +78,8 @@ Sistema POS (Point of Sale) për markete dhe supermarkete me mbështetje multi-f
 - Direct print toggle ✓
 - Professional fiscal receipt ✓
 - QR code contact ✓
+- Keyboard shortcuts for POS (F1, F2, F4, F6, F9, F10, F12, Ctrl+1/*/+/-, Delete) ✓
+- Visual shortcut labels on buttons (F2, F4, F6, F12, Del) ✓
 
 ### P1 (High) - REFACTORING NEEDED
 - [ ] Refactor backend/server.py into modular APIRouter structure
