@@ -141,6 +141,16 @@ Sistema POS (Point of Sale) për markete dhe supermarkete me mbështetje multi-f
   - CRUD /api/warehouses - Menaxhimi i depove
   - CRUD /api/vat-rates - Normat e TVSH (3 default: 18%, 8%, 0%)
 - **Frontend Settings tabs funksionale**: DEPOT, TVSH me dialog add/edit
+- **Raporti i Fitimit/Humbjes (Profit/Loss)**:
+  - Backend: GET /api/reports/profit-loss
+  - Frontend: Tab "Fitimi" me grafik dhe tabelë ditore
+  - Tregon: Të ardhura, Kosto, Fitimi Bruto, Marzhi i Fitimit, TVSH, Fitimi Neto
+- **Faqja e Raporteve plotësisht funksionale**:
+  - Tab Shitjet: Trendi ditor, grafik linear, tabelë
+  - Tab Fitimi: Të ardhura vs Kosto vs Fitim, grafik bar
+  - Tab Stoku: Produkte me stok të ulët/pa stok
+  - Tab Performanca: Renditja e arkëtarëve sipas shitjeve
+  - Eksportimi PDF dhe Excel funksionon
 
 ## Previous Updates (January 26, 2025)
 - Shtuar tekst informues për zgjedhjen e printerit në dialogun e kuponit termik
