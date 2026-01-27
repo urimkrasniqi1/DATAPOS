@@ -67,7 +67,7 @@ const Login = () => {
         addDigit(e.key);
       } else if (e.key === 'Backspace') {
         removeDigit();
-      } else if (e.key === 'Enter' && pin.length >= 4) {
+      } else if (e.key === 'Enter' && pin.length >= 1) {
         handlePinLogin();
       } else if (e.key === 'Escape') {
         clearPin();
