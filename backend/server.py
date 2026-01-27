@@ -1012,6 +1012,7 @@ async def create_product(product_data: ProductCreate, current_user: dict = Depen
     doc = product.model_dump()
     doc['created_at'] = doc['created_at'].isoformat()
     doc['updated_at'] = doc['updated_at'].isoformat()
+    doc = add_tenant_id(doc, current_user)  # Add tenant_id
     await db.products.insert_one(doc)
     
     # Create initial stock movement if initial_stock > 0
@@ -1026,6 +1027,7 @@ async def create_product(product_data: ProductCreate, current_user: dict = Depen
         )
         mov_doc = movement.model_dump()
         mov_doc['created_at'] = mov_doc['created_at'].isoformat()
+        mov_doc = add_tenant_id(mov_doc, current_user)  # Add tenant_id
         await db.stock_movements.insert_one(mov_doc)
     
     await log_audit(current_user["id"], "create_product", "product", product.id)
@@ -1039,7 +1041,7 @@ async def get_products(
     low_stock: Optional[bool] = None,
     current_user: dict = Depends(get_current_user)
 ):
-    query = {}
+    query = get_tenant_filter(current_user)  # Filter by tenant
     if branch_id:
         query["branch_id"] = branch_id
     if category:
@@ -1057,25 +1059,28 @@ async def get_products(
 
 @api_router.get("/products/{product_id}", response_model=ProductResponse)
 async def get_product(product_id: str, current_user: dict = Depends(get_current_user)):
-    product = await db.products.find_one({"id": product_id}, {"_id": 0})
+    query = {"id": product_id, **get_tenant_filter(current_user)}
+    product = await db.products.find_one(query, {"_id": 0})
     if not product:
         raise HTTPException(status_code=404, detail="Produkti nuk u gjet")
     return ProductResponse(**product)
 
 @api_router.get("/products/barcode/{barcode}", response_model=ProductResponse)
 async def get_product_by_barcode(barcode: str, current_user: dict = Depends(get_current_user)):
-    product = await db.products.find_one({"barcode": barcode}, {"_id": 0})
+    query = {"barcode": barcode, **get_tenant_filter(current_user)}
+    product = await db.products.find_one(query, {"_id": 0})
     if not product:
         raise HTTPException(status_code=404, detail="Produkti nuk u gjet")
     return ProductResponse(**product)
 
 @api_router.put("/products/{product_id}", response_model=ProductResponse)
 async def update_product(product_id: str, product_data: ProductUpdate, current_user: dict = Depends(require_role([UserRole.ADMIN, UserRole.MANAGER]))):
+    tenant_filter = get_tenant_filter(current_user)
     update_dict = {k: v for k, v in product_data.model_dump().items() if v is not None}
     update_dict["updated_at"] = datetime.now(timezone.utc).isoformat()
     
-    await db.products.update_one({"id": product_id}, {"$set": update_dict})
-    product = await db.products.find_one({"id": product_id}, {"_id": 0})
+    await db.products.update_one({"id": product_id, **tenant_filter}, {"$set": update_dict})
+    product = await db.products.find_one({"id": product_id, **tenant_filter}, {"_id": 0})
     if not product:
         raise HTTPException(status_code=404, detail="Produkti nuk u gjet")
     
@@ -1084,7 +1089,8 @@ async def update_product(product_id: str, product_data: ProductUpdate, current_u
 
 @api_router.delete("/products/{product_id}")
 async def delete_product(product_id: str, current_user: dict = Depends(require_role([UserRole.ADMIN]))):
-    result = await db.products.delete_one({"id": product_id})
+    tenant_filter = get_tenant_filter(current_user)
+    result = await db.products.delete_one({"id": product_id, **tenant_filter})
     if result.deleted_count == 0:
         raise HTTPException(status_code=404, detail="Produkti nuk u gjet")
     await log_audit(current_user["id"], "delete_product", "product", product_id)
