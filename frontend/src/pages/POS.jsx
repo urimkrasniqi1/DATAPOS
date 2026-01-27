@@ -330,15 +330,30 @@ const POS = () => {
     if (directPrintEnabled) {
       // We need to render the receipt first, then print and close immediately
       setShowReceiptPreview(true);
-      // Use setTimeout to allow the receipt to render first, then print and close
-      setTimeout(() => {
-        executeThermalPrint(false);
-        // Close the dialog immediately after sending to print
-        setTimeout(() => {
+      
+      // Wait for receipt to render, then print
+      const tryPrint = (attempts = 0) => {
+        const printArea = document.getElementById('thermal-receipt-print');
+        if (printArea) {
+          // Receipt is rendered, proceed with printing
+          executeThermalPrint(false);
+          // Close the dialog after printing
+          setTimeout(() => {
+            setShowReceiptPreview(false);
+            setReceiptDataForPrint(null);
+          }, 500);
+        } else if (attempts < 20) {
+          // Receipt not yet rendered, try again after 100ms (max 2 seconds)
+          setTimeout(() => tryPrint(attempts + 1), 100);
+        } else {
+          // Failed to render receipt after 2 seconds
+          toast.error('Gabim: Kuponi nuk u renderua. Provoni përsëri.');
           setShowReceiptPreview(false);
-          setReceiptDataForPrint(null);
-        }, 200);
-      }, 150);
+        }
+      };
+      
+      // Start trying after initial delay
+      setTimeout(() => tryPrint(0), 200);
     } else {
       setShowReceiptPreview(true);
     }
