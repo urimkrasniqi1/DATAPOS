@@ -171,7 +171,7 @@ const Users = () => {
           <p className="text-gray-500">Menaxho përdoruesit e sistemit</p>
         </div>
         <Button
-          className="bg-[#1E3A5F] hover:bg-[#152C4A] gap-2"
+          className="bg-[#00a79d] hover:bg-[#008f86] gap-2"
           onClick={() => {
             resetForm();
             setShowDialog(true);
@@ -251,7 +251,7 @@ const Users = () => {
                       <TableCell>
                         <div className="flex items-center gap-3">
                           <Avatar>
-                            <AvatarFallback className="bg-[#1E3A5F] text-white">
+                            <AvatarFallback className="bg-[#00a79d] text-white">
                               {user.full_name?.charAt(0) || 'U'}
                             </AvatarFallback>
                           </Avatar>
@@ -409,7 +409,7 @@ const Users = () => {
               <Button type="button" variant="outline" onClick={() => setShowDialog(false)}>
                 Anulo
               </Button>
-              <Button type="submit" className="bg-[#1E3A5F] hover:bg-[#152C4A]" data-testid="save-user-btn">
+              <Button type="submit" className="bg-[#00a79d] hover:bg-[#008f86]" data-testid="save-user-btn">
                 {editingUser ? 'Ruaj Ndryshimet' : 'Krijo Përdoruesin'}
               </Button>
             </DialogFooter>

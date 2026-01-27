@@ -120,7 +120,7 @@ const Stock = () => {
             Rifresko
           </Button>
           <Button
-            className="bg-[#1E3A5F] hover:bg-[#152C4A] gap-2"
+            className="bg-[#00a79d] hover:bg-[#008f86] gap-2"
             onClick={() => setShowMovementDialog(true)}
             data-testid="add-movement-btn"
           >
@@ -454,7 +454,7 @@ const Stock = () => {
               </Button>
               <Button
                 type="submit"
-                className="bg-[#1E3A5F] hover:bg-[#152C4A]"
+                className="bg-[#00a79d] hover:bg-[#008f86]"
                 data-testid="save-movement-btn"
               >
                 Regjistro

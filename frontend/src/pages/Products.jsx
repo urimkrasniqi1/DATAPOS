@@ -196,7 +196,7 @@ const Products = () => {
             Importo
           </Button>
           <Button
-            className="bg-[#1E3A5F] hover:bg-[#152C4A] gap-2"
+            className="bg-[#00a79d] hover:bg-[#008f86] gap-2"
             onClick={() => {
               resetForm();
               setShowDialog(true);
@@ -495,7 +495,7 @@ const Products = () => {
               <Button type="button" variant="outline" onClick={() => setShowDialog(false)}>
                 Anulo
               </Button>
-              <Button type="submit" className="bg-[#1E3A5F] hover:bg-[#152C4A]" data-testid="save-product-btn">
+              <Button type="submit" className="bg-[#00a79d] hover:bg-[#008f86]" data-testid="save-product-btn">
                 {editingProduct ? 'Ruaj Ndryshimet' : 'Shto Produktin'}
               </Button>
             </DialogFooter>

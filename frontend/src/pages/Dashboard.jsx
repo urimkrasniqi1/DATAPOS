@@ -122,8 +122,8 @@ const Dashboard = () => {
                   <span className="text-sm text-green-500">+12.5%</span>
                 </div>
               </div>
-              <div className="h-12 w-12 rounded-full bg-[#1E3A5F]/10 flex items-center justify-center">
-                <DollarSign className="h-6 w-6 text-[#1E3A5F]" />
+              <div className="h-12 w-12 rounded-full bg-[#00a79d]/10 flex items-center justify-center">
+                <DollarSign className="h-6 w-6 text-[#00a79d]" />
               </div>
             </div>
           </CardContent>
@@ -142,8 +142,8 @@ const Dashboard = () => {
                   <span className="text-sm text-green-500">+8.2%</span>
                 </div>
               </div>
-              <div className="h-12 w-12 rounded-full bg-[#1E3A5F]/10 flex items-center justify-center">
-                <ShoppingCart className="h-6 w-6 text-[#1E3A5F]" />
+              <div className="h-12 w-12 rounded-full bg-[#00a79d]/10 flex items-center justify-center">
+                <ShoppingCart className="h-6 w-6 text-[#00a79d]" />
               </div>
             </div>
           </CardContent>
@@ -208,10 +208,10 @@ const Dashboard = () => {
                   <Line
                     type="monotone"
                     dataKey="sales"
-                    stroke="#1E3A5F"
+                    stroke="#00a79d"
                     strokeWidth={3}
-                    dot={{ fill: '#1E3A5F', strokeWidth: 2 }}
-                    activeDot={{ r: 6, fill: '#1E3A5F' }}
+                    dot={{ fill: '#00a79d', strokeWidth: 2 }}
+                    activeDot={{ r: 6, fill: '#00a79d' }}
                   />
                 </LineChart>
               </ResponsiveContainer>
@@ -238,7 +238,7 @@ const Dashboard = () => {
                       borderRadius: '8px',
                     }}
                   />
-                  <Bar dataKey="sales" fill="#1E3A5F" radius={[0, 4, 4, 0]} />
+                  <Bar dataKey="sales" fill="#00a79d" radius={[0, 4, 4, 0]} />
                 </BarChart>
               </ResponsiveContainer>
             </div>
@@ -256,7 +256,7 @@ const Dashboard = () => {
               variant="ghost"
               size="sm"
               onClick={() => navigate('/reports')}
-              className="text-[#1E3A5F] hover:text-[#D32F2F]"
+              className="text-[#00a79d] hover:text-[#D32F2F]"
             >
               Shiko të gjitha
               <ArrowRight className="h-4 w-4 ml-1" />
@@ -294,7 +294,7 @@ const Dashboard = () => {
           </CardHeader>
           <CardContent className="space-y-3">
             <Button
-              className="w-full justify-start gap-3 h-12 bg-[#1E3A5F] hover:bg-[#152C4A] text-white"
+              className="w-full justify-start gap-3 h-12 bg-[#00a79d] hover:bg-[#008f86] text-white"
               onClick={() => navigate('/pos')}
               data-testid="quick-action-pos"
             >

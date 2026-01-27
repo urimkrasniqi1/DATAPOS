@@ -122,7 +122,7 @@ const Reports = () => {
     }
   };
 
-  const COLORS = ['#1E3A5F', '#1E3A5F', '#10B981', '#F59E0B', '#8B5CF6'];
+  const COLORS = ['#00a79d', '#00a79d', '#10B981', '#F59E0B', '#8B5CF6'];
 
   return (
     <div className="space-y-6" data-testid="reports-page">
@@ -238,7 +238,7 @@ const Reports = () => {
                 <Card className="border-0 shadow-sm">
                   <CardContent className="p-6">
                     <p className="text-sm text-gray-500">Të Ardhura Totale</p>
-                    <p className="text-2xl font-bold text-[#1E3A5F]">
+                    <p className="text-2xl font-bold text-[#00a79d]">
                       €{salesReport.summary.total_revenue.toFixed(2)}
                     </p>
                   </CardContent>
@@ -252,7 +252,7 @@ const Reports = () => {
                 <Card className="border-0 shadow-sm">
                   <CardContent className="p-6">
                     <p className="text-sm text-gray-500">TVSH Total</p>
-                    <p className="text-2xl font-bold text-[#1E3A5F]">
+                    <p className="text-2xl font-bold text-[#00a79d]">
                       €{salesReport.summary.total_vat.toFixed(2)}
                     </p>
                   </CardContent>
@@ -290,9 +290,9 @@ const Reports = () => {
                         <Line
                           type="monotone"
                           dataKey="total"
-                          stroke="#1E3A5F"
+                          stroke="#00a79d"
                           strokeWidth={3}
-                          dot={{ fill: '#1E3A5F' }}
+                          dot={{ fill: '#00a79d' }}
                         />
                       </LineChart>
                     </ResponsiveContainer>
@@ -489,7 +489,7 @@ const Reports = () => {
                 <Card className="border-0 shadow-sm">
                   <CardContent className="p-6">
                     <p className="text-sm text-gray-500">Artikuj në Stok</p>
-                    <p className="text-2xl font-bold text-[#1E3A5F]">{stockReport.summary.total_items}</p>
+                    <p className="text-2xl font-bold text-[#00a79d]">{stockReport.summary.total_items}</p>
                   </CardContent>
                 </Card>
                 <Card className="border-0 shadow-sm">
@@ -572,7 +572,7 @@ const Reports = () => {
                           }}
                           formatter={(value) => [`€${value.toFixed(2)}`, 'Shitjet']}
                         />
-                        <Bar dataKey="total_sales" fill="#1E3A5F" radius={[0, 4, 4, 0]} />
+                        <Bar dataKey="total_sales" fill="#00a79d" radius={[0, 4, 4, 0]} />
                       </BarChart>
                     </ResponsiveContainer>
                   </div>
@@ -605,7 +605,7 @@ const Reports = () => {
                           </TableCell>
                           <TableCell className="text-right">{cashier.total_transactions}</TableCell>
                           <TableCell className="text-right">{cashier.total_items}</TableCell>
-                          <TableCell className="text-right font-bold text-[#1E3A5F]">
+                          <TableCell className="text-right font-bold text-[#00a79d]">
                             €{cashier.total_sales.toFixed(2)}
                           </TableCell>
                         </TableRow>
