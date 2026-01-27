@@ -364,22 +364,22 @@ const POS = () => {
               font-family: 'Courier New', 'Lucida Console', monospace; 
               font-size: 12px; 
               line-height: 1.4;
-              width: 90mm;
-              max-width: 90mm;
+              width: 110mm;
+              max-width: 110mm;
               min-height: 140mm;
-              padding: 4mm;
+              padding: 5mm;
               background: white;
               color: #000;
             }
             div { box-sizing: border-box; }
             @media print {
               @page { 
-                size: 90mm auto; 
+                size: 110mm auto; 
                 margin: 0; 
               }
               html, body { 
-                width: 90mm !important;
-                max-width: 90mm !important;
+                width: 110mm !important;
+                max-width: 110mm !important;
                 -webkit-print-color-adjust: exact;
                 print-color-adjust: exact;
               }
