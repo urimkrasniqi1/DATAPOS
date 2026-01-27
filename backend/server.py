@@ -1670,9 +1670,10 @@ async def get_users_for_reset(
     # Get sales count per user
     user_stats = []
     for user in users:
-        sales_count = await db.sales.count_documents({"cashier_id": user["id"]})
+        # Query by user_id (the field used in sales collection)
+        sales_count = await db.sales.count_documents({"user_id": user["id"]})
         total_sales = 0
-        sales = await db.sales.find({"cashier_id": user["id"]}, {"grand_total": 1, "_id": 0}).to_list(10000)
+        sales = await db.sales.find({"user_id": user["id"]}, {"grand_total": 1, "_id": 0}).to_list(10000)
         total_sales = sum(s.get("grand_total", 0) for s in sales)
         
         user_stats.append({
@@ -1716,10 +1717,11 @@ async def reset_data(
     elif request.reset_type == "user_specific" and request.user_ids:
         # Reset specific users' data
         for user_id in request.user_ids:
-            result = await db.sales.delete_many({"cashier_id": user_id})
+            # Query by user_id (the field used in sales and cash_drawers collections)
+            result = await db.sales.delete_many({"user_id": user_id})
             deleted_sales += result.deleted_count
             
-            result = await db.cash_drawers.delete_many({"cashier_id": user_id})
+            result = await db.cash_drawers.delete_many({"user_id": user_id})
             deleted_drawers += result.deleted_count
             
     elif request.reset_type == "all":
