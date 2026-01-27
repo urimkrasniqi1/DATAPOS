@@ -50,7 +50,8 @@ import {
   List,
   XCircle,
   LogOut,
-  FileDown
+  FileDown,
+  Save
 } from 'lucide-react';
 import InvoiceA4 from '../components/InvoiceA4';
 import ThermalReceipt from '../components/ThermalReceipt';
