@@ -1356,6 +1356,177 @@ async def update_company_settings(
     updated = await db.settings.find_one({"type": "company"}, {"_id": 0})
     return updated.get("data", {})
 
+# ============ POS SETTINGS ROUTES ============
+@api_router.get("/settings/pos")
+async def get_pos_settings(current_user: dict = Depends(get_current_user)):
+    settings = await db.settings.find_one({"type": "pos"}, {"_id": 0})
+    if not settings:
+        return POSSettings().model_dump()
+    return settings.get("data", POSSettings().model_dump())
+
+@api_router.put("/settings/pos")
+async def update_pos_settings(
+    settings: POSSettingsUpdate,
+    current_user: dict = Depends(require_role([UserRole.ADMIN]))
+):
+    existing = await db.settings.find_one({"type": "pos"})
+    
+    if existing:
+        current_data = existing.get("data", {})
+        update_data = {k: v for k, v in settings.model_dump().items() if v is not None}
+        current_data.update(update_data)
+        
+        await db.settings.update_one(
+            {"type": "pos"},
+            {"$set": {"data": current_data, "updated_at": datetime.now(timezone.utc).isoformat()}}
+        )
+    else:
+        await db.settings.insert_one({
+            "type": "pos",
+            "data": settings.model_dump(),
+            "created_at": datetime.now(timezone.utc).isoformat(),
+            "updated_at": datetime.now(timezone.utc).isoformat()
+        })
+    
+    await log_audit(current_user["id"], "update_settings", "pos", "pos")
+    updated = await db.settings.find_one({"type": "pos"}, {"_id": 0})
+    return updated.get("data", {})
+
+# ============ WAREHOUSE (DEPOT) ROUTES ============
+@api_router.post("/warehouses", response_model=WarehouseResponse)
+async def create_warehouse(
+    warehouse: WarehouseCreate,
+    current_user: dict = Depends(require_role([UserRole.ADMIN]))
+):
+    # If this is set as default, unset other defaults
+    if warehouse.is_default:
+        await db.warehouses.update_many({}, {"$set": {"is_default": False}})
+    
+    new_warehouse = Warehouse(**warehouse.model_dump())
+    doc = new_warehouse.model_dump()
+    doc['created_at'] = doc['created_at'].isoformat()
+    await db.warehouses.insert_one(doc)
+    
+    await log_audit(current_user["id"], "create", "warehouse", new_warehouse.id)
+    doc.pop('_id', None)
+    return WarehouseResponse(**doc)
+
+@api_router.get("/warehouses", response_model=List[WarehouseResponse])
+async def get_warehouses(current_user: dict = Depends(get_current_user)):
+    warehouses = await db.warehouses.find({}, {"_id": 0}).to_list(1000)
+    return [WarehouseResponse(**w) for w in warehouses]
+
+@api_router.get("/warehouses/{warehouse_id}", response_model=WarehouseResponse)
+async def get_warehouse(warehouse_id: str, current_user: dict = Depends(get_current_user)):
+    warehouse = await db.warehouses.find_one({"id": warehouse_id}, {"_id": 0})
+    if not warehouse:
+        raise HTTPException(status_code=404, detail="Depoja nuk u gjet")
+    return WarehouseResponse(**warehouse)
+
+@api_router.put("/warehouses/{warehouse_id}", response_model=WarehouseResponse)
+async def update_warehouse(
+    warehouse_id: str,
+    update: WarehouseUpdate,
+    current_user: dict = Depends(require_role([UserRole.ADMIN]))
+):
+    # If setting as default, unset other defaults
+    if update.is_default:
+        await db.warehouses.update_many({"id": {"$ne": warehouse_id}}, {"$set": {"is_default": False}})
+    
+    update_dict = {k: v for k, v in update.model_dump().items() if v is not None}
+    await db.warehouses.update_one({"id": warehouse_id}, {"$set": update_dict})
+    
+    warehouse = await db.warehouses.find_one({"id": warehouse_id}, {"_id": 0})
+    if not warehouse:
+        raise HTTPException(status_code=404, detail="Depoja nuk u gjet")
+    
+    await log_audit(current_user["id"], "update", "warehouse", warehouse_id)
+    return WarehouseResponse(**warehouse)
+
+@api_router.delete("/warehouses/{warehouse_id}")
+async def delete_warehouse(
+    warehouse_id: str,
+    current_user: dict = Depends(require_role([UserRole.ADMIN]))
+):
+    result = await db.warehouses.delete_one({"id": warehouse_id})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Depoja nuk u gjet")
+    
+    await log_audit(current_user["id"], "delete", "warehouse", warehouse_id)
+    return {"message": "Depoja u fshi me sukses"}
+
+# ============ VAT RATES ROUTES ============
+@api_router.post("/vat-rates", response_model=VATRateResponse)
+async def create_vat_rate(
+    vat_rate: VATRateCreate,
+    current_user: dict = Depends(require_role([UserRole.ADMIN]))
+):
+    # If this is set as default, unset other defaults
+    if vat_rate.is_default:
+        await db.vat_rates.update_many({}, {"$set": {"is_default": False}})
+    
+    new_vat = VATRate(**vat_rate.model_dump())
+    doc = new_vat.model_dump()
+    doc['created_at'] = doc['created_at'].isoformat()
+    await db.vat_rates.insert_one(doc)
+    
+    await log_audit(current_user["id"], "create", "vat_rate", new_vat.id)
+    doc.pop('_id', None)
+    return VATRateResponse(**doc)
+
+@api_router.get("/vat-rates", response_model=List[VATRateResponse])
+async def get_vat_rates(current_user: dict = Depends(get_current_user)):
+    vat_rates = await db.vat_rates.find({}, {"_id": 0}).to_list(1000)
+    # If no VAT rates exist, return default ones
+    if not vat_rates:
+        defaults = [
+            {"id": str(uuid.uuid4()), "name": "TVSH Standard", "rate": 18.0, "code": "18", "is_default": True, "is_active": True, "created_at": datetime.now(timezone.utc).isoformat()},
+            {"id": str(uuid.uuid4()), "name": "TVSH Reduktuar", "rate": 8.0, "code": "8", "is_default": False, "is_active": True, "created_at": datetime.now(timezone.utc).isoformat()},
+            {"id": str(uuid.uuid4()), "name": "Pa TVSH", "rate": 0.0, "code": "0", "is_default": False, "is_active": True, "created_at": datetime.now(timezone.utc).isoformat()},
+        ]
+        await db.vat_rates.insert_many(defaults)
+        return [VATRateResponse(**v) for v in defaults]
+    return [VATRateResponse(**v) for v in vat_rates]
+
+@api_router.get("/vat-rates/{vat_id}", response_model=VATRateResponse)
+async def get_vat_rate(vat_id: str, current_user: dict = Depends(get_current_user)):
+    vat_rate = await db.vat_rates.find_one({"id": vat_id}, {"_id": 0})
+    if not vat_rate:
+        raise HTTPException(status_code=404, detail="Norma e TVSH nuk u gjet")
+    return VATRateResponse(**vat_rate)
+
+@api_router.put("/vat-rates/{vat_id}", response_model=VATRateResponse)
+async def update_vat_rate(
+    vat_id: str,
+    update: VATRateUpdate,
+    current_user: dict = Depends(require_role([UserRole.ADMIN]))
+):
+    # If setting as default, unset other defaults
+    if update.is_default:
+        await db.vat_rates.update_many({"id": {"$ne": vat_id}}, {"$set": {"is_default": False}})
+    
+    update_dict = {k: v for k, v in update.model_dump().items() if v is not None}
+    await db.vat_rates.update_one({"id": vat_id}, {"$set": update_dict})
+    
+    vat_rate = await db.vat_rates.find_one({"id": vat_id}, {"_id": 0})
+    if not vat_rate:
+        raise HTTPException(status_code=404, detail="Norma e TVSH nuk u gjet")
+    
+    await log_audit(current_user["id"], "update", "vat_rate", vat_id)
+    return VATRateResponse(**vat_rate)
+
+@api_router.delete("/vat-rates/{vat_id}")
+async def delete_vat_rate(
+    vat_id: str,
+    current_user: dict = Depends(require_role([UserRole.ADMIN]))
+):
+    result = await db.vat_rates.delete_one({"id": vat_id})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Norma e TVSH nuk u gjet")
+    
+    await log_audit(current_user["id"], "delete", "vat_rate", vat_id)
+    return {"message": "Norma e TVSH u fshi me sukses"}
+
 # ============ INIT ROUTES ============
 @api_router.post("/init/admin")
 async def create_initial_admin():
