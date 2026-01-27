@@ -513,8 +513,8 @@ const POS = () => {
     
     return `
       <div style="text-align: center; margin-bottom: 8px;">
-        <img src="https://customer-assets.emergentagent.com/job_supermarket-pos-12/artifacts/qhc6ljlw_pos%201%20logo.png" alt="Logo" style="height: 45px; max-width: 60mm;" />
-        <div style="font-size: 14px; font-weight: bold;">${companySettings?.company_name || 'iPOS'}</div>
+        <img src="https://customer-assets.emergentagent.com/job_retailsys-1/artifacts/9i1h1bxb_logo%20icon.png" alt="Logo" style="height: 45px; max-width: 60mm;" />
+        <div style="font-size: 14px; font-weight: bold;">${companySettings?.company_name || 'MobilshopurimiPOS'}</div>
         <div style="font-size: 9px;">${companySettings?.address || ''}</div>
         <div style="font-size: 9px;">Tel: ${companySettings?.phone || ''}</div>
       </div>
@@ -2167,13 +2167,13 @@ const POS = () => {
                   {/* Logo */}
                   <div style={{ marginBottom: '8px' }}>
                     <img 
-                      src="https://customer-assets.emergentagent.com/job_supermarket-pos-12/artifacts/qhc6ljlw_pos%201%20logo.png" 
+                      src="https://customer-assets.emergentagent.com/job_retailsys-1/artifacts/9i1h1bxb_logo%20icon.png" 
                       alt="Logo" 
                       style={{ height: '45px', maxWidth: '60mm', objectFit: 'contain' }} 
                     />
                   </div>
                   <div style={{ fontSize: '14px', fontWeight: 'bold', letterSpacing: '1px' }}>
-                    {companySettings?.company_name || 'iPOS'}
+                    {companySettings?.company_name || 'MobilshopurimiPOS'}
                   </div>
                   <div style={{ fontSize: '9px', marginTop: '4px' }}>
                     {companySettings?.address || 'Adresa e Biznesit'}
@@ -2381,7 +2381,7 @@ const POS = () => {
                 }}>
                   <div>Ky kupon shërben vetëm për evidencë</div>
                   <div style={{ marginTop: '2px' }}>
-                    {companySettings?.company_name || 'iPOS'} • {new Date().toLocaleString('sq-AL')}
+                    {companySettings?.company_name || 'MobilshopurimiPOS'} • {new Date().toLocaleString('sq-AL')}
                   </div>
                 </div>
 
