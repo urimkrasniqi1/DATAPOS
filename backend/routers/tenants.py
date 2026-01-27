@@ -1,7 +1,8 @@
 """Tenant management routes (Super Admin only)"""
 from fastapi import APIRouter, HTTPException, Depends
-from typing import List
+from typing import List, Optional
 from datetime import datetime, timezone
+from pydantic import BaseModel
 import uuid
 
 from database import db
