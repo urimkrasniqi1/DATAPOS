@@ -320,12 +320,23 @@ const POS = () => {
     }
   };
 
-  // Print thermal receipt - show preview dialog first
+  // Print thermal receipt - show preview dialog or print directly based on preference
   const printThermalReceipt = (saleData) => {
     setReceiptDataForPrint(saleData);
     setReceiptComment(savedReceiptComment); // Load saved comment as default
     setShowCommentOnReceipt(!!savedReceiptComment);
-    setShowReceiptPreview(true);
+    
+    // If direct print is enabled, print immediately without showing preview
+    if (directPrintEnabled) {
+      // Need to show the preview briefly to generate the receipt, then print
+      setShowReceiptPreview(true);
+      // Use setTimeout to allow the receipt to render first
+      setTimeout(() => {
+        executeThermalPrint(false); // false = silent print without browser dialog handling
+      }, 100);
+    } else {
+      setShowReceiptPreview(true);
+    }
   };
 
   // Save comment as default for future receipts
@@ -1377,18 +1388,37 @@ const POS = () => {
               </div>
             )}
 
-            {/* Print Receipt Option */}
-            <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
-              <Checkbox
-                id="printReceipt"
-                checked={printReceipt}
-                onCheckedChange={setPrintReceipt}
-                className="border-[#1E3A5F] data-[state=checked]:bg-[#1E3A5F]"
-              />
-              <label htmlFor="printReceipt" className="text-sm font-medium cursor-pointer flex-1">
-                Shtyp kupon për klientin
-              </label>
-              <Printer className="h-4 w-4 text-gray-400" />
+            {/* Print Receipt Options */}
+            <div className="space-y-2">
+              <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+                <Checkbox
+                  id="printReceipt"
+                  checked={printReceipt}
+                  onCheckedChange={setPrintReceipt}
+                  className="border-[#1E3A5F] data-[state=checked]:bg-[#1E3A5F]"
+                  data-testid="print-receipt-checkbox"
+                />
+                <label htmlFor="printReceipt" className="text-sm font-medium cursor-pointer flex-1">
+                  Shtyp kupon për klientin
+                </label>
+                <Printer className="h-4 w-4 text-gray-400" />
+              </div>
+              
+              {/* Direct Print Option - only show if printReceipt is checked */}
+              {printReceipt && (
+                <div className="flex items-center gap-3 p-3 bg-blue-50 rounded-lg border border-blue-100">
+                  <Checkbox
+                    id="directPrint"
+                    checked={directPrintEnabled}
+                    onCheckedChange={toggleDirectPrint}
+                    className="border-blue-500 data-[state=checked]:bg-blue-500"
+                    data-testid="direct-print-checkbox"
+                  />
+                  <label htmlFor="directPrint" className="text-sm font-medium cursor-pointer flex-1 text-blue-800">
+                    Printim direkt (pa parapamje)
+                  </label>
+                </div>
+              )}
             </div>
 
             {/* Confirm Button */}
