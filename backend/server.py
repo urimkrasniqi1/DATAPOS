@@ -567,7 +567,8 @@ async def get_me(current_user: dict = Depends(get_current_user)):
         role=current_user["role"],
         branch_id=current_user.get("branch_id"),
         is_active=current_user["is_active"],
-        created_at=current_user["created_at"]
+        created_at=current_user["created_at"],
+        pin=current_user.get("pin")
     )
 
 # ============ USER ROUTES ============
