@@ -296,8 +296,9 @@ const POS = () => {
   const [showCommentOnReceipt, setShowCommentOnReceipt] = useState(true); // Toggle to show comment
   const [savedReceiptComment, setSavedReceiptComment] = useState(''); // Saved comment from settings
   const [directPrintEnabled, setDirectPrintEnabled] = useState(false); // Direct print without dialog
+  const [commentTemplates, setCommentTemplates] = useState([]); // Comment templates from backend
 
-  // Load saved preferences from localStorage
+  // Load saved preferences from localStorage and comment templates
   useEffect(() => {
     const savedComment = localStorage.getItem('receiptDefaultComment');
     if (savedComment) {
@@ -307,6 +308,22 @@ const POS = () => {
     if (savedDirectPrint === 'true') {
       setDirectPrintEnabled(true);
     }
+    
+    // Load comment templates from backend
+    const loadCommentTemplates = async () => {
+      try {
+        const response = await api.get('/comment-templates');
+        setCommentTemplates(response.data || []);
+        // Set default comment if exists
+        const defaultTemplate = response.data?.find(t => t.is_default && t.is_active);
+        if (defaultTemplate && !savedComment) {
+          setSavedReceiptComment(defaultTemplate.content);
+        }
+      } catch (error) {
+        console.log('Comment templates not loaded:', error);
+      }
+    };
+    loadCommentTemplates();
   }, []);
 
   // Check if running in Electron
