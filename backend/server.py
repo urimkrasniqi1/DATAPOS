@@ -2240,7 +2240,8 @@ async def delete_comment_template(
     current_user: dict = Depends(require_role([UserRole.ADMIN, UserRole.MANAGER]))
 ):
     """Delete a comment template"""
-    result = await db.comment_templates.delete_one({"id": template_id})
+    tenant_filter = get_tenant_filter(current_user)
+    result = await db.comment_templates.delete_one({"id": template_id, **tenant_filter})
     if result.deleted_count == 0:
         raise HTTPException(status_code=404, detail="Template nuk u gjet")
     
@@ -2254,10 +2255,11 @@ async def verify_admin_password(
     current_user: dict = Depends(require_role([UserRole.ADMIN]))
 ):
     """Verify admin password before allowing reset operations"""
+    tenant_filter = get_tenant_filter(current_user)
     password = request.get("password", "")
     
     # Get the admin user with password hash
-    admin = await db.users.find_one({"id": current_user["id"]})
+    admin = await db.users.find_one({"id": current_user["id"], **tenant_filter})
     if not admin:
         raise HTTPException(status_code=404, detail="Përdoruesi nuk u gjet")
     
@@ -2271,15 +2273,16 @@ async def get_users_for_reset(
     current_user: dict = Depends(require_role([UserRole.ADMIN]))
 ):
     """Get list of users with their sales statistics for reset selection"""
-    users = await db.users.find({}, {"_id": 0, "password_hash": 0, "pin": 0}).to_list(1000)
+    tenant_filter = get_tenant_filter(current_user)
+    users = await db.users.find(tenant_filter, {"_id": 0, "password_hash": 0, "pin": 0}).to_list(1000)
     
     # Get sales count per user
     user_stats = []
     for user in users:
         # Query by user_id (the field used in sales collection)
-        sales_count = await db.sales.count_documents({"user_id": user["id"]})
+        sales_count = await db.sales.count_documents({"user_id": user["id"], **tenant_filter})
         total_sales = 0
-        sales = await db.sales.find({"user_id": user["id"]}, {"grand_total": 1, "_id": 0}).to_list(10000)
+        sales = await db.sales.find({"user_id": user["id"], **tenant_filter}, {"grand_total": 1, "_id": 0}).to_list(10000)
         total_sales = sum(s.get("grand_total", 0) for s in sales)
         
         user_stats.append({
@@ -2299,8 +2302,9 @@ async def reset_data(
     current_user: dict = Depends(require_role([UserRole.ADMIN]))
 ):
     """Reset sales data based on request parameters"""
+    tenant_filter = get_tenant_filter(current_user)
     # Verify admin password first
-    admin = await db.users.find_one({"id": current_user["id"]})
+    admin = await db.users.find_one({"id": current_user["id"], **tenant_filter})
     if not admin or not verify_password(request.admin_password, admin.get("password_hash", "")):
         raise HTTPException(status_code=401, detail="Fjalëkalimi i gabuar")
     
@@ -2316,6 +2320,7 @@ async def reset_data(
         "cash_drawers": [],
         "stock_movements": []
     }
+    backup_data = add_tenant_id(backup_data, current_user)  # Add tenant_id
     
     deleted_sales = 0
     deleted_movements = 0
