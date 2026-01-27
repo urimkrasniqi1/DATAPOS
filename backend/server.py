@@ -139,6 +139,7 @@ class UserBase(BaseModel):
     branch_id: Optional[str] = None
     is_active: bool = True
     pin: Optional[str] = None
+    tenant_id: Optional[str] = None  # None for super_admin
 
 class UserCreate(UserBase):
     password: str
@@ -165,6 +166,7 @@ class UserResponse(BaseModel):
     is_active: bool
     created_at: str
     pin: Optional[str] = None
+    tenant_id: Optional[str] = None
 
 class LoginRequest(BaseModel):
     username: str
