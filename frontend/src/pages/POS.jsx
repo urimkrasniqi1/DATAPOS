@@ -309,12 +309,19 @@ const POS = () => {
     }
   }, []);
 
+  // Check if running in Electron
+  const isElectron = window.electronAPI?.isElectron === true;
+
   // Toggle direct print and save preference
   const toggleDirectPrint = (enabled) => {
     setDirectPrintEnabled(enabled);
     localStorage.setItem('directPrintEnabled', enabled ? 'true' : 'false');
     if (enabled) {
-      toast.success('Printimi direkt aktivizuar! Kuponi do të printohet automatikisht.');
+      if (isElectron) {
+        toast.success('Printimi direkt aktivizuar! Kuponi do të printohet automatikisht pa dialog.');
+      } else {
+        toast.success('Printimi direkt aktivizuar! Kuponi do të printohet automatikisht.');
+      }
     } else {
       toast.info('Printimi direkt çaktivizuar. Do të hapet dialogu i printerit.');
     }
@@ -336,10 +343,73 @@ const POS = () => {
   };
   
   // Direct print function - creates and prints receipt without showing dialog
-  const executeThermalPrintDirect = (saleData) => {
+  const executeThermalPrintDirect = async (saleData) => {
     // Build receipt HTML directly
     const receiptHTML = buildReceiptHTML(saleData);
     
+    // If running in Electron, use silent print
+    if (isElectron && window.electronAPI?.silentPrint) {
+      try {
+        // Create a temporary window content for printing
+        const fullHTML = `
+          <!DOCTYPE html>
+          <html>
+            <head>
+              <title>Kupon Shitje</title>
+              <style>
+                * { margin: 0; padding: 0; box-sizing: border-box; }
+                body { 
+                  font-family: 'Courier New', 'Consolas', monospace; 
+                  font-size: 11px; 
+                  line-height: 1.4;
+                  width: 80mm;
+                  max-width: 80mm;
+                  padding: 4mm;
+                  background: white;
+                  color: #000;
+                }
+                img { max-width: 100%; height: auto; }
+                @media print {
+                  @page { size: 80mm auto; margin: 0; }
+                  html, body { width: 80mm !important; max-width: 80mm !important; }
+                }
+              </style>
+            </head>
+            <body>
+              ${receiptHTML}
+            </body>
+          </html>
+        `;
+        
+        // Use Electron's silent print
+        const result = await window.electronAPI.silentPrint({
+          pageSize: { width: 80000, height: 297000 }, // 80mm width in microns
+          printOptions: {
+            silent: true,
+            printBackground: true
+          }
+        });
+        
+        if (result.success) {
+          toast.success(`Kuponi u printua në: ${result.printer}`);
+        } else {
+          // Fallback to browser print if Electron silent print fails
+          console.warn('Electron silent print failed, falling back to browser print:', result.error);
+          executeBrowserPrint(receiptHTML);
+        }
+      } catch (error) {
+        console.error('Electron print error:', error);
+        // Fallback to browser print
+        executeBrowserPrint(receiptHTML);
+      }
+    } else {
+      // Use browser print (iframe method)
+      executeBrowserPrint(receiptHTML);
+    }
+  };
+  
+  // Browser print using iframe method
+  const executeBrowserPrint = (receiptHTML) => {
     // Create hidden iframe for printing
     const printFrame = document.createElement('iframe');
     printFrame.id = 'thermal-print-frame-direct';
