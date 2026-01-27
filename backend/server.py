@@ -2053,12 +2053,14 @@ async def create_warehouse(
 
 @api_router.get("/warehouses", response_model=List[WarehouseResponse])
 async def get_warehouses(current_user: dict = Depends(get_current_user)):
-    warehouses = await db.warehouses.find({}, {"_id": 0}).to_list(1000)
+    tenant_filter = get_tenant_filter(current_user)
+    warehouses = await db.warehouses.find(tenant_filter, {"_id": 0}).to_list(1000)
     return [WarehouseResponse(**w) for w in warehouses]
 
 @api_router.get("/warehouses/{warehouse_id}", response_model=WarehouseResponse)
 async def get_warehouse(warehouse_id: str, current_user: dict = Depends(get_current_user)):
-    warehouse = await db.warehouses.find_one({"id": warehouse_id}, {"_id": 0})
+    tenant_filter = get_tenant_filter(current_user)
+    warehouse = await db.warehouses.find_one({"id": warehouse_id, **tenant_filter}, {"_id": 0})
     if not warehouse:
         raise HTTPException(status_code=404, detail="Depoja nuk u gjet")
     return WarehouseResponse(**warehouse)
@@ -2069,14 +2071,15 @@ async def update_warehouse(
     update: WarehouseUpdate,
     current_user: dict = Depends(require_role([UserRole.ADMIN]))
 ):
-    # If setting as default, unset other defaults
+    tenant_filter = get_tenant_filter(current_user)
+    # If setting as default, unset other defaults for this tenant
     if update.is_default:
-        await db.warehouses.update_many({"id": {"$ne": warehouse_id}}, {"$set": {"is_default": False}})
+        await db.warehouses.update_many({"id": {"$ne": warehouse_id}, **tenant_filter}, {"$set": {"is_default": False}})
     
     update_dict = {k: v for k, v in update.model_dump().items() if v is not None}
-    await db.warehouses.update_one({"id": warehouse_id}, {"$set": update_dict})
+    await db.warehouses.update_one({"id": warehouse_id, **tenant_filter}, {"$set": update_dict})
     
-    warehouse = await db.warehouses.find_one({"id": warehouse_id}, {"_id": 0})
+    warehouse = await db.warehouses.find_one({"id": warehouse_id, **tenant_filter}, {"_id": 0})
     if not warehouse:
         raise HTTPException(status_code=404, detail="Depoja nuk u gjet")
     
@@ -2088,7 +2091,8 @@ async def delete_warehouse(
     warehouse_id: str,
     current_user: dict = Depends(require_role([UserRole.ADMIN]))
 ):
-    result = await db.warehouses.delete_one({"id": warehouse_id})
+    tenant_filter = get_tenant_filter(current_user)
+    result = await db.warehouses.delete_one({"id": warehouse_id, **tenant_filter})
     if result.deleted_count == 0:
         raise HTTPException(status_code=404, detail="Depoja nuk u gjet")
     
@@ -2101,13 +2105,15 @@ async def create_vat_rate(
     vat_rate: VATRateCreate,
     current_user: dict = Depends(require_role([UserRole.ADMIN]))
 ):
-    # If this is set as default, unset other defaults
+    tenant_filter = get_tenant_filter(current_user)
+    # If this is set as default, unset other defaults for this tenant
     if vat_rate.is_default:
-        await db.vat_rates.update_many({}, {"$set": {"is_default": False}})
+        await db.vat_rates.update_many(tenant_filter, {"$set": {"is_default": False}})
     
     new_vat = VATRate(**vat_rate.model_dump())
     doc = new_vat.model_dump()
     doc['created_at'] = doc['created_at'].isoformat()
+    doc = add_tenant_id(doc, current_user)  # Add tenant_id
     await db.vat_rates.insert_one(doc)
     
     await log_audit(current_user["id"], "create", "vat_rate", new_vat.id)
@@ -2116,13 +2122,15 @@ async def create_vat_rate(
 
 @api_router.get("/vat-rates", response_model=List[VATRateResponse])
 async def get_vat_rates(current_user: dict = Depends(get_current_user)):
-    vat_rates = await db.vat_rates.find({}, {"_id": 0}).to_list(1000)
-    # If no VAT rates exist, return default ones
+    tenant_filter = get_tenant_filter(current_user)
+    vat_rates = await db.vat_rates.find(tenant_filter, {"_id": 0}).to_list(1000)
+    # If no VAT rates exist for this tenant, return default ones
     if not vat_rates:
+        tenant_id = current_user.get("tenant_id")
         defaults = [
-            {"id": str(uuid.uuid4()), "name": "TVSH Standard", "rate": 18.0, "code": "18", "is_default": True, "is_active": True, "created_at": datetime.now(timezone.utc).isoformat()},
-            {"id": str(uuid.uuid4()), "name": "TVSH Reduktuar", "rate": 8.0, "code": "8", "is_default": False, "is_active": True, "created_at": datetime.now(timezone.utc).isoformat()},
-            {"id": str(uuid.uuid4()), "name": "Pa TVSH", "rate": 0.0, "code": "0", "is_default": False, "is_active": True, "created_at": datetime.now(timezone.utc).isoformat()},
+            {"id": str(uuid.uuid4()), "name": "TVSH Standard", "rate": 18.0, "code": "18", "is_default": True, "is_active": True, "created_at": datetime.now(timezone.utc).isoformat(), "tenant_id": tenant_id},
+            {"id": str(uuid.uuid4()), "name": "TVSH Reduktuar", "rate": 8.0, "code": "8", "is_default": False, "is_active": True, "created_at": datetime.now(timezone.utc).isoformat(), "tenant_id": tenant_id},
+            {"id": str(uuid.uuid4()), "name": "Pa TVSH", "rate": 0.0, "code": "0", "is_default": False, "is_active": True, "created_at": datetime.now(timezone.utc).isoformat(), "tenant_id": tenant_id},
         ]
         await db.vat_rates.insert_many(defaults)
         return [VATRateResponse(**v) for v in defaults]
