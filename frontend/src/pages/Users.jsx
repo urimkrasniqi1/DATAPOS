@@ -353,6 +353,23 @@ const Users = () => {
               </div>
 
               <div className="space-y-2">
+                <Label>PIN (për kyçje të shpejtë)</Label>
+                <Input
+                  type="text"
+                  value={formData.pin}
+                  onChange={(e) => {
+                    // Only allow numbers and max 6 digits
+                    const value = e.target.value.replace(/\D/g, '').slice(0, 6);
+                    setFormData({ ...formData, pin: value });
+                  }}
+                  placeholder="1234"
+                  maxLength={6}
+                  data-testid="user-pin-input"
+                />
+                <p className="text-xs text-gray-500">PIN numerik 1-6 shifra për kyçje nga tastiera</p>
+              </div>
+
+              <div className="space-y-2">
                 <Label>Roli</Label>
                 <Select
                   value={formData.role}
