@@ -72,18 +72,18 @@ const Settings = () => {
   // POS Settings
   const [posSettings, setPosSettings] = useState({
     eshte_me_tvsh: true,
+    norma_tvsh_default: 18.0,
     shfaq_artikuj_me_minus: true,
     lejo_shitjen_me_minus: true,
     gjenero_automatik_numrin: true,
     lejo_shume_zbritje: false,
-    kam_restaurant: false,
     orientimi_fatures: 'vertikal',
     valuta: 'EUR',
     simboli_valutes: '€',
-    metoda_gjenerimit: '3',
+    metoda_gjenerimit: 'auto',
     shteku_printer: '',
-    partneri_default: '',
-    formati_numrit: 'F-yy-mm-dd-AA',
+    printo_automatikisht: false,
+    hap_sirtar_automatikisht: false,
   });
 
   // Branch form
@@ -94,12 +94,30 @@ const Settings = () => {
     is_active: true
   });
 
+  // Warehouses (Depot)
+  const [warehouses, setWarehouses] = useState([]);
+  const [showWarehouseDialog, setShowWarehouseDialog] = useState(false);
+  const [editingWarehouse, setEditingWarehouse] = useState(null);
+  const [warehouseForm, setWarehouseForm] = useState({
+    name: '',
+    code: '',
+    address: '',
+    phone: '',
+    is_active: true,
+    is_default: false
+  });
+
   // VAT rates
-  const [vatRates, setVatRates] = useState([
-    { id: 1, name: 'Standard', rate: 18, is_default: true },
-    { id: 2, name: 'I reduktuar', rate: 8, is_default: false },
-    { id: 3, name: 'Zero', rate: 0, is_default: false },
-  ]);
+  const [vatRates, setVatRates] = useState([]);
+  const [showVatDialog, setShowVatDialog] = useState(false);
+  const [editingVat, setEditingVat] = useState(null);
+  const [vatForm, setVatForm] = useState({
+    name: '',
+    rate: 18,
+    code: '',
+    is_default: false,
+    is_active: true
+  });
 
   useEffect(() => {
     loadData();
@@ -107,14 +125,22 @@ const Settings = () => {
 
   const loadData = async () => {
     try {
-      const [branchesRes, companyRes] = await Promise.all([
+      const [branchesRes, companyRes, posRes, warehousesRes, vatRes] = await Promise.all([
         api.get('/branches'),
-        api.get('/settings/company')
+        api.get('/settings/company'),
+        api.get('/settings/pos'),
+        api.get('/warehouses'),
+        api.get('/vat-rates')
       ]);
       setBranches(branchesRes.data);
       if (companyRes.data) {
         setCompanyData(prev => ({...prev, ...companyRes.data}));
       }
+      if (posRes.data) {
+        setPosSettings(prev => ({...prev, ...posRes.data}));
+      }
+      setWarehouses(warehousesRes.data || []);
+      setVatRates(vatRes.data || []);
     } catch (error) {
       console.error('Error loading settings:', error);
     }
@@ -135,12 +161,99 @@ const Settings = () => {
   const handleSavePosSettings = async () => {
     setLoading(true);
     try {
-      await new Promise(resolve => setTimeout(resolve, 500));
-      toast.success('Cilësimet e POS u ruajtën');
+      await api.put('/settings/pos', posSettings);
+      toast.success('Cilësimet e POS u ruajtën me sukses!');
     } catch (error) {
-      toast.error('Gabim gjatë ruajtjes');
+      toast.error('Gabim gjatë ruajtjes së cilësimeve');
     } finally {
       setLoading(false);
+    }
+  };
+
+  // Warehouse handlers
+  const handleSaveWarehouse = async () => {
+    try {
+      if (editingWarehouse) {
+        await api.put(`/warehouses/${editingWarehouse.id}`, warehouseForm);
+        toast.success('Depoja u përditësua me sukses!');
+      } else {
+        await api.post('/warehouses', warehouseForm);
+        toast.success('Depoja u shtua me sukses!');
+      }
+      setShowWarehouseDialog(false);
+      setEditingWarehouse(null);
+      setWarehouseForm({ name: '', code: '', address: '', phone: '', is_active: true, is_default: false });
+      loadData();
+    } catch (error) {
+      toast.error('Gabim gjatë ruajtjes së depos');
+    }
+  };
+
+  const handleEditWarehouse = (warehouse) => {
+    setEditingWarehouse(warehouse);
+    setWarehouseForm({
+      name: warehouse.name,
+      code: warehouse.code || '',
+      address: warehouse.address || '',
+      phone: warehouse.phone || '',
+      is_active: warehouse.is_active,
+      is_default: warehouse.is_default
+    });
+    setShowWarehouseDialog(true);
+  };
+
+  const handleDeleteWarehouse = async (id) => {
+    if (window.confirm('Jeni të sigurt që dëshironi të fshini këtë depo?')) {
+      try {
+        await api.delete(`/warehouses/${id}`);
+        toast.success('Depoja u fshi me sukses!');
+        loadData();
+      } catch (error) {
+        toast.error('Gabim gjatë fshirjes së depos');
+      }
+    }
+  };
+
+  // VAT handlers
+  const handleSaveVat = async () => {
+    try {
+      if (editingVat) {
+        await api.put(`/vat-rates/${editingVat.id}`, vatForm);
+        toast.success('Norma e TVSH u përditësua me sukses!');
+      } else {
+        await api.post('/vat-rates', vatForm);
+        toast.success('Norma e TVSH u shtua me sukses!');
+      }
+      setShowVatDialog(false);
+      setEditingVat(null);
+      setVatForm({ name: '', rate: 18, code: '', is_default: false, is_active: true });
+      loadData();
+    } catch (error) {
+      toast.error('Gabim gjatë ruajtjes së normës TVSH');
+    }
+  };
+
+  const handleEditVat = (vat) => {
+    setEditingVat(vat);
+    setVatForm({
+      name: vat.name,
+      rate: vat.rate,
+      code: vat.code || '',
+      is_default: vat.is_default,
+      is_active: vat.is_active
+    });
+    setShowVatDialog(true);
+  };
+
+  const handleDeleteVat = async (id) => {
+    if (window.confirm('Jeni të sigurt që dëshironi të fshini këtë normë TVSH?')) {
+      try {
+        await api.delete(`/vat-rates/${id}`);
+        toast.success('Norma e TVSH u fshi me sukses!');
+        loadData();
+      } catch (error) {
+        toast.error('Gabim gjatë fshirjes së normës TVSH');
+      }
     }
   };
 
