@@ -2093,8 +2093,8 @@ const POS = () => {
                 <div style={{ borderTop: '1px dashed #000', margin: '8px 0' }}></div>
 
                 {/* Thank You Message */}
-                <div style={{ textAlign: 'center', margin: '10px 0' }}>
-                  <div style={{ fontSize: '12px', fontWeight: 'bold', marginBottom: '4px' }}>
+                <div style={{ textAlign: 'center', margin: '6px 0' }}>
+                  <div style={{ fontSize: '12px', fontWeight: 'bold', marginBottom: '2px' }}>
                     FALEMINDERIT!
                   </div>
                   <div style={{ fontSize: '9px' }}>
