@@ -1343,6 +1343,68 @@ const Settings = () => {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* Comment Template Dialog */}
+      <Dialog open={showCommentDialog} onOpenChange={setShowCommentDialog}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <MessageSquare className="h-5 w-5" />
+              {editingComment ? 'Edito Komentin' : 'Shto Koment të Ri'}
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div>
+              <Label>Titulli</Label>
+              <Input
+                value={commentForm.title}
+                onChange={(e) => setCommentForm({...commentForm, title: e.target.value})}
+                placeholder="p.sh. Faleminderit"
+              />
+            </div>
+            <div>
+              <Label>Përmbajtja</Label>
+              <Textarea
+                value={commentForm.content}
+                onChange={(e) => setCommentForm({...commentForm, content: e.target.value})}
+                placeholder="p.sh. Faleminderit për blerjen! Ju mirëpresim përsëri."
+                rows={4}
+              />
+            </div>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Switch
+                  checked={commentForm.is_default}
+                  onCheckedChange={(checked) => setCommentForm({...commentForm, is_default: checked})}
+                />
+                <Label className="cursor-pointer">Komenti Default</Label>
+              </div>
+              <div className="flex items-center gap-2">
+                <Switch
+                  checked={commentForm.is_active}
+                  onCheckedChange={(checked) => setCommentForm({...commentForm, is_active: checked})}
+                />
+                <Label className="cursor-pointer">Aktiv</Label>
+              </div>
+            </div>
+            {commentForm.is_default && (
+              <p className="text-xs text-gray-500">
+                Ky koment do të zgjidhet automatikisht kur printoni kuponin.
+              </p>
+            )}
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowCommentDialog(false)}>Anulo</Button>
+            <Button 
+              onClick={handleSaveComment} 
+              className="bg-[#00a79d] hover:bg-[#008f86]" 
+              disabled={!commentForm.title || !commentForm.content || loading}
+            >
+              {loading ? 'Duke ruajtur...' : (editingComment ? 'Ruaj' : 'Shto')}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
