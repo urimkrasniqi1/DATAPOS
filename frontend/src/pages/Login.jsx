@@ -58,14 +58,21 @@ const Login = () => {
     setPin('');
   };
 
-  // Keyboard event handler
+  // Keyboard event handler - only for PIN login view
   useEffect(() => {
     if (showAdminLogin) return; // Don't handle keyboard when admin form is open
 
     const handleKeyDown = (e) => {
+      // Don't intercept keyboard events when focused on an input
+      const activeElement = document.activeElement;
+      if (activeElement && (activeElement.tagName === 'INPUT' || activeElement.tagName === 'TEXTAREA')) {
+        return;
+      }
+      
       if (e.key >= '0' && e.key <= '9') {
         addDigit(e.key);
       } else if (e.key === 'Backspace') {
+        e.preventDefault();
         removeDigit();
       } else if (e.key === 'Enter' && pin.length >= 1) {
         handlePinLogin();
