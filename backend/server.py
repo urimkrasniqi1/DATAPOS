@@ -1254,10 +1254,13 @@ async def close_cash_drawer(request: CloseDrawerRequest, current_user: dict = De
 # ============ SALES ROUTES ============
 @api_router.post("/sales", response_model=SaleResponse)
 async def create_sale(sale_data: SaleCreate, current_user: dict = Depends(get_current_user)):
+    tenant_filter = get_tenant_filter(current_user)
+    
     # Get current cash drawer
     drawer = await db.cash_drawers.find_one({
         "user_id": current_user["id"],
-        "status": CashDrawerStatus.OPEN.value
+        "status": CashDrawerStatus.OPEN.value,
+        **tenant_filter
     }, {"_id": 0})
     
     items = []
@@ -1266,7 +1269,7 @@ async def create_sale(sale_data: SaleCreate, current_user: dict = Depends(get_cu
     total_vat = 0
     
     for item_data in sale_data.items:
-        product = await db.products.find_one({"id": item_data.product_id}, {"_id": 0})
+        product = await db.products.find_one({"id": item_data.product_id, **tenant_filter}, {"_id": 0})
         if not product:
             raise HTTPException(status_code=404, detail=f"Produkti {item_data.product_id} nuk u gjet")
         
@@ -1297,7 +1300,7 @@ async def create_sale(sale_data: SaleCreate, current_user: dict = Depends(get_cu
         # Update stock (can go negative)
         new_stock = product.get("current_stock", 0) - item_data.quantity
         await db.products.update_one(
-            {"id": item_data.product_id},
+            {"id": item_data.product_id, **tenant_filter},
             {"$set": {"current_stock": new_stock, "updated_at": datetime.now(timezone.utc).isoformat()}}
         )
         
@@ -1312,12 +1315,13 @@ async def create_sale(sale_data: SaleCreate, current_user: dict = Depends(get_cu
         )
         mov_doc = movement.model_dump()
         mov_doc['created_at'] = mov_doc['created_at'].isoformat()
+        mov_doc = add_tenant_id(mov_doc, current_user)  # Add tenant_id
         await db.stock_movements.insert_one(mov_doc)
     
     grand_total = subtotal - total_discount + total_vat
     change_amount = (sale_data.cash_amount or 0) - grand_total if sale_data.payment_method == PaymentMethod.CASH else 0
     
-    receipt_number = await generate_receipt_number(current_user.get("branch_id"))
+    receipt_number = await generate_receipt_number(current_user.get("branch_id"), current_user.get("tenant_id"))
     
     sale = Sale(
         receipt_number=receipt_number,
@@ -1339,13 +1343,14 @@ async def create_sale(sale_data: SaleCreate, current_user: dict = Depends(get_cu
     
     doc = sale.model_dump()
     doc['created_at'] = doc['created_at'].isoformat()
+    doc = add_tenant_id(doc, current_user)  # Add tenant_id
     await db.sales.insert_one(doc)
     
     # Update cash drawer expected balance
     if drawer and sale_data.cash_amount:
         new_expected = drawer["expected_balance"] + sale_data.cash_amount - change_amount
         await db.cash_drawers.update_one(
-            {"id": drawer["id"]},
+            {"id": drawer["id"], **tenant_filter},
             {"$set": {"expected_balance": new_expected}}
         )
     
