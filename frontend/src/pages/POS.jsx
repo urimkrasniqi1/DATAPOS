@@ -292,11 +292,22 @@ const POS = () => {
   const [showReceiptPreview, setShowReceiptPreview] = useState(false);
   const [receiptDataForPrint, setReceiptDataForPrint] = useState(null);
   const [receiptComment, setReceiptComment] = useState(''); // Extra comment for receipt
+  const [showCommentOnReceipt, setShowCommentOnReceipt] = useState(true); // Toggle to show comment
+  const [savedReceiptComment, setSavedReceiptComment] = useState(''); // Saved comment from settings
+
+  // Load saved comment from localStorage
+  useEffect(() => {
+    const saved = localStorage.getItem('receiptDefaultComment');
+    if (saved) {
+      setSavedReceiptComment(saved);
+    }
+  }, []);
 
   // Print thermal receipt - show preview dialog first
   const printThermalReceipt = (saleData) => {
     setReceiptDataForPrint(saleData);
-    setReceiptComment(''); // Reset comment for new receipt
+    setReceiptComment(savedReceiptComment); // Load saved comment as default
+    setShowCommentOnReceipt(!!savedReceiptComment);
     setShowReceiptPreview(true);
   };
 
