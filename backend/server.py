@@ -361,6 +361,110 @@ class CompanySettingsUpdate(BaseModel):
     bank_account: Optional[str] = None
     logo_url: Optional[str] = None
 
+# POS Settings Models
+class POSSettings(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    eshte_me_tvsh: bool = True
+    norma_tvsh_default: float = 18.0
+    shfaq_artikuj_me_minus: bool = True
+    lejo_shitjen_me_minus: bool = True
+    gjenero_automatik_numrin: bool = True
+    lejo_shume_zbritje: bool = False
+    valuta: str = "EUR"
+    simboli_valutes: str = "€"
+    metoda_gjenerimit: str = "auto"
+    orientimi_fatures: str = "vertikal"
+    shteku_printer: str = ""
+    printo_automatikisht: bool = False
+    hap_sirtar_automatikisht: bool = False
+
+class POSSettingsUpdate(BaseModel):
+    eshte_me_tvsh: Optional[bool] = None
+    norma_tvsh_default: Optional[float] = None
+    shfaq_artikuj_me_minus: Optional[bool] = None
+    lejo_shitjen_me_minus: Optional[bool] = None
+    gjenero_automatik_numrin: Optional[bool] = None
+    lejo_shume_zbritje: Optional[bool] = None
+    valuta: Optional[str] = None
+    simboli_valutes: Optional[str] = None
+    metoda_gjenerimit: Optional[str] = None
+    orientimi_fatures: Optional[str] = None
+    shteku_printer: Optional[str] = None
+    printo_automatikisht: Optional[bool] = None
+    hap_sirtar_automatikisht: Optional[bool] = None
+
+# Warehouse (Depot) Models
+class WarehouseCreate(BaseModel):
+    name: str
+    code: Optional[str] = None
+    address: Optional[str] = None
+    phone: Optional[str] = None
+    is_active: bool = True
+    is_default: bool = False
+
+class Warehouse(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    name: str
+    code: Optional[str] = None
+    address: Optional[str] = None
+    phone: Optional[str] = None
+    is_active: bool = True
+    is_default: bool = False
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class WarehouseResponse(BaseModel):
+    id: str
+    name: str
+    code: Optional[str] = None
+    address: Optional[str] = None
+    phone: Optional[str] = None
+    is_active: bool
+    is_default: bool
+    created_at: str
+
+class WarehouseUpdate(BaseModel):
+    name: Optional[str] = None
+    code: Optional[str] = None
+    address: Optional[str] = None
+    phone: Optional[str] = None
+    is_active: Optional[bool] = None
+    is_default: Optional[bool] = None
+
+# VAT Rate Models
+class VATRateCreate(BaseModel):
+    name: str
+    rate: float
+    code: Optional[str] = None
+    is_default: bool = False
+    is_active: bool = True
+
+class VATRate(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    name: str
+    rate: float
+    code: Optional[str] = None
+    is_default: bool = False
+    is_active: bool = True
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class VATRateResponse(BaseModel):
+    id: str
+    name: str
+    rate: float
+    code: Optional[str] = None
+    is_default: bool
+    is_active: bool
+    created_at: str
+
+class VATRateUpdate(BaseModel):
+    name: Optional[str] = None
+    rate: Optional[float] = None
+    code: Optional[str] = None
+    is_default: Optional[bool] = None
+    is_active: Optional[bool] = None
+
 # ============ HELPER FUNCTIONS ============
 def hash_password(password: str) -> str:
     return pwd_context.hash(password)
