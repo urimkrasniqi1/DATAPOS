@@ -813,10 +813,28 @@ async def login(request: LoginRequest):
     if not user.get("is_active", True):
         raise HTTPException(status_code=403, detail="Llogaria është e çaktivizuar")
     
+    # Check tenant status (skip for super_admin)
+    tenant_id = user.get("tenant_id")
+    tenant_info = None
+    if tenant_id and user.get("role") != UserRole.SUPER_ADMIN:
+        tenant = await db.tenants.find_one({"id": tenant_id}, {"_id": 0})
+        if not tenant:
+            raise HTTPException(status_code=403, detail="Firma nuk ekziston")
+        if tenant.get("status") == TenantStatus.SUSPENDED:
+            raise HTTPException(status_code=403, detail="Firma është e pezulluar. Kontaktoni administratorin.")
+        tenant_info = {
+            "id": tenant["id"],
+            "name": tenant["name"],
+            "company_name": tenant["company_name"],
+            "logo_url": tenant.get("logo_url"),
+            "primary_color": tenant.get("primary_color", "#00a79d"),
+            "secondary_color": tenant.get("secondary_color", "#f3f4f6")
+        }
+    
     token = create_token(user["id"], user["username"], user["role"])
     await log_audit(user["id"], "login", "user", user["id"])
     
-    return TokenResponse(
+    response_data = TokenResponse(
         access_token=token,
         user=UserResponse(
             id=user["id"],
@@ -826,9 +844,13 @@ async def login(request: LoginRequest):
             branch_id=user.get("branch_id"),
             is_active=user["is_active"],
             created_at=user["created_at"],
-            pin=user.get("pin")
+            pin=user.get("pin"),
+            tenant_id=tenant_id
         )
     )
+    
+    # Add tenant info to response
+    return response_data
 
 @api_router.get("/auth/me", response_model=UserResponse)
 async def get_me(current_user: dict = Depends(get_current_user)):
