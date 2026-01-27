@@ -58,7 +58,7 @@ const MainLayout = () => {
       className={({ isActive }) =>
         `flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 ${
           isActive
-            ? 'bg-[#1E3A5F] text-white shadow-md'
+            ? 'bg-[#00a79d] text-white shadow-md'
             : 'text-gray-600 hover:bg-gray-100'
         }`
       }
@@ -82,11 +82,11 @@ const MainLayout = () => {
             {sidebarOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
           </Button>
           <div className="flex items-center gap-2">
-            <div className="bg-[#1E3A5F] p-1.5 rounded-lg">
+            <div className="bg-[#00a79d] p-1.5 rounded-lg">
               <Smartphone className="h-5 w-5 text-white" />
             </div>
             <span className="text-xl font-bold">
-              <span className="text-[#1E3A5F]">Mobilshop</span>
+              <span className="text-[#00a79d]">Mobilshop</span>
               <span className="text-gray-500">urimi</span>
             </span>
           </div>
@@ -94,7 +94,7 @@ const MainLayout = () => {
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" size="icon" data-testid="user-menu-mobile">
                 <Avatar className="h-8 w-8">
-                  <AvatarFallback className="bg-[#1E3A5F] text-white">
+                  <AvatarFallback className="bg-[#00a79d] text-white">
                     {user?.full_name?.charAt(0) || 'U'}
                   </AvatarFallback>
                 </Avatar>
@@ -124,11 +124,11 @@ const MainLayout = () => {
         {/* Logo */}
         <div className="h-16 flex items-center justify-center border-b border-gray-100">
           <div className="flex items-center gap-2">
-            <div className="bg-[#1E3A5F] p-2 rounded-lg">
+            <div className="bg-[#00a79d] p-2 rounded-lg">
               <Smartphone className="h-6 w-6 text-white" />
             </div>
             <span className="text-2xl font-bold">
-              <span className="text-[#1E3A5F]">Mobilshop</span>
+              <span className="text-[#00a79d]">Mobilshop</span>
               <span className="text-gray-500">urimi</span>
             </span>
           </div>
@@ -153,7 +153,7 @@ const MainLayout = () => {
                 data-testid="user-menu-desktop"
               >
                 <Avatar className="h-9 w-9">
-                  <AvatarFallback className="bg-[#1E3A5F] text-white font-semibold">
+                  <AvatarFallback className="bg-[#00a79d] text-white font-semibold">
                     {user?.full_name?.charAt(0) || 'U'}
                   </AvatarFallback>
                 </Avatar>
