@@ -48,18 +48,20 @@ Sistema POS (Point of Sale) për markete dhe supermarkete me mbështetje multi-f
 - [x] PWA support for fullscreen mode
 
 ### Receipt Printing Features (January 2025)
-- [x] Professional thermal receipt design (8cm wide)
+- [x] **Professional FISCAL-style thermal receipt design (80mm wide)** - UPDATED
 - [x] Company logo on receipt
 - [x] Comment templates for receipt
 - [x] Saved default comment feature
-- [x] **Direct print toggle (pa parapamje) - NEW**
+- [x] **Direct print toggle (pa parapamje)**
 - [x] iframe-based reliable printing mechanism
 - [x] A4 Invoice printing with buyer info form
+- [x] **QR Code for contact (WhatsApp, Viber, Thirrje)** - NEW
 
 ### Design & UX
 - [x] Mobilshopurimi rebranding (cream #f5f0e8, dark-blue #1E3A5F)
 - [x] F2 shortcut label on payment button
 - [x] Responsive design
+- [x] Courier/monospace font for fiscal receipt look
 
 ## Prioritized Backlog
 
@@ -72,6 +74,8 @@ Sistema POS (Point of Sale) për markete dhe supermarkete me mbështetje multi-f
 - Invoice A4 printing ✓
 - Settings backend ✓
 - Direct print toggle ✓
+- Professional fiscal receipt ✓
+- QR code contact ✓
 
 ### P1 (High) - REFACTORING NEEDED
 - [ ] Refactor backend/server.py into modular APIRouter structure
