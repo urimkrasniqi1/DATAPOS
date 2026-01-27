@@ -621,6 +621,12 @@ async def update_user(user_id: str, user_data: UserUpdate, current_user: dict = 
     if "password" in update_dict:
         update_dict["password_hash"] = hash_password(update_dict.pop("password"))
     
+    # Check if PIN is unique (if provided and changed)
+    if "pin" in update_dict and update_dict["pin"]:
+        existing_pin = await db.users.find_one({"pin": update_dict["pin"], "id": {"$ne": user_id}})
+        if existing_pin:
+            raise HTTPException(status_code=400, detail="Ky PIN përdoret nga një përdorues tjetër")
+    
     if update_dict:
         await db.users.update_one({"id": user_id}, {"$set": update_dict})
     
