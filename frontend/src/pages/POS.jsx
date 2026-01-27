@@ -2445,7 +2445,7 @@ const POS = () => {
             </div>
             {directPrintEnabled && (
               <p className="text-xs text-green-600 mt-2">
-                Kur klikoni "Printo Direkt", kuponi dërgohet automatikisht në printer pa hapur dialogun.
+                Kur klikoni &quot;Printo Direkt&quot;, kuponi dërgohet automatikisht në printer pa hapur dialogun.
               </p>
             )}
           </div>
