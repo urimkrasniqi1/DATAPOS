@@ -132,6 +132,7 @@ const Users = () => {
     setFormData({
       username: '',
       password: '',
+      pin: '',
       full_name: '',
       role: 'cashier',
       branch_id: '',
