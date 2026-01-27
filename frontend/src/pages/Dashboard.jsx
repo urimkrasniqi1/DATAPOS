@@ -208,10 +208,10 @@ const Dashboard = () => {
                   <Line
                     type="monotone"
                     dataKey="sales"
-                    stroke="#E53935"
+                    stroke="#1E3A5F"
                     strokeWidth={3}
-                    dot={{ fill: '#E53935', strokeWidth: 2 }}
-                    activeDot={{ r: 6, fill: '#E53935' }}
+                    dot={{ fill: '#1E3A5F', strokeWidth: 2 }}
+                    activeDot={{ r: 6, fill: '#1E3A5F' }}
                   />
                 </LineChart>
               </ResponsiveContainer>

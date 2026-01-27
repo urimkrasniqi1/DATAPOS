@@ -122,7 +122,7 @@ const Reports = () => {
     }
   };
 
-  const COLORS = ['#E53935', '#00B9D7', '#10B981', '#F59E0B', '#8B5CF6'];
+  const COLORS = ['#1E3A5F', '#00B9D7', '#10B981', '#F59E0B', '#8B5CF6'];
 
   return (
     <div className="space-y-6" data-testid="reports-page">
@@ -290,9 +290,9 @@ const Reports = () => {
                         <Line
                           type="monotone"
                           dataKey="total"
-                          stroke="#E53935"
+                          stroke="#1E3A5F"
                           strokeWidth={3}
-                          dot={{ fill: '#E53935' }}
+                          dot={{ fill: '#1E3A5F' }}
                         />
                       </LineChart>
                     </ResponsiveContainer>
@@ -572,7 +572,7 @@ const Reports = () => {
                           }}
                           formatter={(value) => [`€${value.toFixed(2)}`, 'Shitjet']}
                         />
-                        <Bar dataKey="total_sales" fill="#E53935" radius={[0, 4, 4, 0]} />
+                        <Bar dataKey="total_sales" fill="#1E3A5F" radius={[0, 4, 4, 0]} />
                       </BarChart>
                     </ResponsiveContainer>
                   </div>

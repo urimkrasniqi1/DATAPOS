@@ -54,7 +54,7 @@ const Login = () => {
                 placeholder="Username"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
-                className="pl-10 h-12 bg-gray-50 border-gray-200 rounded-full focus:ring-[#E53935] focus:border-[#1E3A5F]"
+                className="pl-10 h-12 bg-gray-50 border-gray-200 rounded-full focus:ring-[#1E3A5F] focus:border-[#1E3A5F]"
                 required
                 data-testid="login-username-input"
               />
@@ -70,7 +70,7 @@ const Login = () => {
                 placeholder="Fjalëkalimi"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="pl-10 pr-10 h-12 bg-gray-50 border-gray-200 rounded-full focus:ring-[#E53935] focus:border-[#1E3A5F]"
+                className="pl-10 pr-10 h-12 bg-gray-50 border-gray-200 rounded-full focus:ring-[#1E3A5F] focus:border-[#1E3A5F]"
                 required
                 data-testid="login-password-input"
               />
