@@ -2125,16 +2125,13 @@ const POS = () => {
                   textAlign: 'center', 
                   fontSize: '8px', 
                   color: '#666',
-                  marginTop: '10px',
-                  paddingTop: '8px',
+                  marginTop: '4px',
+                  paddingTop: '4px',
                   borderTop: '1px dashed #000'
                 }}>
                   <div>Ky kupon shërben vetëm për evidencë</div>
-                  <div style={{ marginTop: '4px' }}>
-                    {companySettings?.company_name || 'iPOS'}
-                  </div>
                   <div style={{ marginTop: '2px' }}>
-                    {new Date().toLocaleString('sq-AL')}
+                    {companySettings?.company_name || 'iPOS'} • {new Date().toLocaleString('sq-AL')}
                   </div>
                 </div>
 
