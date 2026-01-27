@@ -1822,7 +1822,8 @@ async def export_excel_report(
         worksheet.write(2, 0, f"Gjeneruar: {datetime.now().strftime('%d/%m/%Y %H:%M')}")
         
         # Get data
-        query = {"created_at": {"$gte": start_date, "$lte": end_date + "T23:59:59"}}
+        tenant_filter = get_tenant_filter(current_user)
+        query = {"created_at": {"$gte": start_date, "$lte": end_date + "T23:59:59"}, **tenant_filter}
         if branch_id:
             query["branch_id"] = branch_id
         sales = await db.sales.find(query, {"_id": 0}).sort("created_at", -1).to_list(10000)
@@ -1877,7 +1878,8 @@ async def export_excel_report(
         worksheet.write(2, 0, f"Gjeneruar: {datetime.now().strftime('%d/%m/%Y %H:%M')}")
         
         # Get data
-        products = await db.products.find({}, {"_id": 0}).sort("name", 1).to_list(10000)
+        tenant_filter = get_tenant_filter(current_user)
+        products = await db.products.find(tenant_filter, {"_id": 0}).sort("name", 1).to_list(10000)
         
         # Summary
         total_products = len(products)
