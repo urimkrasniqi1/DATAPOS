@@ -2149,14 +2149,15 @@ async def update_vat_rate(
     update: VATRateUpdate,
     current_user: dict = Depends(require_role([UserRole.ADMIN]))
 ):
-    # If setting as default, unset other defaults
+    tenant_filter = get_tenant_filter(current_user)
+    # If setting as default, unset other defaults for this tenant
     if update.is_default:
-        await db.vat_rates.update_many({"id": {"$ne": vat_id}}, {"$set": {"is_default": False}})
+        await db.vat_rates.update_many({"id": {"$ne": vat_id}, **tenant_filter}, {"$set": {"is_default": False}})
     
     update_dict = {k: v for k, v in update.model_dump().items() if v is not None}
-    await db.vat_rates.update_one({"id": vat_id}, {"$set": update_dict})
+    await db.vat_rates.update_one({"id": vat_id, **tenant_filter}, {"$set": update_dict})
     
-    vat_rate = await db.vat_rates.find_one({"id": vat_id}, {"_id": 0})
+    vat_rate = await db.vat_rates.find_one({"id": vat_id, **tenant_filter}, {"_id": 0})
     if not vat_rate:
         raise HTTPException(status_code=404, detail="Norma e TVSH nuk u gjet")
     
@@ -2168,7 +2169,8 @@ async def delete_vat_rate(
     vat_id: str,
     current_user: dict = Depends(require_role([UserRole.ADMIN]))
 ):
-    result = await db.vat_rates.delete_one({"id": vat_id})
+    tenant_filter = get_tenant_filter(current_user)
+    result = await db.vat_rates.delete_one({"id": vat_id, **tenant_filter})
     if result.deleted_count == 0:
         raise HTTPException(status_code=404, detail="Norma e TVSH nuk u gjet")
     
@@ -2180,8 +2182,9 @@ async def delete_vat_rate(
 async def get_comment_templates(
     current_user: dict = Depends(get_current_user)
 ):
-    """Get all comment templates"""
-    templates = await db.comment_templates.find({}, {"_id": 0}).sort("created_at", -1).to_list(100)
+    """Get all comment templates for this tenant"""
+    tenant_filter = get_tenant_filter(current_user)
+    templates = await db.comment_templates.find(tenant_filter, {"_id": 0}).sort("created_at", -1).to_list(100)
     return templates
 
 @api_router.post("/comment-templates", response_model=CommentTemplateResponse)
@@ -2190,14 +2193,16 @@ async def create_comment_template(
     current_user: dict = Depends(require_role([UserRole.ADMIN, UserRole.MANAGER]))
 ):
     """Create a new comment template"""
+    tenant_filter = get_tenant_filter(current_user)
     template_data = template.model_dump()
     template_data["id"] = str(uuid.uuid4())
     template_data["created_at"] = datetime.now(timezone.utc).isoformat()
     template_data["created_by"] = current_user["id"]
+    template_data = add_tenant_id(template_data, current_user)  # Add tenant_id
     
-    # If this is default, unset other defaults
+    # If this is default, unset other defaults for this tenant
     if template_data.get("is_default"):
-        await db.comment_templates.update_many({}, {"$set": {"is_default": False}})
+        await db.comment_templates.update_many(tenant_filter, {"$set": {"is_default": False}})
     
     await db.comment_templates.insert_one(template_data)
     await log_audit(current_user["id"], "create", "comment_template", template_data["id"])
@@ -2211,19 +2216,20 @@ async def update_comment_template(
     current_user: dict = Depends(require_role([UserRole.ADMIN, UserRole.MANAGER]))
 ):
     """Update a comment template"""
-    existing = await db.comment_templates.find_one({"id": template_id})
+    tenant_filter = get_tenant_filter(current_user)
+    existing = await db.comment_templates.find_one({"id": template_id, **tenant_filter})
     if not existing:
         raise HTTPException(status_code=404, detail="Template nuk u gjet")
     
     update_data = {k: v for k, v in template.model_dump().items() if v is not None}
     
-    # If setting as default, unset other defaults
+    # If setting as default, unset other defaults for this tenant
     if update_data.get("is_default"):
-        await db.comment_templates.update_many({"id": {"$ne": template_id}}, {"$set": {"is_default": False}})
+        await db.comment_templates.update_many({"id": {"$ne": template_id}, **tenant_filter}, {"$set": {"is_default": False}})
     
-    await db.comment_templates.update_one({"id": template_id}, {"$set": update_data})
+    await db.comment_templates.update_one({"id": template_id, **tenant_filter}, {"$set": update_data})
     
-    updated = await db.comment_templates.find_one({"id": template_id}, {"_id": 0})
+    updated = await db.comment_templates.find_one({"id": template_id, **tenant_filter}, {"_id": 0})
     await log_audit(current_user["id"], "update", "comment_template", template_id)
     
     return CommentTemplateResponse(**updated)
