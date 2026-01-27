@@ -96,7 +96,7 @@ code {
 
 /* Table row hover */
 .table-row-hover:hover {
-    background-color: rgba(0, 185, 215, 0.1);
+    background-color: rgba(30, 58, 95, 0.08);
 }
 
 /* POS Numpad Button */
