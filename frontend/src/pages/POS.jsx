@@ -469,8 +469,8 @@ const POS = () => {
         <div style="font-size: 12px; font-weight: bold;">FALEMINDERIT!</div>
         <div style="font-size: 9px;">Ju mirëpresim përsëri!</div>
       </div>
-      <div style="text-align: center; margin: 12px 0; padding: 8px;">
-        <img src="https://customer-assets.emergentagent.com/job_supermarket-pos-12/artifacts/ewy3j4rc_qr%20code.png" alt="QR" style="width: 40mm; height: 40mm;" />
+      <div style="text-align: center; margin: 8px 0; padding: 4px;">
+        <img src="https://customer-assets.emergentagent.com/job_supermarket-pos-12/artifacts/ewy3j4rc_qr%20code.png" alt="QR" style="width: 30mm; height: 30mm;" />
       </div>
       <div style="text-align: center; font-size: 8px; color: #666; border-top: 1px dashed #000; padding-top: 8px;">
         <div>Ky kupon shërben vetëm për evidencë</div>
