@@ -89,15 +89,13 @@ const Login = () => {
   const PinLoginView = () => (
     <div className="w-full max-w-sm mx-4">
       <div className="bg-white rounded-2xl shadow-xl overflow-hidden p-8">
-        {/* Brand */}
-        <div className="flex items-center justify-center gap-2 mb-8">
-          <div className="bg-[#00a79d] p-2 rounded-lg">
-            <Smartphone className="h-6 w-6 text-white" />
-          </div>
-          <span className="text-2xl font-bold">
-            <span className="text-[#00a79d]">Mobilshop</span>
-            <span className="text-gray-600">urimi</span>
-          </span>
+        {/* Logo */}
+        <div className="flex items-center justify-center mb-8">
+          <img 
+            src="https://customer-assets.emergentagent.com/job_supermarket-pos-12/artifacts/qhc6ljlw_pos%201%20logo.png" 
+            alt="iPOS" 
+            className="h-16 object-contain"
+          />
         </div>
 
         {/* PIN Display - Single Frame */}
