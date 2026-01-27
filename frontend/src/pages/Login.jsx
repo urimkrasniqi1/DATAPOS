@@ -107,23 +107,16 @@ const Login = () => {
           </span>
         </div>
 
-        {/* PIN Display */}
+        {/* PIN Display - Single Frame */}
         <div className="mb-6">
-          <div className="flex justify-center gap-3 mb-2">
-            {[...Array(6)].map((_, i) => (
-              <div
-                key={i}
-                className={`w-12 h-14 rounded-xl border-2 flex items-center justify-center text-2xl font-bold transition-all duration-200 ${
-                  i < pin.length 
-                    ? 'border-[#00a79d] bg-[#00a79d]/10 text-[#00a79d]' 
-                    : 'border-gray-200 bg-gray-50'
-                }`}
-              >
-                {i < pin.length ? '•' : ''}
-              </div>
-            ))}
+          <div className="relative">
+            <div 
+              className="w-full h-16 rounded-xl border-2 border-[#00a79d] bg-gray-50 flex items-center justify-center text-3xl font-bold tracking-[0.5em] text-[#00a79d]"
+            >
+              {pin ? '•'.repeat(pin.length) : <span className="text-gray-300 text-lg tracking-normal">PIN</span>}
+            </div>
           </div>
-          <p className="text-center text-sm text-gray-500">Shkruaj kodin PIN</p>
+          <p className="text-center text-sm text-gray-500 mt-2">Shkruaj kodin PIN (1-6 shifra)</p>
         </div>
 
         {/* Numpad */}
