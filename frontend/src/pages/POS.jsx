@@ -1177,16 +1177,16 @@ const POS = () => {
           <span className="hidden lg:inline">Printo A4</span>
         </Button>
 
-        {/* Shtyp - Print and finish (payment) */}
+        {/* Shtyp - Print and finish (payment) - F2 */}
         <Button
-          variant="outline"
-          className="flex-1 lg:h-14 flex items-center justify-center gap-2 border-green-500 text-green-600 hover:bg-green-50"
+          className="flex-1 lg:h-16 flex items-center justify-center gap-2 bg-green-600 hover:bg-green-700 text-white font-semibold shadow-lg"
           onClick={() => cart.length > 0 && setShowPayment(true)}
           disabled={cart.length === 0}
           data-testid="pos-print-btn"
         >
           <Printer className="h-5 w-5" />
           <span className="hidden lg:inline">Shtyp</span>
+          <span className="text-xs bg-white/20 px-2 py-0.5 rounded ml-1">F2</span>
         </Button>
 
         {/* Provo Art / Mbyll Arkën - Close drawer */}
