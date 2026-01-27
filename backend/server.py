@@ -1641,6 +1641,124 @@ async def delete_vat_rate(
     await log_audit(current_user["id"], "delete", "vat_rate", vat_id)
     return {"message": "Norma e TVSH u fshi me sukses"}
 
+# ============ DATA RESET ROUTES ============
+@api_router.post("/admin/verify-password")
+async def verify_admin_password(
+    request: dict,
+    current_user: dict = Depends(require_role([UserRole.ADMIN]))
+):
+    """Verify admin password before allowing reset operations"""
+    password = request.get("password", "")
+    
+    # Get the admin user with password hash
+    admin = await db.users.find_one({"id": current_user["id"]})
+    if not admin:
+        raise HTTPException(status_code=404, detail="Përdoruesi nuk u gjet")
+    
+    if not verify_password(password, admin.get("password_hash", "")):
+        raise HTTPException(status_code=401, detail="Fjalëkalimi i gabuar")
+    
+    return {"verified": True, "message": "Fjalëkalimi u verifikua"}
+
+@api_router.get("/admin/users-for-reset")
+async def get_users_for_reset(
+    current_user: dict = Depends(require_role([UserRole.ADMIN]))
+):
+    """Get list of users with their sales statistics for reset selection"""
+    users = await db.users.find({}, {"_id": 0, "password_hash": 0, "pin": 0}).to_list(1000)
+    
+    # Get sales count per user
+    user_stats = []
+    for user in users:
+        sales_count = await db.sales.count_documents({"cashier_id": user["id"]})
+        total_sales = 0
+        sales = await db.sales.find({"cashier_id": user["id"]}, {"grand_total": 1, "_id": 0}).to_list(10000)
+        total_sales = sum(s.get("grand_total", 0) for s in sales)
+        
+        user_stats.append({
+            "id": user["id"],
+            "username": user["username"],
+            "full_name": user.get("full_name", ""),
+            "role": user["role"],
+            "sales_count": sales_count,
+            "total_sales": round(total_sales, 2)
+        })
+    
+    return user_stats
+
+@api_router.post("/admin/reset-data")
+async def reset_data(
+    request: ResetDataRequest,
+    current_user: dict = Depends(require_role([UserRole.ADMIN]))
+):
+    """Reset sales data based on request parameters"""
+    # Verify admin password first
+    admin = await db.users.find_one({"id": current_user["id"]})
+    if not admin or not verify_password(request.admin_password, admin.get("password_hash", "")):
+        raise HTTPException(status_code=401, detail="Fjalëkalimi i gabuar")
+    
+    deleted_sales = 0
+    deleted_movements = 0
+    deleted_drawers = 0
+    
+    if request.reset_type == "daily":
+        # Reset only today's data
+        today = datetime.now(timezone.utc).replace(hour=0, minute=0, second=0, microsecond=0).isoformat()
+        
+        # Delete today's sales
+        result = await db.sales.delete_many({"created_at": {"$gte": today}})
+        deleted_sales = result.deleted_count
+        
+        # Close and delete today's cash drawers
+        result = await db.cash_drawers.delete_many({"opened_at": {"$gte": today}})
+        deleted_drawers = result.deleted_count
+        
+    elif request.reset_type == "user_specific" and request.user_ids:
+        # Reset specific users' data
+        for user_id in request.user_ids:
+            result = await db.sales.delete_many({"cashier_id": user_id})
+            deleted_sales += result.deleted_count
+            
+            result = await db.cash_drawers.delete_many({"cashier_id": user_id})
+            deleted_drawers += result.deleted_count
+            
+    elif request.reset_type == "all":
+        # Reset all sales data
+        result = await db.sales.delete_many({})
+        deleted_sales = result.deleted_count
+        
+        result = await db.cash_drawers.delete_many({})
+        deleted_drawers = result.deleted_count
+        
+        # Reset stock movements (optional - keep products but clear movement history)
+        result = await db.stock_movements.delete_many({})
+        deleted_movements = result.deleted_count
+    
+    # Log the reset action
+    await log_audit(
+        current_user["id"], 
+        "reset_data", 
+        "system", 
+        request.reset_type,
+        {
+            "deleted_sales": deleted_sales,
+            "deleted_drawers": deleted_drawers,
+            "deleted_movements": deleted_movements,
+            "user_ids": request.user_ids,
+            "reset_type": request.reset_type
+        }
+    )
+    
+    return {
+        "success": True,
+        "message": "Të dhënat u resetuan me sukses",
+        "deleted": {
+            "sales": deleted_sales,
+            "cash_drawers": deleted_drawers,
+            "stock_movements": deleted_movements
+        }
+    }
+
 # ============ INIT ROUTES ============
 @api_router.post("/init/admin")
 async def create_initial_admin():
