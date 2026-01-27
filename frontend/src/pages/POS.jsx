@@ -1940,56 +1940,22 @@ const POS = () => {
                   </div>
                 </div>
 
-                {/* QR Code Section */}
+                {/* QR Code Section - Clean design */}
                 <div style={{ 
                   textAlign: 'center', 
                   margin: '12px 0',
-                  padding: '10px',
-                  border: '1px solid #ddd',
-                  borderRadius: '4px',
-                  background: '#fafafa'
+                  padding: '8px'
                 }}>
-                  <div style={{ fontSize: '9px', marginBottom: '8px', fontWeight: 'bold' }}>
-                    📱 Skanoni për të na kontaktuar:
-                  </div>
                   <img 
                     src="https://customer-assets.emergentagent.com/job_supermarket-pos-12/artifacts/ewy3j4rc_qr%20code.png" 
                     alt="QR Code" 
                     style={{ 
-                      width: '50mm', 
-                      height: '50mm', 
+                      width: '45mm', 
+                      height: '45mm', 
                       maxWidth: '100%',
                       objectFit: 'contain'
                     }} 
                   />
-                  <div style={{ fontSize: '8px', marginTop: '8px', color: '#666' }}>
-                    <div style={{ marginBottom: '4px' }}>
-                      <span style={{ 
-                        display: 'inline-block',
-                        padding: '2px 6px',
-                        background: '#25D366',
-                        color: '#fff',
-                        borderRadius: '3px',
-                        marginRight: '4px'
-                      }}>WhatsApp</span>
-                      <span style={{ 
-                        display: 'inline-block',
-                        padding: '2px 6px',
-                        background: '#7360F2',
-                        color: '#fff',
-                        borderRadius: '3px',
-                        marginRight: '4px'
-                      }}>Viber</span>
-                      <span style={{ 
-                        display: 'inline-block',
-                        padding: '2px 6px',
-                        background: '#1E3A5F',
-                        color: '#fff',
-                        borderRadius: '3px'
-                      }}>Thirrje</span>
-                    </div>
-                    <div>Na kontaktoni për çdo pyetje!</div>
-                  </div>
                 </div>
 
                 {/* Footer */}
