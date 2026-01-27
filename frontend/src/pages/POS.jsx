@@ -2072,14 +2072,54 @@ const POS = () => {
             )}
           </div>
           
+          {/* Print Options */}
+          <div className="bg-gray-50 rounded-lg p-3 border">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    id="directPrint"
+                    checked={directPrintEnabled}
+                    onChange={(e) => toggleDirectPrint(e.target.checked)}
+                    className="w-4 h-4 rounded border-gray-300 text-green-600 focus:ring-green-500"
+                  />
+                  <label htmlFor="directPrint" className="text-sm font-medium text-gray-700">
+                    🖨️ Printim direkt (pa dialog)
+                  </label>
+                </div>
+              </div>
+              <span className="text-xs text-gray-500">
+                {directPrintEnabled ? '✓ Aktiv' : 'Çaktivizuar'}
+              </span>
+            </div>
+            {directPrintEnabled && (
+              <p className="text-xs text-green-600 mt-2">
+                Kur klikoni "Printo Direkt", kuponi dërgohet automatikisht në printer pa hapur dialogun.
+              </p>
+            )}
+          </div>
+          
           {/* Bottom actions */}
           <div className="flex gap-2 pt-2 border-t">
             <Button variant="outline" className="flex-1" onClick={() => setShowReceiptPreview(false)}>
               Mbyll
             </Button>
-            <Button className="flex-1 bg-[#1E3A5F] hover:bg-[#152C4A]" onClick={executeThermalPrint}>
+            {directPrintEnabled && (
+              <Button 
+                className="flex-1 bg-green-600 hover:bg-green-700" 
+                onClick={executeDirectPrint}
+              >
+                <Printer className="h-4 w-4 mr-2" />
+                Printo Direkt
+              </Button>
+            )}
+            <Button 
+              className="flex-1 bg-[#1E3A5F] hover:bg-[#152C4A]" 
+              onClick={() => executeThermalPrint(true)}
+            >
               <Printer className="h-4 w-4 mr-2" />
-              Printo Kuponin
+              {directPrintEnabled ? 'Zgjidh Printer' : 'Printo Kuponin'}
             </Button>
           </div>
         </DialogContent>
