@@ -13,8 +13,7 @@ import {
   LogOut,
   ClipboardList,
   Menu,
-  X,
-  Smartphone
+  X
 } from 'lucide-react';
 import { Button } from './ui/button';
 import { ScrollArea } from './ui/scroll-area';
