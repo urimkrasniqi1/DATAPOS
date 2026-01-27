@@ -48,6 +48,7 @@ const Users = () => {
   const [formData, setFormData] = useState({
     username: '',
     password: '',
+    pin: '',
     full_name: '',
     role: 'cashier',
     branch_id: '',
