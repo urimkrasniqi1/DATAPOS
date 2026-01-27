@@ -14,6 +14,7 @@ import Branches from './pages/Branches';
 import Reports from './pages/Reports';
 import Settings from './pages/Settings';
 import AuditLogs from './pages/AuditLogs';
+import SuperAdmin from './pages/SuperAdmin';
 
 // Layout
 import MainLayout from './components/MainLayout';
