@@ -1474,44 +1474,120 @@ async def export_excel_report(
 ):
     buffer = io.BytesIO()
     workbook = xlsxwriter.Workbook(buffer)
-    worksheet = workbook.add_worksheet()
     
-    header_format = workbook.add_format({'bold': True, 'bg_color': '#E53935', 'font_color': 'white'})
+    # Formats
+    title_format = workbook.add_format({'bold': True, 'font_size': 16, 'font_color': '#00a79d'})
+    header_format = workbook.add_format({'bold': True, 'bg_color': '#00a79d', 'font_color': 'white', 'border': 1})
+    summary_header = workbook.add_format({'bold': True, 'bg_color': '#f0f0f0', 'border': 1})
+    summary_value = workbook.add_format({'num_format': '€#,##0.00', 'border': 1})
+    money_format = workbook.add_format({'num_format': '€#,##0.00'})
+    date_format = workbook.add_format({'num_format': 'dd/mm/yyyy'})
+    
+    # Get company info
+    company = await db.settings.find_one({"type": "company"}, {"_id": 0})
+    company_name = company.get("company_name", "iPOS") if company else "iPOS"
     
     if report_type == "sales" and start_date and end_date:
-        headers = ["Data", "Nr. Faturës", "Totali", "Metoda", "Arkëtari"]
-        for col, header in enumerate(headers):
-            worksheet.write(0, col, header, header_format)
+        worksheet = workbook.add_worksheet("Shitjet")
         
-        query = {"created_at": {"$gte": start_date, "$lte": end_date}}
+        # Title
+        worksheet.write(0, 0, company_name, title_format)
+        worksheet.write(1, 0, f"Raport Shitjesh: {start_date} - {end_date}")
+        worksheet.write(2, 0, f"Gjeneruar: {datetime.now().strftime('%d/%m/%Y %H:%M')}")
+        
+        # Get data
+        query = {"created_at": {"$gte": start_date, "$lte": end_date + "T23:59:59"}}
         if branch_id:
             query["branch_id"] = branch_id
-        sales = await db.sales.find(query, {"_id": 0}).to_list(10000)
+        sales = await db.sales.find(query, {"_id": 0}).sort("created_at", -1).to_list(10000)
         
-        for row, sale in enumerate(sales, start=1):
-            worksheet.write(row, 0, sale["created_at"][:10])
-            worksheet.write(row, 1, sale["receipt_number"])
-            worksheet.write(row, 2, sale["grand_total"])
-            worksheet.write(row, 3, sale["payment_method"])
-            worksheet.write(row, 4, sale["user_id"])
+        # Summary section
+        total_sales = sum(s.get("grand_total", 0) for s in sales)
+        total_vat = sum(s.get("vat_total", 0) for s in sales)
+        cash_sales = sum(s.get("grand_total", 0) for s in sales if s.get("payment_method") == "cash")
+        card_sales = sum(s.get("grand_total", 0) for s in sales if s.get("payment_method") in ["card", "bank"])
+        
+        worksheet.write(4, 0, "PËRMBLEDHJE", summary_header)
+        worksheet.write(4, 1, "", summary_header)
+        worksheet.write(5, 0, "Numri i Transaksioneve", summary_header)
+        worksheet.write(5, 1, len(sales))
+        worksheet.write(6, 0, "Të Ardhura Totale", summary_header)
+        worksheet.write(6, 1, total_sales, summary_value)
+        worksheet.write(7, 0, "TVSH Total", summary_header)
+        worksheet.write(7, 1, total_vat, summary_value)
+        worksheet.write(8, 0, "Pagesa Cash", summary_header)
+        worksheet.write(8, 1, cash_sales, summary_value)
+        worksheet.write(9, 0, "Pagesa Kartë/Bank", summary_header)
+        worksheet.write(9, 1, card_sales, summary_value)
+        
+        # Detail headers
+        headers = ["#", "Data", "Nr. Faturës", "Nëntotali", "TVSH", "Totali", "Metoda"]
+        for col, header in enumerate(headers):
+            worksheet.write(11, col, header, header_format)
+        
+        # Detail data
+        for row, sale in enumerate(sales, start=12):
+            worksheet.write(row, 0, row - 11)
+            worksheet.write(row, 1, sale["created_at"][:10])
+            worksheet.write(row, 2, sale.get("receipt_number", "-"))
+            worksheet.write(row, 3, sale.get("subtotal", 0), money_format)
+            worksheet.write(row, 4, sale.get("vat_total", 0), money_format)
+            worksheet.write(row, 5, sale.get("grand_total", 0), money_format)
+            worksheet.write(row, 6, sale.get("payment_method", "-"))
+        
+        # Auto-fit columns
+        worksheet.set_column(0, 0, 5)
+        worksheet.set_column(1, 1, 12)
+        worksheet.set_column(2, 2, 15)
+        worksheet.set_column(3, 5, 12)
+        worksheet.set_column(6, 6, 10)
     
     elif report_type == "stock":
-        headers = ["Emri", "Barkodi", "Stoku", "Çmimi Blerjes", "Çmimi Shitjes", "Kategoria"]
+        worksheet = workbook.add_worksheet("Stoku")
+        
+        # Title
+        worksheet.write(0, 0, company_name, title_format)
+        worksheet.write(1, 0, "Raport Stoku")
+        worksheet.write(2, 0, f"Gjeneruar: {datetime.now().strftime('%d/%m/%Y %H:%M')}")
+        
+        # Get data
+        products = await db.products.find({}, {"_id": 0}).sort("name", 1).to_list(10000)
+        
+        # Summary
+        total_products = len(products)
+        low_stock = len([p for p in products if (p.get("current_stock", 0) or 0) < 10])
+        total_value = sum((p.get("current_stock", 0) or 0) * (p.get("purchase_price", 0) or 0) for p in products)
+        
+        worksheet.write(4, 0, "PËRMBLEDHJE STOKU", summary_header)
+        worksheet.write(4, 1, "", summary_header)
+        worksheet.write(5, 0, "Numri i Produkteve", summary_header)
+        worksheet.write(5, 1, total_products)
+        worksheet.write(6, 0, "Stok i Ulët (<10)", summary_header)
+        worksheet.write(6, 1, low_stock)
+        worksheet.write(7, 0, "Vlera Totale", summary_header)
+        worksheet.write(7, 1, total_value, summary_value)
+        
+        # Headers
+        headers = ["Emri", "Barkodi", "Stoku", "Ç. Blerjes", "Ç. Shitjes", "Kategoria", "Vlera Stokut"]
         for col, header in enumerate(headers):
-            worksheet.write(0, col, header, header_format)
+            worksheet.write(9, col, header, header_format)
         
-        query = {}
-        if branch_id:
-            query["branch_id"] = branch_id
-        products = await db.products.find(query, {"_id": 0}).to_list(10000)
-        
-        for row, product in enumerate(products, start=1):
+        # Data
+        for row, product in enumerate(products, start=10):
+            stock = product.get("current_stock", 0) or 0
+            purchase = product.get("purchase_price", 0) or 0
             worksheet.write(row, 0, product.get("name", ""))
             worksheet.write(row, 1, product.get("barcode", ""))
-            worksheet.write(row, 2, product.get("current_stock", 0))
-            worksheet.write(row, 3, product.get("purchase_price", 0) or 0)
-            worksheet.write(row, 4, product.get("sale_price", 0) or 0)
+            worksheet.write(row, 2, stock)
+            worksheet.write(row, 3, purchase, money_format)
+            worksheet.write(row, 4, product.get("sale_price", 0) or 0, money_format)
             worksheet.write(row, 5, product.get("category", ""))
+            worksheet.write(row, 6, stock * purchase, money_format)
+        
+        # Auto-fit
+        worksheet.set_column(0, 0, 30)
+        worksheet.set_column(1, 1, 15)
+        worksheet.set_column(2, 6, 12)
     
     workbook.close()
     buffer.seek(0)
