@@ -177,6 +177,13 @@ Sistema POS (Point of Sale) për markete dhe supermarkete me mbështetje multi-f
   - Fallback në browser print kur nuk është Electron
   - Detektim automatik nëse po ekzekutohet në Electron
 
+- **Comment Templates UI** (P2 Completed):
+  - Settings > Shabllonet > "Komentet e Kuponit" section
+  - CRUD operations për menaxhimin e template-ve
+  - Default template marker (★)
+  - Templates shfaqen në POS receipt preview dialog
+  - Backend: /api/comment-templates (GET, POST, PUT, DELETE)
+
 ## Previous Updates (January 27, 2025)
 - Rregulluar printimi i kuponit termik dhe faturës A4 duke përdorur iframe të fshehur në vend të window.open()
 - Metoda e re e printimit nuk bllokohet nga popup blockers
