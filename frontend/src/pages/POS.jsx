@@ -328,35 +328,155 @@ const POS = () => {
     
     // If direct print is enabled, print immediately without showing preview dialog
     if (directPrintEnabled) {
-      // We need to render the receipt first, then print and close immediately
-      setShowReceiptPreview(true);
-      
-      // Wait for receipt to render, then print
-      const tryPrint = (attempts = 0) => {
-        const printArea = document.getElementById('thermal-receipt-print');
-        if (printArea) {
-          // Receipt is rendered, proceed with printing
-          executeThermalPrint(false);
-          // Close the dialog after printing
-          setTimeout(() => {
-            setShowReceiptPreview(false);
-            setReceiptDataForPrint(null);
-          }, 500);
-        } else if (attempts < 20) {
-          // Receipt not yet rendered, try again after 100ms (max 2 seconds)
-          setTimeout(() => tryPrint(attempts + 1), 100);
-        } else {
-          // Failed to render receipt after 2 seconds
-          toast.error('Gabim: Kuponi nuk u renderua. Provoni përsëri.');
-          setShowReceiptPreview(false);
-        }
-      };
-      
-      // Start trying after initial delay
-      setTimeout(() => tryPrint(0), 200);
+      // Print directly without showing preview dialog
+      executeThermalPrintDirect(saleData);
     } else {
       setShowReceiptPreview(true);
     }
+  };
+  
+  // Direct print function - creates and prints receipt without showing dialog
+  const executeThermalPrintDirect = (saleData) => {
+    // Build receipt HTML directly
+    const receiptHTML = buildReceiptHTML(saleData);
+    
+    // Create hidden iframe for printing
+    const printFrame = document.createElement('iframe');
+    printFrame.id = 'thermal-print-frame-direct';
+    printFrame.style.position = 'absolute';
+    printFrame.style.top = '-10000px';
+    printFrame.style.left = '-10000px';
+    printFrame.style.width = '80mm';
+    printFrame.style.height = '0';
+    
+    // Remove any existing print frame
+    const existingFrame = document.getElementById('thermal-print-frame-direct');
+    if (existingFrame) {
+      existingFrame.remove();
+    }
+    
+    document.body.appendChild(printFrame);
+    
+    const printDocument = printFrame.contentDocument || printFrame.contentWindow.document;
+    
+    printDocument.write(`
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <title>Kupon Shitje</title>
+          <style>
+            * { margin: 0; padding: 0; box-sizing: border-box; }
+            body { 
+              font-family: 'Courier New', 'Consolas', monospace; 
+              font-size: 11px; 
+              line-height: 1.4;
+              width: 80mm;
+              max-width: 80mm;
+              padding: 4mm;
+              background: white;
+              color: #000;
+            }
+            img { max-width: 100%; height: auto; }
+            @media print {
+              @page { size: 80mm auto; margin: 0; }
+              html, body { width: 80mm !important; max-width: 80mm !important; }
+            }
+          </style>
+        </head>
+        <body>
+          ${receiptHTML}
+        </body>
+      </html>
+    `);
+    
+    printDocument.close();
+    
+    // Wait for content and images to load, then print
+    setTimeout(() => {
+      try {
+        printFrame.contentWindow.focus();
+        printFrame.contentWindow.print();
+        toast.success('Kuponi u dërgua në printer!');
+      } catch (e) {
+        console.error('Print error:', e);
+        toast.error('Gabim gjatë printimit.');
+      }
+      // Remove iframe after printing
+      setTimeout(() => {
+        const frame = document.getElementById('thermal-print-frame-direct');
+        if (frame) frame.remove();
+      }, 2000);
+    }, 500);
+  };
+  
+  // Build receipt HTML for direct printing
+  const buildReceiptHTML = (saleData) => {
+    const items = saleData.items || [];
+    const itemsHTML = items.map(item => `
+      <div style="margin-bottom: 6px;">
+        <div style="font-weight: 500;">${(item.product_name || 'Produkt').substring(0, 30)}</div>
+        <div style="display: flex;">
+          <span style="flex: 1;"></span>
+          <span style="width: 30px; text-align: center;">${item.quantity}</span>
+          <span style="width: 45px; text-align: right;">${(item.unit_price || 0).toFixed(2)}</span>
+          <span style="width: 50px; text-align: right; font-weight: bold;">${(item.total || (item.quantity * item.unit_price)).toFixed(2)}</span>
+        </div>
+      </div>
+    `).join('');
+    
+    return `
+      <div style="text-align: center; margin-bottom: 8px;">
+        <img src="https://customer-assets.emergentagent.com/job_supermarket-pos-11/artifacts/mcfwxd72_mobilshopurimi%20logo.png" alt="Logo" style="height: 45px; max-width: 60mm;" />
+        <div style="font-size: 14px; font-weight: bold;">${companySettings?.company_name || 'MOBILSHOPURIMI'}</div>
+        <div style="font-size: 9px;">${companySettings?.address || ''}</div>
+        <div style="font-size: 9px;">Tel: ${companySettings?.phone || ''}</div>
+      </div>
+      <div style="border-top: 2px dashed #000; margin: 8px 0;"></div>
+      <div style="text-align: center; margin: 8px 0;">
+        <span style="border: 1px solid #000; padding: 4px 8px; font-weight: bold;">KUPON SHITJE</span>
+      </div>
+      <div style="font-size: 10px; margin: 8px 0;">
+        <div style="display: flex; justify-content: space-between;"><span>Nr:</span><span style="font-weight: bold;">${saleData.receipt_number}</span></div>
+        <div style="display: flex; justify-content: space-between;"><span>Data:</span><span>${new Date(saleData.created_at).toLocaleDateString('sq-AL')}</span></div>
+        <div style="display: flex; justify-content: space-between;"><span>Ora:</span><span>${new Date(saleData.created_at).toLocaleTimeString('sq-AL')}</span></div>
+        <div style="display: flex; justify-content: space-between;"><span>Arkëtar:</span><span>${user?.full_name || '-'}</span></div>
+      </div>
+      <div style="border-top: 1px dashed #000; margin: 8px 0;"></div>
+      <div style="font-size: 9px; font-weight: bold; display: flex; border-bottom: 1px solid #000; padding-bottom: 4px;">
+        <span style="flex: 1;">ARTIKULLI</span>
+        <span style="width: 30px; text-align: center;">SAS</span>
+        <span style="width: 45px; text-align: right;">ÇMIMI</span>
+        <span style="width: 50px; text-align: right;">VLERA</span>
+      </div>
+      <div style="font-size: 9px; margin: 8px 0;">${itemsHTML}</div>
+      <div style="border-top: 1px dashed #000; margin: 8px 0;"></div>
+      <div style="font-size: 10px;">
+        <div style="display: flex; justify-content: space-between;"><span>Nëntotali:</span><span>${(saleData.subtotal || 0).toFixed(2)} EUR</span></div>
+      </div>
+      <div style="border-top: 2px solid #000; border-bottom: 2px solid #000; padding: 8px 0; margin: 8px 0; display: flex; justify-content: space-between;">
+        <span style="font-size: 14px; font-weight: bold;">TOTALI:</span>
+        <span style="font-size: 18px; font-weight: bold;">${(saleData.grand_total || 0).toFixed(2)} EUR</span>
+      </div>
+      <div style="font-size: 10px; margin: 8px 0;">
+        <div style="display: flex; justify-content: space-between;"><span>Mënyra:</span><span style="font-weight: bold;">${saleData.payment_method === 'cash' ? 'CASH' : 'KARTË'}</span></div>
+        ${saleData.payment_method === 'cash' ? `
+          <div style="display: flex; justify-content: space-between;"><span>Paguar:</span><span>${(saleData.cash_amount || 0).toFixed(2)} EUR</span></div>
+          <div style="display: flex; justify-content: space-between; font-weight: bold;"><span>Kusuri:</span><span>${(saleData.change_amount || 0).toFixed(2)} EUR</span></div>
+        ` : ''}
+      </div>
+      <div style="border-top: 1px dashed #000; margin: 8px 0;"></div>
+      <div style="text-align: center; margin: 10px 0;">
+        <div style="font-size: 12px; font-weight: bold;">FALEMINDERIT!</div>
+        <div style="font-size: 9px;">Ju mirëpresim përsëri!</div>
+      </div>
+      <div style="text-align: center; margin: 12px 0; padding: 8px;">
+        <img src="https://customer-assets.emergentagent.com/job_supermarket-pos-12/artifacts/ewy3j4rc_qr%20code.png" alt="QR" style="width: 45mm; height: 45mm;" />
+      </div>
+      <div style="text-align: center; font-size: 8px; color: #666; border-top: 1px dashed #000; padding-top: 8px;">
+        <div>Ky kupon shërben vetëm për evidencë</div>
+        <div>${new Date().toLocaleString('sq-AL')}</div>
+      </div>
+    `;
   };
 
   // Save comment as default for future receipts
