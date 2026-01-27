@@ -458,7 +458,6 @@ const POS = () => {
       toast.success('Kuponi po dërgohet për printim...');
     } else {
       toast.success('Kuponi u dërgua direkt në printer!');
-      setShowReceiptPreview(false); // Close dialog after direct print
     }
   };
 
