@@ -295,14 +295,30 @@ const POS = () => {
   const [receiptComment, setReceiptComment] = useState(''); // Extra comment for receipt
   const [showCommentOnReceipt, setShowCommentOnReceipt] = useState(true); // Toggle to show comment
   const [savedReceiptComment, setSavedReceiptComment] = useState(''); // Saved comment from settings
+  const [directPrintEnabled, setDirectPrintEnabled] = useState(false); // Direct print without dialog
 
-  // Load saved comment from localStorage
+  // Load saved preferences from localStorage
   useEffect(() => {
-    const saved = localStorage.getItem('receiptDefaultComment');
-    if (saved) {
-      setSavedReceiptComment(saved);
+    const savedComment = localStorage.getItem('receiptDefaultComment');
+    if (savedComment) {
+      setSavedReceiptComment(savedComment);
+    }
+    const savedDirectPrint = localStorage.getItem('directPrintEnabled');
+    if (savedDirectPrint === 'true') {
+      setDirectPrintEnabled(true);
     }
   }, []);
+
+  // Toggle direct print and save preference
+  const toggleDirectPrint = (enabled) => {
+    setDirectPrintEnabled(enabled);
+    localStorage.setItem('directPrintEnabled', enabled ? 'true' : 'false');
+    if (enabled) {
+      toast.success('Printimi direkt aktivizuar! Kuponi do të printohet automatikisht.');
+    } else {
+      toast.info('Printimi direkt çaktivizuar. Do të hapet dialogu i printerit.');
+    }
+  };
 
   // Print thermal receipt - show preview dialog first
   const printThermalReceipt = (saleData) => {
