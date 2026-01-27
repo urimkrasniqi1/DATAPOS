@@ -139,7 +139,24 @@ Sistema POS (Point of Sale) për markete dhe supermarkete me mbështetje multi-f
     └── PRD.md
 ```
 
-## Latest Updates (January 27, 2025)
+## Latest Updates (January 27, 2025 - Session 2)
+- **Keyboard Shortcuts për POS Screen** (të gjitha funksionale):
+  - F1 - Shfaq ndihmën me listën e shkurtoreve
+  - F2 - Hap dritaren e pagesës (Shtyp & Përfundo)
+  - F4 - Hap preview faturën A4
+  - F6 - Hap dialogun "Dokumentet e Fundit"
+  - F9 - Hap dritaren e pagesës (alternativë)
+  - F10 - Pagesë direkte me kartë/bank
+  - F12 - Hap dialogun "Kërko Artikullin"
+  - Ctrl+1 - Zgjidh artikullin e parë në shportë
+  - Ctrl+* - Ndrysho çmimin e artikullit të zgjedhur
+  - Ctrl++ - Shto sasinë
+  - Ctrl+- - Zbrit sasinë
+  - Delete - Fshij artikullin e zgjedhur
+- **Etiketa vizuale në butona**: F6, F12, Del, F4, F2
+- Rregulluar bug: setShowA4Invoice → setShowInvoiceA4
+
+## Previous Updates (January 27, 2025)
 - Rregulluar printimi i kuponit termik dhe faturës A4 duke përdorur iframe të fshehur në vend të window.open()
 - Metoda e re e printimit nuk bllokohet nga popup blockers
 - Shtuar mesazhe të sakta gabimi dhe suksesi gjatë printimit
