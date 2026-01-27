@@ -1738,365 +1738,285 @@ const POS = () => {
           <div className="border rounded-lg overflow-auto flex-1 bg-gray-100 p-3">
             {receiptDataForPrint && (
               <div id="thermal-receipt-print" style={{ 
-                fontFamily: "'Segoe UI', 'Arial', sans-serif", 
+                fontFamily: "'Courier New', 'Consolas', monospace", 
                 fontSize: '11px', 
-                width: '110mm', 
-                maxWidth: '110mm',
-                minHeight: '150mm',
+                width: '80mm', 
+                maxWidth: '80mm',
+                minHeight: '180mm',
                 margin: '0 auto',
-                padding: '6mm',
+                padding: '4mm',
                 backgroundColor: '#fff',
-                color: '#1a1a1a',
-                lineHeight: '1.5',
-                borderRadius: '4px',
-                boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
+                color: '#000',
+                lineHeight: '1.4'
               }}>
-                {/* === ELEGANT HEADER === */}
-                <div style={{ 
-                  textAlign: 'center', 
-                  paddingBottom: '15px', 
-                  marginBottom: '15px', 
-                  borderBottom: '3px double #1E3A5F',
-                  background: 'linear-gradient(to bottom, #f8f9fa, #fff)'
-                }}>
-                  {/* Logo with elegant frame */}
-                  <div style={{ 
-                    marginBottom: '12px',
-                    padding: '10px',
-                    display: 'inline-block'
-                  }}>
+                {/* === FISCAL RECEIPT HEADER === */}
+                <div style={{ textAlign: 'center', marginBottom: '8px' }}>
+                  {/* Logo */}
+                  <div style={{ marginBottom: '8px' }}>
                     <img 
                       src="https://customer-assets.emergentagent.com/job_supermarket-pos-11/artifacts/mcfwxd72_mobilshopurimi%20logo.png" 
-                      alt="Mobilshopurimi" 
-                      style={{ 
-                        height: '55px', 
-                        maxWidth: '200px',
-                        objectFit: 'contain'
-                      }} 
+                      alt="Logo" 
+                      style={{ height: '45px', maxWidth: '60mm', objectFit: 'contain' }} 
                     />
                   </div>
-                  <div style={{ 
-                    fontSize: '18px', 
-                    fontWeight: '700', 
-                    letterSpacing: '3px', 
-                    color: '#1E3A5F',
-                    marginBottom: '6px',
-                    textTransform: 'uppercase'
-                  }}>
+                  <div style={{ fontSize: '14px', fontWeight: 'bold', letterSpacing: '1px' }}>
                     {companySettings?.company_name || 'MOBILSHOPURIMI'}
                   </div>
-                  <div style={{ fontSize: '10px', color: '#666', lineHeight: '1.6' }}>
-                    {companySettings?.address && <div>{companySettings.address}</div>}
-                    {companySettings?.city && <span>{companySettings.city}</span>}
-                    {companySettings?.phone && <div style={{ marginTop: '4px' }}>📞 {companySettings.phone}</div>}
+                  <div style={{ fontSize: '9px', marginTop: '4px' }}>
+                    {companySettings?.address || 'Adresa e Biznesit'}
+                  </div>
+                  {companySettings?.city && (
+                    <div style={{ fontSize: '9px' }}>{companySettings.city}</div>
+                  )}
+                  <div style={{ fontSize: '9px', marginTop: '2px' }}>
+                    Tel: {companySettings?.phone || '+383 XX XXX XXX'}
                   </div>
                   {(companySettings?.nui || companySettings?.nf) && (
-                    <div style={{ 
-                      marginTop: '8px', 
-                      fontSize: '9px', 
-                      color: '#888',
-                      display: 'flex',
-                      justifyContent: 'center',
-                      gap: '20px'
-                    }}>
-                      {companySettings?.nui && <span>NUI: {companySettings.nui}</span>}
-                      {companySettings?.nf && <span>NF: {companySettings.nf}</span>}
+                    <div style={{ fontSize: '8px', marginTop: '4px' }}>
+                      {companySettings?.nui && `NUI: ${companySettings.nui}`}
+                      {companySettings?.nui && companySettings?.nf && ' | '}
+                      {companySettings?.nf && `NF: ${companySettings.nf}`}
                     </div>
                   )}
                 </div>
 
-                {/* === RECEIPT BADGE === */}
-                <div style={{ 
-                  textAlign: 'center', 
-                  margin: '0 auto 15px auto',
-                  maxWidth: '200px'
-                }}>
+                {/* Separator */}
+                <div style={{ borderTop: '2px dashed #000', margin: '8px 0' }}></div>
+
+                {/* Receipt Type */}
+                <div style={{ textAlign: 'center', margin: '8px 0' }}>
                   <div style={{ 
-                    background: '#1E3A5F',
-                    color: '#fff',
-                    padding: '10px 20px',
-                    borderRadius: '25px',
-                    fontSize: '13px',
-                    fontWeight: '600',
-                    letterSpacing: '2px',
-                    boxShadow: '0 3px 10px rgba(30, 58, 95, 0.3)'
+                    fontSize: '12px', 
+                    fontWeight: 'bold',
+                    border: '1px solid #000',
+                    padding: '4px 8px',
+                    display: 'inline-block'
                   }}>
                     KUPON SHITJE
                   </div>
-                  <div style={{ fontSize: '9px', color: '#999', marginTop: '5px' }}>
-                    Jo Fiskal • Për Evidencë
+                </div>
+
+                {/* Receipt Info */}
+                <div style={{ fontSize: '10px', margin: '8px 0' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                    <span>Nr:</span>
+                    <span style={{ fontWeight: 'bold' }}>{receiptDataForPrint.receipt_number}</span>
+                  </div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                    <span>Data:</span>
+                    <span>{new Date(receiptDataForPrint.created_at).toLocaleDateString('sq-AL')}</span>
+                  </div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                    <span>Ora:</span>
+                    <span>{new Date(receiptDataForPrint.created_at).toLocaleTimeString('sq-AL', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}</span>
+                  </div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                    <span>Arkëtar:</span>
+                    <span>{user?.full_name || '-'}</span>
                   </div>
                 </div>
 
-                {/* === RECEIPT DETAILS CARD === */}
+                {/* Separator */}
+                <div style={{ borderTop: '1px dashed #000', margin: '8px 0' }}></div>
+
+                {/* Items Header */}
                 <div style={{ 
-                  background: '#f8f9fa',
-                  borderRadius: '8px',
-                  padding: '12px',
-                  marginBottom: '15px',
-                  border: '1px solid #e9ecef'
-                }}>
-                  <div style={{ 
-                    display: 'grid', 
-                    gridTemplateColumns: '1fr 1fr',
-                    gap: '8px',
-                    fontSize: '10px'
-                  }}>
-                    <div>
-                      <span style={{ color: '#666' }}>Nr. Kuponit:</span>
-                      <div style={{ fontWeight: '600', color: '#1E3A5F' }}>{receiptDataForPrint.receipt_number}</div>
-                    </div>
-                    <div style={{ textAlign: 'right' }}>
-                      <span style={{ color: '#666' }}>Arkëtar:</span>
-                      <div style={{ fontWeight: '600' }}>{user?.full_name || '-'}</div>
-                    </div>
-                    <div>
-                      <span style={{ color: '#666' }}>Data:</span>
-                      <div style={{ fontWeight: '500' }}>{new Date(receiptDataForPrint.created_at).toLocaleDateString('sq-AL', { day: '2-digit', month: 'short', year: 'numeric' })}</div>
-                    </div>
-                    <div style={{ textAlign: 'right' }}>
-                      <span style={{ color: '#666' }}>Ora:</span>
-                      <div style={{ fontWeight: '500' }}>{new Date(receiptDataForPrint.created_at).toLocaleTimeString('sq-AL', { hour: '2-digit', minute: '2-digit' })}</div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* === ITEMS TABLE === */}
-                <div style={{ marginBottom: '15px' }}>
-                  {/* Table Header */}
-                  <div style={{ 
-                    display: 'flex',
-                    background: '#1E3A5F',
-                    color: '#fff',
-                    padding: '8px 10px',
-                    borderRadius: '6px 6px 0 0',
-                    fontSize: '9px',
-                    fontWeight: '600',
-                    textTransform: 'uppercase',
-                    letterSpacing: '0.5px'
-                  }}>
-                    <span style={{ flex: 1 }}>Artikulli</span>
-                    <span style={{ width: '35px', textAlign: 'center' }}>Sas.</span>
-                    <span style={{ width: '50px', textAlign: 'right' }}>Çmimi</span>
-                    <span style={{ width: '55px', textAlign: 'right' }}>Vlera</span>
-                  </div>
-                  
-                  {/* Items */}
-                  <div style={{ border: '1px solid #e9ecef', borderTop: 'none', borderRadius: '0 0 6px 6px' }}>
-                    {receiptDataForPrint.items?.map((item, index) => (
-                      <div key={index} style={{ 
-                        display: 'flex',
-                        alignItems: 'center',
-                        padding: '10px',
-                        fontSize: '10px',
-                        borderBottom: index < receiptDataForPrint.items.length - 1 ? '1px solid #f0f0f0' : 'none',
-                        background: index % 2 === 0 ? '#fff' : '#fafafa'
-                      }}>
-                        <div style={{ flex: 1 }}>
-                          <div style={{ fontWeight: '500', color: '#333', marginBottom: '2px' }}>
-                            {(item.product_name || 'Produkt').substring(0, 28)}
-                          </div>
-                          {item.discount_percent > 0 && (
-                            <span style={{ 
-                              fontSize: '8px', 
-                              background: '#fee2e2', 
-                              color: '#dc2626',
-                              padding: '2px 6px',
-                              borderRadius: '10px'
-                            }}>
-                              -{item.discount_percent}% zbritje
-                            </span>
-                          )}
-                        </div>
-                        <span style={{ width: '35px', textAlign: 'center', color: '#666' }}>{item.quantity}</span>
-                        <span style={{ width: '50px', textAlign: 'right', color: '#666' }}>{(item.unit_price || 0).toFixed(2)}</span>
-                        <span style={{ width: '55px', textAlign: 'right', fontWeight: '600', color: '#1E3A5F' }}>
-                          {(item.total || (item.quantity * item.unit_price)).toFixed(2)} €
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                {/* === TOTALS SECTION === */}
-                <div style={{ 
-                  background: '#f8f9fa',
-                  borderRadius: '8px',
-                  padding: '12px',
-                  marginBottom: '15px'
-                }}>
-                  <div style={{ fontSize: '10px', marginBottom: '8px' }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
-                      <span style={{ color: '#666' }}>Nëntotali:</span>
-                      <span>{(receiptDataForPrint.subtotal || 0).toFixed(2)} €</span>
-                    </div>
-                    {receiptDataForPrint.total_discount > 0 && (
-                      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px', color: '#dc2626' }}>
-                        <span>Zbritja:</span>
-                        <span>-{receiptDataForPrint.total_discount.toFixed(2)} €</span>
-                      </div>
-                    )}
-                    {receiptDataForPrint.total_vat > 0 && (
-                      <div style={{ display: 'flex', justifyContent: 'space-between', color: '#666' }}>
-                        <span>TVSH:</span>
-                        <span>{receiptDataForPrint.total_vat.toFixed(2)} €</span>
-                      </div>
-                    )}
-                  </div>
-                  
-                  {/* Grand Total */}
-                  <div style={{ 
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                    background: '#1E3A5F',
-                    color: '#fff',
-                    padding: '12px 15px',
-                    borderRadius: '8px',
-                    marginTop: '10px'
-                  }}>
-                    <span style={{ fontSize: '14px', fontWeight: '600' }}>TOTALI</span>
-                    <span style={{ fontSize: '20px', fontWeight: '700' }}>{(receiptDataForPrint.grand_total || 0).toFixed(2)} €</span>
-                  </div>
-                </div>
-
-                {/* === PAYMENT INFO === */}
-                <div style={{ 
+                  fontSize: '9px', 
+                  fontWeight: 'bold',
                   display: 'flex',
-                  gap: '10px',
-                  marginBottom: '15px'
+                  borderBottom: '1px solid #000',
+                  paddingBottom: '4px',
+                  marginBottom: '4px'
                 }}>
-                  <div style={{ 
-                    flex: 1,
-                    background: receiptDataForPrint.payment_method === 'cash' ? '#ecfdf5' : '#eff6ff',
-                    border: receiptDataForPrint.payment_method === 'cash' ? '1px solid #a7f3d0' : '1px solid #bfdbfe',
-                    borderRadius: '8px',
-                    padding: '10px',
-                    textAlign: 'center'
-                  }}>
-                    <div style={{ fontSize: '9px', color: '#666', marginBottom: '2px' }}>Mënyra</div>
-                    <div style={{ 
-                      fontSize: '11px', 
-                      fontWeight: '600',
-                      color: receiptDataForPrint.payment_method === 'cash' ? '#059669' : '#2563eb'
-                    }}>
-                      {receiptDataForPrint.payment_method === 'cash' ? '💵 CASH' : '💳 KARTË'}
+                  <span style={{ flex: 1 }}>ARTIKULLI</span>
+                  <span style={{ width: '30px', textAlign: 'center' }}>SAS</span>
+                  <span style={{ width: '45px', textAlign: 'right' }}>ÇMIMI</span>
+                  <span style={{ width: '50px', textAlign: 'right' }}>VLERA</span>
+                </div>
+
+                {/* Items */}
+                {receiptDataForPrint.items?.map((item, index) => (
+                  <div key={index} style={{ fontSize: '9px', marginBottom: '6px' }}>
+                    <div style={{ fontWeight: '500', marginBottom: '2px' }}>
+                      {(item.product_name || 'Produkt').substring(0, 30)}
                     </div>
+                    <div style={{ display: 'flex' }}>
+                      <span style={{ flex: 1 }}></span>
+                      <span style={{ width: '30px', textAlign: 'center' }}>{item.quantity}</span>
+                      <span style={{ width: '45px', textAlign: 'right' }}>{(item.unit_price || 0).toFixed(2)}</span>
+                      <span style={{ width: '50px', textAlign: 'right', fontWeight: 'bold' }}>
+                        {(item.total || (item.quantity * item.unit_price)).toFixed(2)}
+                      </span>
+                    </div>
+                    {item.discount_percent > 0 && (
+                      <div style={{ fontSize: '8px', marginLeft: '10px' }}>
+                        (Zbritje: -{item.discount_percent}%)
+                      </div>
+                    )}
+                  </div>
+                ))}
+
+                {/* Separator */}
+                <div style={{ borderTop: '1px dashed #000', margin: '8px 0' }}></div>
+
+                {/* Totals */}
+                <div style={{ fontSize: '10px' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '2px' }}>
+                    <span>Nëntotali:</span>
+                    <span>{(receiptDataForPrint.subtotal || 0).toFixed(2)} EUR</span>
+                  </div>
+                  {receiptDataForPrint.total_discount > 0 && (
+                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '2px' }}>
+                      <span>Zbritja:</span>
+                      <span>-{receiptDataForPrint.total_discount.toFixed(2)} EUR</span>
+                    </div>
+                  )}
+                  {receiptDataForPrint.total_vat > 0 && (
+                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '2px' }}>
+                      <span>TVSH:</span>
+                      <span>{receiptDataForPrint.total_vat.toFixed(2)} EUR</span>
+                    </div>
+                  )}
+                </div>
+
+                {/* Grand Total */}
+                <div style={{ 
+                  borderTop: '2px solid #000',
+                  borderBottom: '2px solid #000',
+                  padding: '8px 0',
+                  margin: '8px 0',
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center'
+                }}>
+                  <span style={{ fontSize: '14px', fontWeight: 'bold' }}>TOTALI:</span>
+                  <span style={{ fontSize: '18px', fontWeight: 'bold' }}>{(receiptDataForPrint.grand_total || 0).toFixed(2)} EUR</span>
+                </div>
+
+                {/* Payment Info */}
+                <div style={{ fontSize: '10px', margin: '8px 0' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                    <span>Mënyra e pagesës:</span>
+                    <span style={{ fontWeight: 'bold' }}>{receiptDataForPrint.payment_method === 'cash' ? 'CASH' : 'KARTË'}</span>
                   </div>
                   {receiptDataForPrint.payment_method === 'cash' && (
                     <>
-                      <div style={{ 
-                        flex: 1,
-                        background: '#f8f9fa',
-                        border: '1px solid #e9ecef',
-                        borderRadius: '8px',
-                        padding: '10px',
-                        textAlign: 'center'
-                      }}>
-                        <div style={{ fontSize: '9px', color: '#666', marginBottom: '2px' }}>Paguar</div>
-                        <div style={{ fontSize: '11px', fontWeight: '600' }}>
-                          {(receiptDataForPrint.cash_amount || 0).toFixed(2)} €
-                        </div>
+                      <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                        <span>Paguar:</span>
+                        <span>{(receiptDataForPrint.cash_amount || 0).toFixed(2)} EUR</span>
                       </div>
-                      <div style={{ 
-                        flex: 1,
-                        background: '#fef3c7',
-                        border: '1px solid #fcd34d',
-                        borderRadius: '8px',
-                        padding: '10px',
-                        textAlign: 'center'
-                      }}>
-                        <div style={{ fontSize: '9px', color: '#666', marginBottom: '2px' }}>Kusuri</div>
-                        <div style={{ fontSize: '13px', fontWeight: '700', color: '#d97706' }}>
-                          {(receiptDataForPrint.change_amount || 0).toFixed(2)} €
-                        </div>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', fontWeight: 'bold' }}>
+                        <span>Kusuri:</span>
+                        <span>{(receiptDataForPrint.change_amount || 0).toFixed(2)} EUR</span>
                       </div>
                     </>
                   )}
                 </div>
 
-                {/* === COMMENT SECTION === */}
+                {/* Comment Section */}
                 {showCommentOnReceipt && receiptComment && (
                   <div style={{ 
-                    background: 'linear-gradient(135deg, #fef9c3, #fef3c7)',
-                    borderRadius: '8px',
-                    padding: '12px',
-                    marginBottom: '15px',
-                    border: '1px solid #fcd34d'
+                    margin: '8px 0',
+                    padding: '6px',
+                    border: '1px dashed #000',
+                    fontSize: '9px'
                   }}>
-                    <div style={{ 
-                      display: 'flex', 
-                      alignItems: 'center', 
-                      gap: '6px',
-                      fontWeight: '600', 
-                      marginBottom: '6px', 
-                      fontSize: '10px',
-                      color: '#92400e'
-                    }}>
-                      <span>📝</span> SHËNIM
-                    </div>
-                    <div style={{ 
-                      fontSize: '10px',
-                      color: '#78350f',
-                      wordBreak: 'break-word',
-                      whiteSpace: 'pre-wrap',
-                      lineHeight: '1.6',
-                      fontStyle: 'italic'
-                    }}>
-                      {receiptComment}
-                    </div>
+                    <div style={{ fontWeight: 'bold', marginBottom: '4px' }}>SHËNIM:</div>
+                    <div style={{ whiteSpace: 'pre-wrap' }}>{receiptComment}</div>
                   </div>
                 )}
 
-                {/* === ELEGANT FOOTER === */}
+                {/* Separator */}
+                <div style={{ borderTop: '1px dashed #000', margin: '8px 0' }}></div>
+
+                {/* Thank You Message */}
+                <div style={{ textAlign: 'center', margin: '10px 0' }}>
+                  <div style={{ fontSize: '12px', fontWeight: 'bold', marginBottom: '4px' }}>
+                    FALEMINDERIT!
+                  </div>
+                  <div style={{ fontSize: '9px' }}>
+                    Ju mirëpresim përsëri!
+                  </div>
+                </div>
+
+                {/* QR Code Section */}
                 <div style={{ 
-                  textAlign: 'center',
-                  paddingTop: '15px',
-                  borderTop: '2px solid #1E3A5F'
+                  textAlign: 'center', 
+                  margin: '12px 0',
+                  padding: '10px',
+                  border: '1px solid #ddd',
+                  borderRadius: '4px',
+                  background: '#fafafa'
                 }}>
-                  <div style={{ 
-                    fontSize: '16px', 
-                    fontWeight: '700',
-                    color: '#1E3A5F',
-                    marginBottom: '5px'
-                  }}>
-                    ✦ Faleminderit! ✦
+                  <div style={{ fontSize: '9px', marginBottom: '8px', fontWeight: 'bold' }}>
+                    📱 Skanoni për të na kontaktuar:
                   </div>
-                  <div style={{ 
-                    fontSize: '11px', 
-                    color: '#666',
-                    marginBottom: '12px'
-                  }}>
-                    Ju mirëpresim përsëri me kënaqësi!
-                  </div>
-                  
-                  <div style={{ 
-                    display: 'flex',
-                    justifyContent: 'center',
-                    gap: '15px',
-                    marginBottom: '10px'
-                  }}>
-                    {companySettings?.phone && (
-                      <span style={{ fontSize: '9px', color: '#888' }}>📞 {companySettings.phone}</span>
-                    )}
-                    {companySettings?.website && (
-                      <span style={{ fontSize: '9px', color: '#888' }}>🌐 {companySettings.website}</span>
-                    )}
-                  </div>
-                  
-                  <div style={{ 
-                    fontSize: '8px', 
-                    color: '#aaa',
-                    background: '#f8f9fa',
-                    padding: '8px',
-                    borderRadius: '6px',
-                    marginTop: '10px'
-                  }}>
-                    <div>Ky kupon shërben vetëm për evidencë</div>
-                    <div style={{ marginTop: '4px' }}>
-                      {companySettings?.company_name || 'Mobilshopurimi'} • {new Date().toLocaleString('sq-AL')}
+                  <img 
+                    src="https://customer-assets.emergentagent.com/job_supermarket-pos-12/artifacts/ewy3j4rc_qr%20code.png" 
+                    alt="QR Code" 
+                    style={{ 
+                      width: '50mm', 
+                      height: '50mm', 
+                      maxWidth: '100%',
+                      objectFit: 'contain'
+                    }} 
+                  />
+                  <div style={{ fontSize: '8px', marginTop: '8px', color: '#666' }}>
+                    <div style={{ marginBottom: '4px' }}>
+                      <span style={{ 
+                        display: 'inline-block',
+                        padding: '2px 6px',
+                        background: '#25D366',
+                        color: '#fff',
+                        borderRadius: '3px',
+                        marginRight: '4px'
+                      }}>WhatsApp</span>
+                      <span style={{ 
+                        display: 'inline-block',
+                        padding: '2px 6px',
+                        background: '#7360F2',
+                        color: '#fff',
+                        borderRadius: '3px',
+                        marginRight: '4px'
+                      }}>Viber</span>
+                      <span style={{ 
+                        display: 'inline-block',
+                        padding: '2px 6px',
+                        background: '#1E3A5F',
+                        color: '#fff',
+                        borderRadius: '3px'
+                      }}>Thirrje</span>
                     </div>
+                    <div>Na kontaktoni për çdo pyetje!</div>
                   </div>
+                </div>
+
+                {/* Footer */}
+                <div style={{ 
+                  textAlign: 'center', 
+                  fontSize: '8px', 
+                  color: '#666',
+                  marginTop: '10px',
+                  paddingTop: '8px',
+                  borderTop: '1px dashed #000'
+                }}>
+                  <div>Ky kupon shërben vetëm për evidencë</div>
+                  <div style={{ marginTop: '4px' }}>
+                    {companySettings?.company_name || 'Mobilshopurimi'}
+                  </div>
+                  <div style={{ marginTop: '2px' }}>
+                    {new Date().toLocaleString('sq-AL')}
+                  </div>
+                </div>
+
+                {/* Receipt End Mark */}
+                <div style={{ 
+                  textAlign: 'center', 
+                  margin: '10px 0',
+                  fontSize: '10px',
+                  letterSpacing: '2px'
+                }}>
+                  ================================
                 </div>
               </div>
             )}
