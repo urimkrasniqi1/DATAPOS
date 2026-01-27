@@ -361,15 +361,15 @@ const POS = () => {
           <style>
             * { margin: 0; padding: 0; box-sizing: border-box; }
             body { 
-              font-family: 'Courier New', 'Lucida Console', monospace; 
-              font-size: 12px; 
-              line-height: 1.4;
+              font-family: 'Segoe UI', Arial, sans-serif; 
+              font-size: 11px; 
+              line-height: 1.5;
               width: 110mm;
               max-width: 110mm;
-              min-height: 140mm;
+              min-height: 150mm;
               padding: 5mm;
               background: white;
-              color: #000;
+              color: #1a1a1a;
             }
             div { box-sizing: border-box; }
             @media print {
