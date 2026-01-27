@@ -1810,6 +1810,119 @@ async def reset_data(
         }
     }
 
+@api_router.get("/admin/backups")
+async def get_backups(
+    current_user: dict = Depends(require_role([UserRole.ADMIN]))
+):
+    """Get list of all reset backups"""
+    backups = await db.reset_backups.find({}, {"_id": 0, "sales": 0, "cash_drawers": 0, "stock_movements": 0}).sort("created_at", -1).to_list(100)
+    
+    # Enrich with user info
+    for backup in backups:
+        user = await db.users.find_one({"id": backup.get("created_by")}, {"_id": 0, "username": 1, "full_name": 1})
+        backup["created_by_name"] = user.get("full_name") or user.get("username") if user else "Unknown"
+    
+    return backups
+
+@api_router.get("/admin/backups/{backup_id}")
+async def get_backup_detail(
+    backup_id: str,
+    current_user: dict = Depends(require_role([UserRole.ADMIN]))
+):
+    """Get detailed backup info"""
+    backup = await db.reset_backups.find_one({"id": backup_id}, {"_id": 0})
+    if not backup:
+        raise HTTPException(status_code=404, detail="Backup nuk u gjet")
+    return backup
+
+@api_router.post("/admin/backups/{backup_id}/restore")
+async def restore_backup(
+    backup_id: str,
+    request: dict,
+    current_user: dict = Depends(require_role([UserRole.ADMIN]))
+):
+    """Restore data from a backup"""
+    # Verify admin password
+    password = request.get("admin_password", "")
+    admin = await db.users.find_one({"id": current_user["id"]})
+    if not admin or not verify_password(password, admin.get("password_hash", "")):
+        raise HTTPException(status_code=401, detail="Fjalëkalimi i gabuar")
+    
+    backup = await db.reset_backups.find_one({"id": backup_id}, {"_id": 0})
+    if not backup:
+        raise HTTPException(status_code=404, detail="Backup nuk u gjet")
+    
+    restored_sales = 0
+    restored_drawers = 0
+    restored_movements = 0
+    
+    # Restore sales
+    if backup.get("sales"):
+        for sale in backup["sales"]:
+            # Check if sale already exists
+            existing = await db.sales.find_one({"id": sale.get("id")})
+            if not existing:
+                await db.sales.insert_one(sale)
+                restored_sales += 1
+    
+    # Restore cash drawers
+    if backup.get("cash_drawers"):
+        for drawer in backup["cash_drawers"]:
+            existing = await db.cash_drawers.find_one({"id": drawer.get("id")})
+            if not existing:
+                await db.cash_drawers.insert_one(drawer)
+                restored_drawers += 1
+    
+    # Restore stock movements
+    if backup.get("stock_movements"):
+        for movement in backup["stock_movements"]:
+            existing = await db.stock_movements.find_one({"id": movement.get("id")})
+            if not existing:
+                await db.stock_movements.insert_one(movement)
+                restored_movements += 1
+    
+    # Mark backup as restored
+    await db.reset_backups.update_one(
+        {"id": backup_id},
+        {"$set": {"restored_at": datetime.now(timezone.utc).isoformat(), "restored_by": current_user["id"]}}
+    )
+    
+    # Log the restore action
+    await log_audit(
+        current_user["id"],
+        "restore_backup",
+        "system",
+        backup_id,
+        {
+            "restored_sales": restored_sales,
+            "restored_drawers": restored_drawers,
+            "restored_movements": restored_movements
+        }
+    )
+    
+    return {
+        "success": True,
+        "message": "Të dhënat u rikthyen me sukses",
+        "restored": {
+            "sales": restored_sales,
+            "cash_drawers": restored_drawers,
+            "stock_movements": restored_movements
+        }
+    }
+
+@api_router.delete("/admin/backups/{backup_id}")
+async def delete_backup(
+    backup_id: str,
+    current_user: dict = Depends(require_role([UserRole.ADMIN]))
+):
+    """Delete a backup permanently"""
+    result = await db.reset_backups.delete_one({"id": backup_id})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Backup nuk u gjet")
+    
+    await log_audit(current_user["id"], "delete_backup", "system", backup_id)
+    return {"message": "Backup u fshi me sukses"}
+
 # ============ INIT ROUTES ============
 @api_router.post("/init/admin")
 async def create_initial_admin():
