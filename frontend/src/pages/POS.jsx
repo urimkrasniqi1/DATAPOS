@@ -312,7 +312,7 @@ const POS = () => {
     printFrame.style.position = 'absolute';
     printFrame.style.top = '-10000px';
     printFrame.style.left = '-10000px';
-    printFrame.style.width = '80mm';
+    printFrame.style.width = '58mm';
     printFrame.style.height = '0';
     
     // Remove any existing print frame
@@ -333,38 +333,24 @@ const POS = () => {
           <style>
             * { margin: 0; padding: 0; box-sizing: border-box; }
             body { 
-              font-family: 'Courier New', Courier, monospace; 
-              font-size: 12px; 
-              line-height: 1.4;
-              width: 80mm;
-              max-width: 80mm;
+              font-family: 'Courier New', 'Lucida Console', monospace; 
+              font-size: 11px; 
+              line-height: 1.3;
+              width: 58mm;
+              max-width: 58mm;
               padding: 2mm;
               background: white;
+              color: #000;
             }
-            .receipt-header { text-align: center; border-bottom: 1px dashed #000; padding-bottom: 8px; margin-bottom: 8px; }
-            .company-name { font-size: 16px; font-weight: bold; }
-            .receipt-title { text-align: center; margin: 8px 0; }
-            .receipt-title h2 { font-size: 14px; margin: 0; }
-            .receipt-title span { font-size: 10px; color: #666; }
-            .info-row { display: flex; justify-content: space-between; font-size: 11px; }
-            .divider { border-top: 1px dashed #000; margin: 8px 0; }
-            .item { margin-bottom: 6px; }
-            .item-name { font-size: 11px; }
-            .item-details { display: flex; justify-content: space-between; font-size: 11px; }
-            .totals .info-row { font-size: 11px; }
-            .grand-total { display: flex; justify-content: space-between; font-size: 14px; font-weight: bold; border-top: 1px solid #000; padding-top: 4px; margin-top: 4px; }
-            .payment-info { font-size: 11px; }
-            .change { font-weight: bold; }
-            .footer { text-align: center; margin-top: 10px; padding-top: 8px; border-top: 1px dashed #000; }
-            .footer .thanks { font-weight: bold; }
-            .footer .small { font-size: 10px; color: #666; }
+            div { box-sizing: border-box; }
             @media print {
               @page { 
-                size: 80mm auto; 
+                size: 58mm auto; 
                 margin: 0; 
               }
-              body { 
-                width: 80mm !important;
+              html, body { 
+                width: 58mm !important;
+                max-width: 58mm !important;
                 -webkit-print-color-adjust: exact;
                 print-color-adjust: exact;
               }
