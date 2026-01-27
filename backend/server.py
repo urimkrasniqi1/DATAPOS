@@ -578,6 +578,12 @@ async def create_user(user_data: UserCreate, current_user: dict = Depends(requir
     if existing:
         raise HTTPException(status_code=400, detail="Username ekziston tashmë")
     
+    # Check if PIN is unique (if provided)
+    if user_data.pin:
+        existing_pin = await db.users.find_one({"pin": user_data.pin})
+        if existing_pin:
+            raise HTTPException(status_code=400, detail="Ky PIN përdoret nga një përdorues tjetër")
+    
     user = User(**user_data.model_dump(exclude={"password"}))
     doc = user.model_dump()
     doc['password_hash'] = hash_password(user_data.password)
