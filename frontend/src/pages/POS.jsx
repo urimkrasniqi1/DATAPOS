@@ -470,11 +470,34 @@ const POS = () => {
         <div style="font-size: 9px;">Ju mirëpresim përsëri!</div>
       </div>
       <div style="text-align: center; margin: 12px 0; padding: 8px;">
-        <img src="https://customer-assets.emergentagent.com/job_supermarket-pos-12/artifacts/ewy3j4rc_qr%20code.png" alt="QR" style="width: 45mm; height: 45mm;" />
+        <img src="https://customer-assets.emergentagent.com/job_supermarket-pos-12/artifacts/ewy3j4rc_qr%20code.png" alt="QR" style="width: 40mm; height: 40mm;" />
       </div>
       <div style="text-align: center; font-size: 8px; color: #666; border-top: 1px dashed #000; padding-top: 8px;">
         <div>Ky kupon shërben vetëm për evidencë</div>
         <div>${new Date().toLocaleString('sq-AL')}</div>
+      </div>
+      
+      <!-- ═══════════ ZONA E SHKYÇJES PËR ARKËTARIN ═══════════ -->
+      <div style="margin-top: 15px; border-top: 2px dashed #000; padding-top: 8px;">
+        <div style="text-align: center; margin-bottom: 8px;">
+          <span style="font-size: 8px; background: #000; color: #fff; padding: 2px 8px; letter-spacing: 1px;">✂ SHKYÇ KËTU ✂</span>
+        </div>
+        <div style="border: 1px solid #000; padding: 8px; border-radius: 4px; background: #fafafa;">
+          <div style="text-align: center; font-size: 10px; font-weight: bold; margin-bottom: 6px; text-transform: uppercase; border-bottom: 1px solid #ddd; padding-bottom: 4px;">
+            Kopje për Arkëtarin
+          </div>
+          <div style="font-size: 9px;">
+            <div style="margin-bottom: 4px;"><strong>Data:</strong> ${new Date(saleData.created_at).toLocaleDateString('sq-AL')} <strong>Ora:</strong> ${new Date(saleData.created_at).toLocaleTimeString('sq-AL', { hour: '2-digit', minute: '2-digit' })}</div>
+            <div style="margin-bottom: 4px;"><strong>Nr:</strong> ${saleData.receipt_number}</div>
+            <div style="border-top: 1px dashed #ccc; margin: 6px 0; padding-top: 6px;">
+              ${items.map(item => `<div style="display: flex; justify-content: space-between; margin-bottom: 2px;"><span>${(item.product_name || 'Produkt').substring(0, 20)} x${item.quantity}</span><span style="font-weight: bold;">${(item.total || (item.quantity * item.unit_price)).toFixed(2)}€</span></div>`).join('')}
+            </div>
+            <div style="border-top: 1px solid #000; margin-top: 6px; padding-top: 6px; display: flex; justify-content: space-between; font-weight: bold;">
+              <span>TOTAL:</span>
+              <span style="font-size: 12px;">${(saleData.grand_total || 0).toFixed(2)} EUR</span>
+            </div>
+          </div>
+        </div>
       </div>
     `;
   };
