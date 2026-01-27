@@ -119,6 +119,84 @@ async def update_tenant(tenant_id: str, update: TenantUpdate, current_user: dict
     return TenantResponse(**updated)
 
 
+class TenantUserCreate(BaseModel):
+    username: str
+    password: str
+    full_name: str
+    role: str = "admin"  # admin or cashier
+    pin: Optional[str] = None
+
+
+@router.get("/{tenant_id}/users")
+async def get_tenant_users(tenant_id: str, current_user: dict = Depends(get_current_user)):
+    """Get all users for a tenant - Super Admin only"""
+    if current_user.get("role") != UserRole.SUPER_ADMIN and current_user.get("role") != "super_admin":
+        raise HTTPException(status_code=403, detail="Vetëm Super Admin ka akses")
+    
+    users = await db.users.find({"tenant_id": tenant_id}, {"_id": 0, "password_hash": 0}).to_list(1000)
+    return users
+
+
+@router.post("/{tenant_id}/users")
+async def create_tenant_user(tenant_id: str, user_data: TenantUserCreate, current_user: dict = Depends(get_current_user)):
+    """Create a new user for a tenant - Super Admin only"""
+    if current_user.get("role") != UserRole.SUPER_ADMIN and current_user.get("role") != "super_admin":
+        raise HTTPException(status_code=403, detail="Vetëm Super Admin ka akses")
+    
+    # Verify tenant exists
+    tenant = await db.tenants.find_one({"id": tenant_id})
+    if not tenant:
+        raise HTTPException(status_code=404, detail="Firma nuk u gjet")
+    
+    # Check if username exists
+    existing = await db.users.find_one({"username": user_data.username, "tenant_id": tenant_id})
+    if existing:
+        raise HTTPException(status_code=400, detail="Username ekziston tashmë në këtë firmë")
+    
+    # Check PIN if provided
+    if user_data.pin:
+        existing_pin = await db.users.find_one({"pin": user_data.pin, "tenant_id": tenant_id})
+        if existing_pin:
+            raise HTTPException(status_code=400, detail="PIN ekziston tashmë në këtë firmë")
+    
+    # Determine role
+    role = UserRole.ADMIN if user_data.role == "admin" else UserRole.CASHIER
+    
+    new_user = {
+        "id": str(uuid.uuid4()),
+        "username": user_data.username,
+        "password_hash": hash_password(user_data.password),
+        "full_name": user_data.full_name,
+        "role": role,
+        "tenant_id": tenant_id,
+        "pin": user_data.pin,
+        "is_active": True,
+        "created_at": datetime.now(timezone.utc).isoformat()
+    }
+    await db.users.insert_one(new_user)
+    
+    await log_audit(current_user["id"], "create_tenant_user", "user", new_user["id"], {"tenant_id": tenant_id})
+    
+    # Return without password_hash
+    new_user.pop("password_hash")
+    return {"message": "Përdoruesi u krijua me sukses", "user": new_user}
+
+
+@router.delete("/{tenant_id}/users/{user_id}")
+async def delete_tenant_user(tenant_id: str, user_id: str, current_user: dict = Depends(get_current_user)):
+    """Delete a user from a tenant - Super Admin only"""
+    if current_user.get("role") != UserRole.SUPER_ADMIN and current_user.get("role") != "super_admin":
+        raise HTTPException(status_code=403, detail="Vetëm Super Admin ka akses")
+    
+    result = await db.users.delete_one({"id": user_id, "tenant_id": tenant_id})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Përdoruesi nuk u gjet")
+    
+    await log_audit(current_user["id"], "delete_tenant_user", "user", user_id, {"tenant_id": tenant_id})
+    
+    return {"message": "Përdoruesi u fshi me sukses"}
+
+
 @router.delete("/{tenant_id}")
 async def delete_tenant(tenant_id: str, current_user: dict = Depends(get_current_user)):
     """Delete tenant and all associated data - Super Admin only"""
