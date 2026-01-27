@@ -51,6 +51,7 @@ const Reports = () => {
     to: new Date()
   });
   const [salesReport, setSalesReport] = useState(null);
+  const [profitReport, setProfitReport] = useState(null);
   const [stockReport, setStockReport] = useState(null);
   const [cashierReport, setCashierReport] = useState([]);
   const [loading, setLoading] = useState(false);
