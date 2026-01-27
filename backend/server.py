@@ -47,7 +47,8 @@ logger = logging.getLogger(__name__)
 
 # ============ ENUMS ============
 class UserRole(str, Enum):
-    ADMIN = "admin"
+    SUPER_ADMIN = "super_admin"  # Can manage all tenants
+    ADMIN = "admin"              # Tenant admin
     MANAGER = "manager"
     CASHIER = "cashier"
 
@@ -65,6 +66,70 @@ class PaymentMethod(str, Enum):
 class CashDrawerStatus(str, Enum):
     OPEN = "open"
     CLOSED = "closed"
+
+class TenantStatus(str, Enum):
+    ACTIVE = "active"
+    SUSPENDED = "suspended"
+    TRIAL = "trial"
+
+# ============ TENANT MODELS ============
+class TenantBranding(BaseModel):
+    logo_url: Optional[str] = None
+    primary_color: str = "#00a79d"
+    secondary_color: str = "#f3f4f6"
+    company_name: str = "POS System"
+
+class TenantCreate(BaseModel):
+    name: str  # Unique tenant identifier (used in subdomain)
+    company_name: str
+    email: str
+    phone: Optional[str] = None
+    address: Optional[str] = None
+    logo_url: Optional[str] = None
+    primary_color: str = "#00a79d"
+    secondary_color: str = "#f3f4f6"
+    stripe_payment_link: Optional[str] = None
+    admin_username: str
+    admin_password: str
+    admin_full_name: str
+
+class TenantUpdate(BaseModel):
+    company_name: Optional[str] = None
+    email: Optional[str] = None
+    phone: Optional[str] = None
+    address: Optional[str] = None
+    logo_url: Optional[str] = None
+    primary_color: Optional[str] = None
+    secondary_color: Optional[str] = None
+    stripe_payment_link: Optional[str] = None
+    status: Optional[TenantStatus] = None
+    subscription_expires: Optional[str] = None
+
+class TenantResponse(BaseModel):
+    id: str
+    name: str
+    company_name: str
+    email: str
+    phone: Optional[str] = None
+    address: Optional[str] = None
+    logo_url: Optional[str] = None
+    primary_color: str
+    secondary_color: str
+    stripe_payment_link: Optional[str] = None
+    status: TenantStatus
+    subscription_expires: Optional[str] = None
+    created_at: str
+    users_count: Optional[int] = 0
+    sales_count: Optional[int] = 0
+
+class TenantPublicInfo(BaseModel):
+    """Public tenant info for branding (no sensitive data)"""
+    id: str
+    name: str
+    company_name: str
+    logo_url: Optional[str] = None
+    primary_color: str
+    secondary_color: str
 
 # ============ MODELS ============
 class UserBase(BaseModel):
