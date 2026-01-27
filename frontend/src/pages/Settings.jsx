@@ -43,7 +43,8 @@ import {
   Edit2,
   Trash2,
   Upload,
-  FolderOpen
+  FolderOpen,
+  MessageSquare
 } from 'lucide-react';
 
 const Settings = () => {
@@ -52,6 +53,17 @@ const Settings = () => {
   const [branches, setBranches] = useState([]);
   const [showBranchDialog, setShowBranchDialog] = useState(false);
   const [editingBranch, setEditingBranch] = useState(null);
+  
+  // Comment Templates
+  const [commentTemplates, setCommentTemplates] = useState([]);
+  const [showCommentDialog, setShowCommentDialog] = useState(false);
+  const [editingComment, setEditingComment] = useState(null);
+  const [commentForm, setCommentForm] = useState({
+    title: '',
+    content: '',
+    is_default: false,
+    is_active: true
+  });
   
   // Company settings
   const [companyData, setCompanyData] = useState({
