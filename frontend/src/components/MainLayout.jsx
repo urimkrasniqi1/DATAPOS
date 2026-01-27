@@ -58,8 +58,8 @@ const MainLayout = () => {
       className={({ isActive }) =>
         `flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 ${
           isActive
-            ? 'bg-[#3b82f6] text-white shadow-md'
-            : 'text-[#94a3b8] hover:bg-[#2a2f38] hover:text-[#f1f5f9]'
+            ? 'bg-[#1E3A5F] text-white shadow-md'
+            : 'text-gray-600 hover:bg-gray-100'
         }`
       }
     >
@@ -69,45 +69,44 @@ const MainLayout = () => {
   );
 
   return (
-    <div className="min-h-screen" style={{ backgroundColor: '#1a1d23' }}>
+    <div className="min-h-screen bg-[#F8FAFC]">
       {/* Mobile Header */}
-      <header className="lg:hidden fixed top-0 left-0 right-0 z-50 px-4 py-3" style={{ backgroundColor: '#22262e', borderBottom: '1px solid #374151' }}>
+      <header className="lg:hidden fixed top-0 left-0 right-0 z-50 bg-white border-b border-gray-200 px-4 py-3">
         <div className="flex items-center justify-between">
           <Button
             variant="ghost"
             size="icon"
             onClick={() => setSidebarOpen(!sidebarOpen)}
             data-testid="mobile-menu-btn"
-            className="text-[#f1f5f9] hover:bg-[#2a2f38]"
           >
             {sidebarOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
           </Button>
           <div className="flex items-center gap-2">
-            <div className="p-1.5 rounded-lg" style={{ backgroundColor: '#3b82f6' }}>
+            <div className="bg-[#1E3A5F] p-1.5 rounded-lg">
               <Smartphone className="h-5 w-5 text-white" />
             </div>
             <span className="text-xl font-bold">
-              <span className="text-white">Mobilshop</span>
-              <span style={{ color: '#94a3b8' }}>urimi</span>
+              <span className="text-[#1E3A5F]">Mobilshop</span>
+              <span className="text-gray-500">urimi</span>
             </span>
           </div>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon" data-testid="user-menu-mobile" className="hover:bg-[#2a2f38]">
+              <Button variant="ghost" size="icon" data-testid="user-menu-mobile">
                 <Avatar className="h-8 w-8">
-                  <AvatarFallback style={{ backgroundColor: '#3b82f6' }} className="text-white">
+                  <AvatarFallback className="bg-[#1E3A5F] text-white">
                     {user?.full_name?.charAt(0) || 'U'}
                   </AvatarFallback>
                 </Avatar>
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" style={{ backgroundColor: '#22262e', border: '1px solid #374151' }}>
+            <DropdownMenuContent align="end">
               <div className="px-3 py-2">
-                <p className="font-medium text-[#f1f5f9]">{user?.full_name}</p>
-                <p className="text-sm text-[#94a3b8]">{user?.username}</p>
+                <p className="font-medium">{user?.full_name}</p>
+                <p className="text-sm text-gray-500">{user?.username}</p>
               </div>
-              <DropdownMenuSeparator style={{ backgroundColor: '#374151' }} />
-              <DropdownMenuItem onClick={handleLogout} className="text-[#ef4444] hover:bg-[#2a2f38]">
+              <DropdownMenuSeparator />
+              <DropdownMenuItem onClick={handleLogout} className="text-red-600">
                 <LogOut className="h-4 w-4 mr-2" />
                 Çkyçu
               </DropdownMenuItem>
@@ -118,20 +117,19 @@ const MainLayout = () => {
 
       {/* Sidebar */}
       <aside
-        className={`fixed inset-y-0 left-0 z-40 w-64 transform transition-transform duration-300 ease-in-out lg:translate-x-0 ${
+        className={`fixed inset-y-0 left-0 z-40 w-64 bg-white border-r border-gray-200 transform transition-transform duration-300 ease-in-out lg:translate-x-0 ${
           sidebarOpen ? 'translate-x-0' : '-translate-x-full'
         }`}
-        style={{ backgroundColor: '#1a1d23', borderRight: '1px solid #374151' }}
       >
         {/* Logo */}
-        <div className="h-16 flex items-center justify-center" style={{ borderBottom: '1px solid #374151' }}>
+        <div className="h-16 flex items-center justify-center border-b border-gray-100">
           <div className="flex items-center gap-2">
-            <div className="p-2 rounded-lg" style={{ backgroundColor: '#3b82f6' }}>
+            <div className="bg-[#1E3A5F] p-2 rounded-lg">
               <Smartphone className="h-6 w-6 text-white" />
             </div>
             <span className="text-2xl font-bold">
-              <span className="text-white">Mobilshop</span>
-              <span style={{ color: '#94a3b8' }}>urimi</span>
+              <span className="text-[#1E3A5F]">Mobilshop</span>
+              <span className="text-gray-500">urimi</span>
             </span>
           </div>
         </div>
@@ -146,31 +144,31 @@ const MainLayout = () => {
         </ScrollArea>
 
         {/* User Section */}
-        <div className="absolute bottom-0 left-0 right-0 p-4" style={{ borderTop: '1px solid #374151', backgroundColor: '#1a1d23' }}>
+        <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-gray-100 bg-white">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button
                 variant="ghost"
-                className="w-full justify-start gap-3 h-auto py-2 text-[#f1f5f9] hover:bg-[#2a2f38]"
+                className="w-full justify-start gap-3 h-auto py-2"
                 data-testid="user-menu-desktop"
               >
                 <Avatar className="h-9 w-9">
-                  <AvatarFallback style={{ backgroundColor: '#3b82f6' }} className="text-white font-semibold">
+                  <AvatarFallback className="bg-[#1E3A5F] text-white font-semibold">
                     {user?.full_name?.charAt(0) || 'U'}
                   </AvatarFallback>
                 </Avatar>
                 <div className="flex flex-col items-start">
-                  <span className="font-medium text-sm text-[#f1f5f9]">{user?.full_name}</span>
-                  <span className="text-xs text-[#94a3b8] capitalize">{user?.role}</span>
+                  <span className="font-medium text-sm">{user?.full_name}</span>
+                  <span className="text-xs text-gray-500 capitalize">{user?.role}</span>
                 </div>
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-56" style={{ backgroundColor: '#22262e', border: '1px solid #374151' }}>
+            <DropdownMenuContent align="end" className="w-56">
               <div className="px-3 py-2">
-                <p className="text-sm text-[#94a3b8]">@{user?.username}</p>
+                <p className="text-sm text-gray-500">@{user?.username}</p>
               </div>
-              <DropdownMenuSeparator style={{ backgroundColor: '#374151' }} />
-              <DropdownMenuItem onClick={handleLogout} className="text-[#ef4444] hover:bg-[#2a2f38] cursor-pointer">
+              <DropdownMenuSeparator />
+              <DropdownMenuItem onClick={handleLogout} className="text-red-600">
                 <LogOut className="h-4 w-4 mr-2" />
                 Çkyçu
               </DropdownMenuItem>
@@ -182,13 +180,13 @@ const MainLayout = () => {
       {/* Overlay for mobile */}
       {sidebarOpen && (
         <div
-          className="fixed inset-0 bg-black/60 z-30 lg:hidden"
+          className="fixed inset-0 bg-black/50 z-30 lg:hidden"
           onClick={() => setSidebarOpen(false)}
         />
       )}
 
       {/* Main Content */}
-      <main className="lg:ml-64 min-h-screen pt-16 lg:pt-0" style={{ backgroundColor: '#1a1d23' }}>
+      <main className="lg:ml-64 min-h-screen pt-16 lg:pt-0">
         <div className="p-4 md:p-6">
           <Outlet />
         </div>
