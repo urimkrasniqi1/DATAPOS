@@ -330,6 +330,146 @@ const Reports = () => {
           )}
         </TabsContent>
 
+        {/* Profit/Loss Report */}
+        <TabsContent value="profit" className="space-y-6">
+          {loading ? (
+            <div className="flex items-center justify-center py-12">
+              <div className="spinner" />
+            </div>
+          ) : profitReport && (
+            <>
+              {/* Summary Cards */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <Card className="border-0 shadow-sm">
+                  <CardContent className="p-6">
+                    <p className="text-sm text-gray-500">Të Ardhura</p>
+                    <p className="text-2xl font-bold text-blue-600">
+                      €{profitReport.summary.total_revenue.toFixed(2)}
+                    </p>
+                  </CardContent>
+                </Card>
+                <Card className="border-0 shadow-sm">
+                  <CardContent className="p-6">
+                    <p className="text-sm text-gray-500">Kosto</p>
+                    <p className="text-2xl font-bold text-orange-500">
+                      €{profitReport.summary.total_cost.toFixed(2)}
+                    </p>
+                  </CardContent>
+                </Card>
+                <Card className="border-0 shadow-sm">
+                  <CardContent className="p-6">
+                    <p className="text-sm text-gray-500">Fitimi Bruto</p>
+                    <p className={`text-2xl font-bold ${profitReport.summary.gross_profit >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                      €{profitReport.summary.gross_profit.toFixed(2)}
+                    </p>
+                  </CardContent>
+                </Card>
+                <Card className="border-0 shadow-sm">
+                  <CardContent className="p-6">
+                    <p className="text-sm text-gray-500">Marzhi i Fitimit</p>
+                    <p className={`text-2xl font-bold ${profitReport.summary.profit_margin >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                      {profitReport.summary.profit_margin.toFixed(1)}%
+                    </p>
+                  </CardContent>
+                </Card>
+              </div>
+
+              {/* Additional Info */}
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <Card className="border-0 shadow-sm bg-gray-50">
+                  <CardContent className="p-4">
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm text-gray-600">TVSH</span>
+                      <span className="font-semibold">€{profitReport.summary.total_vat.toFixed(2)}</span>
+                    </div>
+                  </CardContent>
+                </Card>
+                <Card className="border-0 shadow-sm bg-gray-50">
+                  <CardContent className="p-4">
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm text-gray-600">Fitimi Neto</span>
+                      <span className={`font-semibold ${profitReport.summary.net_profit >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                        €{profitReport.summary.net_profit.toFixed(2)}
+                      </span>
+                    </div>
+                  </CardContent>
+                </Card>
+                <Card className="border-0 shadow-sm bg-gray-50">
+                  <CardContent className="p-4">
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm text-gray-600">Transaksione</span>
+                      <span className="font-semibold">{profitReport.summary.total_transactions}</span>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+
+              {/* Chart */}
+              <Card className="border-0 shadow-sm">
+                <CardHeader>
+                  <CardTitle>Trendi i Fitimit</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="h-80">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <BarChart data={profitReport.daily_breakdown}>
+                        <CartesianGrid strokeDasharray="3 3" stroke="#E2E8F0" />
+                        <XAxis dataKey="date" stroke="#64748B" fontSize={12} />
+                        <YAxis stroke="#64748B" fontSize={12} />
+                        <Tooltip
+                          contentStyle={{
+                            backgroundColor: 'white',
+                            border: '1px solid #E2E8F0',
+                            borderRadius: '8px',
+                          }}
+                          formatter={(value, name) => [
+                            `€${value.toFixed(2)}`,
+                            name === 'revenue' ? 'Të ardhura' : name === 'cost' ? 'Kosto' : 'Fitimi'
+                          ]}
+                        />
+                        <Bar dataKey="revenue" fill="#3B82F6" name="revenue" />
+                        <Bar dataKey="cost" fill="#F97316" name="cost" />
+                        <Bar dataKey="profit" fill="#10B981" name="profit" />
+                      </BarChart>
+                    </ResponsiveContainer>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Daily Breakdown Table */}
+              <Card className="border-0 shadow-sm">
+                <CardHeader>
+                  <CardTitle>Detajet Ditore</CardTitle>
+                </CardHeader>
+                <CardContent className="p-0">
+                  <Table>
+                    <TableHeader>
+                      <TableRow className="bg-gray-50">
+                        <TableHead>Data</TableHead>
+                        <TableHead className="text-right">Të Ardhura</TableHead>
+                        <TableHead className="text-right">Kosto</TableHead>
+                        <TableHead className="text-right">Fitimi</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {profitReport.daily_breakdown.map((day) => (
+                        <TableRow key={day.date} className="table-row-hover">
+                          <TableCell>{format(new Date(day.date), 'dd MMMM yyyy', { locale: sq })}</TableCell>
+                          <TableCell className="text-right text-blue-600">€{day.revenue.toFixed(2)}</TableCell>
+                          <TableCell className="text-right text-orange-500">€{day.cost.toFixed(2)}</TableCell>
+                          <TableCell className={`text-right font-semibold ${day.profit >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                            €{day.profit.toFixed(2)}
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </CardContent>
+              </Card>
+            </>
+          )}
+        </TabsContent>
+
         {/* Stock Report */}
         <TabsContent value="stock" className="space-y-6">
           {loading ? (
