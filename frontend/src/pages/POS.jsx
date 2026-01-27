@@ -919,11 +919,11 @@ const POS = () => {
           {/* Cashier Header */}
           <header className="bg-white border-b border-gray-200 px-4 py-3 flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <span className="text-2xl font-bold text-[#1E3A5F]">→</span>
+              <span className="text-2xl font-bold text-[#00a79d]">→</span>
               <span className="text-xl font-bold">
-                <span className="text-[#1E3A5F]">t</span>
+                <span className="text-[#00a79d]">t</span>
                 <span className="text-gray-400">3</span>
-                <span className="text-[#1E3A5F]">next</span>
+                <span className="text-[#00a79d]">next</span>
               </span>
               <span className="text-gray-400 mx-2">|</span>
               <span className="text-gray-600">Arka</span>
@@ -950,8 +950,8 @@ const POS = () => {
           {/* Open Drawer Content */}
           <div className="flex flex-col items-center justify-center h-[calc(100vh-5rem)]" data-testid="pos-open-drawer">
             <div className="text-center space-y-6">
-              <div className="h-24 w-24 mx-auto bg-[#1E3A5F]/10 rounded-full flex items-center justify-center">
-                <Calculator className="h-12 w-12 text-[#1E3A5F]" />
+              <div className="h-24 w-24 mx-auto bg-[#00a79d]/10 rounded-full flex items-center justify-center">
+                <Calculator className="h-12 w-12 text-[#00a79d]" />
               </div>
               <div>
                 <h2 className="text-3xl font-bold text-gray-900">Arka është e Mbyllur</h2>
@@ -960,7 +960,7 @@ const POS = () => {
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <Button
                   onClick={() => setShowOpenDrawer(true)}
-                  className="bg-[#1E3A5F] hover:bg-[#152C4A] text-white px-8 py-6 text-lg"
+                  className="bg-[#00a79d] hover:bg-[#008f86] text-white px-8 py-6 text-lg"
                   data-testid="open-drawer-btn"
                 >
                   <Calculator className="h-5 w-5 mr-2" />
@@ -999,7 +999,7 @@ const POS = () => {
                   </div>
                   <Button
                     onClick={handleOpenDrawer}
-                    className="w-full bg-[#1E3A5F] hover:bg-[#152C4A]"
+                    className="w-full bg-[#00a79d] hover:bg-[#008f86]"
                     data-testid="confirm-open-drawer"
                   >
                     Konfirmo
@@ -1016,14 +1016,14 @@ const POS = () => {
     return (
       <div className="flex flex-col items-center justify-center h-[70vh]" data-testid="pos-open-drawer">
         <div className="text-center space-y-4">
-          <div className="h-20 w-20 mx-auto bg-[#1E3A5F]/10 rounded-full flex items-center justify-center">
-            <Calculator className="h-10 w-10 text-[#1E3A5F]" />
+          <div className="h-20 w-20 mx-auto bg-[#00a79d]/10 rounded-full flex items-center justify-center">
+            <Calculator className="h-10 w-10 text-[#00a79d]" />
           </div>
           <h2 className="text-2xl font-bold text-gray-900">Arka është e Mbyllur</h2>
           <p className="text-gray-500">Hapni arkën për të filluar shitjen</p>
           <Button
             onClick={() => setShowOpenDrawer(true)}
-            className="bg-[#1E3A5F] hover:bg-[#152C4A] text-white px-8 py-6 text-lg"
+            className="bg-[#00a79d] hover:bg-[#008f86] text-white px-8 py-6 text-lg"
             data-testid="open-drawer-btn"
           >
             Hap Arkën
@@ -1051,7 +1051,7 @@ const POS = () => {
               </div>
               <Button
                 onClick={handleOpenDrawer}
-                className="w-full bg-[#1E3A5F] hover:bg-[#152C4A]"
+                className="w-full bg-[#00a79d] hover:bg-[#008f86]"
                 data-testid="confirm-open-drawer"
               >
                 Konfirmo
@@ -1087,7 +1087,7 @@ const POS = () => {
               }}
               onFocus={() => search.trim() && setShowSearchResults(true)}
               onBlur={() => setTimeout(() => setShowSearchResults(false), 200)}
-              className="pl-10 h-12 border-[#1E3A5F] focus:ring-[#1E3A5F]"
+              className="pl-10 h-12 border-[#00a79d] focus:ring-[#00a79d]"
               data-testid="pos-search-input"
             />
             
@@ -1111,7 +1111,7 @@ const POS = () => {
                         <p className="text-sm text-gray-500">Barkod: {product.barcode || '-'}</p>
                       </div>
                       <div className="text-right">
-                        <p className="font-bold text-[#1E3A5F]">€{(product.sale_price || 0).toFixed(2)}</p>
+                        <p className="font-bold text-[#00a79d]">€{(product.sale_price || 0).toFixed(2)}</p>
                         <p className={`text-xs ${product.current_stock > 0 ? 'text-green-600' : 'text-red-500 font-semibold'}`}>
                           {product.current_stock > 0 ? `Stok: ${product.current_stock}` : 'Pa stok!'}
                         </p>
@@ -1130,8 +1130,8 @@ const POS = () => {
             )}
           </div>
           {customerName && (
-            <div className="flex items-center gap-2 px-3 py-1 bg-[#1E3A5F]/10 rounded-lg">
-              <User className="h-4 w-4 text-[#1E3A5F]" />
+            <div className="flex items-center gap-2 px-3 py-1 bg-[#00a79d]/10 rounded-lg">
+              <User className="h-4 w-4 text-[#00a79d]" />
               <span className="text-sm font-medium">{customerName}</span>
             </div>
           )}
@@ -1139,7 +1139,7 @@ const POS = () => {
 
         {/* Cart Table */}
         <Card className="flex-1 border-0 shadow-sm overflow-hidden">
-          <div className="bg-[#1E3A5F]/10 px-4 py-2 border-b border-[#1E3A5F]/20">
+          <div className="bg-[#00a79d]/10 px-4 py-2 border-b border-[#00a79d]/20">
             <div className="grid grid-cols-12 gap-2 text-xs font-semibold text-gray-600">
               <div className="col-span-1">Nr</div>
               <div className="col-span-3">Emërtimi</div>
@@ -1168,7 +1168,7 @@ const POS = () => {
                     return (
                       <TableRow 
                         key={item.product_id} 
-                        className={`table-row-hover cursor-pointer ${selectedItemIndex === index ? 'bg-[#1E3A5F]/10' : ''}`}
+                        className={`table-row-hover cursor-pointer ${selectedItemIndex === index ? 'bg-[#00a79d]/10' : ''}`}
                         onClick={() => setSelectedItemIndex(index)}
                       >
                         <TableCell className="w-12">{index + 1}</TableCell>
@@ -1192,7 +1192,7 @@ const POS = () => {
                                 }
                               }}
                             >
-                              <SelectTrigger className="border-[#1E3A5F]">
+                              <SelectTrigger className="border-[#00a79d]">
                                 <SelectValue>{item.product_name || 'Zgjidh'}</SelectValue>
                               </SelectTrigger>
                               <SelectContent>
@@ -1266,7 +1266,7 @@ const POS = () => {
           </div>
 
           {/* Cart Totals */}
-          <div className="border-t border-[#1E3A5F] bg-gray-50 p-4">
+          <div className="border-t border-[#00a79d] bg-gray-50 p-4">
             <div className="flex justify-between items-center">
               <div className="space-y-1 text-sm">
                 <div className="flex gap-8">
@@ -1332,7 +1332,7 @@ const POS = () => {
         {/* Konsumatori - Customer info */}
         <Button
           variant="outline"
-          className={`flex-1 lg:h-14 flex items-center justify-center gap-2 ${customerName ? 'border-[#1E3A5F] text-[#1E3A5F]' : ''}`}
+          className={`flex-1 lg:h-14 flex items-center justify-center gap-2 ${customerName ? 'border-[#00a79d] text-[#00a79d]' : ''}`}
           onClick={() => setShowCustomer(true)}
           data-testid="pos-customer-btn"
         >
@@ -1400,7 +1400,7 @@ const POS = () => {
         {/* Pa TVSH - Toggle VAT (vetëm admin/manager) */}
         {(user?.role === 'admin' || user?.role === 'manager') && (
           <Button
-            className={`flex-1 lg:h-14 flex items-center justify-center gap-2 ${applyNoVat ? 'bg-orange-500 hover:bg-orange-600' : 'bg-[#1E3A5F] hover:bg-[#152C4A]'}`}
+            className={`flex-1 lg:h-14 flex items-center justify-center gap-2 ${applyNoVat ? 'bg-orange-500 hover:bg-orange-600' : 'bg-[#00a79d] hover:bg-[#008f86]'}`}
             onClick={handleNoVat}
             data-testid="pos-no-vat-btn"
           >
@@ -1412,7 +1412,7 @@ const POS = () => {
 
       {/* Time Display */}
       <div className="fixed bottom-4 right-4 text-right hidden lg:block">
-        <div className="text-4xl font-bold text-[#1E3A5F]">
+        <div className="text-4xl font-bold text-[#00a79d]">
           {new Date().toLocaleTimeString('sq-AL', { hour: '2-digit', minute: '2-digit' })}
         </div>
         <div className="text-gray-500">
@@ -1440,7 +1440,7 @@ const POS = () => {
             <div className="grid grid-cols-2 gap-2">
               <Button
                 variant={paymentMethod === 'cash' ? 'default' : 'outline'}
-                className={paymentMethod === 'cash' ? 'bg-[#1E3A5F] hover:bg-[#152C4A]' : ''}
+                className={paymentMethod === 'cash' ? 'bg-[#00a79d] hover:bg-[#008f86]' : ''}
                 onClick={() => setPaymentMethod('cash')}
                 data-testid="payment-cash-btn"
               >
@@ -1449,7 +1449,7 @@ const POS = () => {
               </Button>
               <Button
                 variant={paymentMethod === 'bank' ? 'default' : 'outline'}
-                className={paymentMethod === 'bank' ? 'bg-[#1E3A5F] hover:bg-[#152C4A]' : ''}
+                className={paymentMethod === 'bank' ? 'bg-[#00a79d] hover:bg-[#008f86]' : ''}
                 onClick={() => setPaymentMethod('bank')}
                 data-testid="payment-bank-btn"
               >
@@ -1462,7 +1462,7 @@ const POS = () => {
             {paymentMethod === 'cash' && (
               <>
                 <div className="relative">
-                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[#1E3A5F] font-bold">€</span>
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[#00a79d] font-bold">€</span>
                   <Input
                     ref={cashInputRef}
                     type="text"
@@ -1524,7 +1524,7 @@ const POS = () => {
             {paymentMethod === 'bank' && (
               <div className="p-4 bg-gray-50 rounded-lg text-center">
                 <p className="text-sm text-gray-500 mb-2">Pagesa me kartë/bank</p>
-                <p className="text-2xl font-bold text-[#1E3A5F]">€{cartTotals.total.toFixed(2)}</p>
+                <p className="text-2xl font-bold text-[#00a79d]">€{cartTotals.total.toFixed(2)}</p>
               </div>
             )}
 
@@ -1535,7 +1535,7 @@ const POS = () => {
                   id="printReceipt"
                   checked={printReceipt}
                   onCheckedChange={setPrintReceipt}
-                  className="border-[#1E3A5F] data-[state=checked]:bg-[#1E3A5F]"
+                  className="border-[#00a79d] data-[state=checked]:bg-[#00a79d]"
                   data-testid="print-receipt-checkbox"
                 />
                 <label htmlFor="printReceipt" className="text-sm font-medium cursor-pointer flex-1">
@@ -1619,7 +1619,7 @@ const POS = () => {
                         <p className="text-sm text-gray-500">Barkod: {product.barcode || '-'}</p>
                       </div>
                       <div className="text-right">
-                        <p className="font-bold text-[#1E3A5F]">€{(product.sale_price || 0).toFixed(2)}</p>
+                        <p className="font-bold text-[#00a79d]">€{(product.sale_price || 0).toFixed(2)}</p>
                         <p className={`text-xs ${product.current_stock > 0 ? 'text-green-600' : 'text-red-500 font-semibold'}`}>
                           {product.current_stock > 0 ? `Stok: ${product.current_stock}` : 'Pa stok!'}
                         </p>
@@ -1669,7 +1669,7 @@ const POS = () => {
             <Button variant="outline" onClick={() => { setCustomerName(''); setCustomerNote(''); }}>
               Pastro
             </Button>
-            <Button onClick={() => setShowCustomer(false)} className="bg-[#1E3A5F] hover:bg-[#152C4A]">
+            <Button onClick={() => setShowCustomer(false)} className="bg-[#00a79d] hover:bg-[#008f86]">
               Ruaj
             </Button>
           </DialogFooter>
@@ -1694,7 +1694,7 @@ const POS = () => {
               </div>
               <div className="flex justify-between">
                 <span className="text-gray-500">Bilanci i Pritshëm:</span>
-                <span className="font-semibold text-[#1E3A5F]">€{cashDrawer?.expected_balance?.toFixed(2) || '0.00'}</span>
+                <span className="font-semibold text-[#00a79d]">€{cashDrawer?.expected_balance?.toFixed(2) || '0.00'}</span>
               </div>
             </div>
             <div className="p-4 bg-gray-50 rounded-lg">
@@ -1741,7 +1741,7 @@ const POS = () => {
                     </div>
                     <div className="flex items-center gap-3">
                       <div className="text-right">
-                        <p className="font-bold text-[#1E3A5F]">€{sale.grand_total?.toFixed(2)}</p>
+                        <p className="font-bold text-[#00a79d]">€{sale.grand_total?.toFixed(2)}</p>
                         <p className="text-xs text-gray-400 capitalize">{sale.payment_method}</p>
                       </div>
                       <Button
@@ -1773,7 +1773,7 @@ const POS = () => {
               <span>Kupon Shitje</span>
               <Button
                 onClick={executeThermalPrint}
-                className="bg-[#1E3A5F] hover:bg-[#152C4A]"
+                className="bg-[#00a79d] hover:bg-[#008f86]"
                 size="sm"
               >
                 <Printer className="h-4 w-4 mr-2" />
@@ -2171,7 +2171,7 @@ const POS = () => {
               </Button>
             )}
             <Button 
-              className="flex-1 bg-[#1E3A5F] hover:bg-[#152C4A]" 
+              className="flex-1 bg-[#00a79d] hover:bg-[#008f86]" 
               onClick={() => executeThermalPrint(true)}
             >
               <Printer className="h-4 w-4 mr-2" />
@@ -2189,7 +2189,7 @@ const POS = () => {
               <span>Fatura A4 - {currentSaleForPrint?.receipt_number || 'Preview'}</span>
               <Button
                 onClick={executePrint}
-                className="bg-[#1E3A5F] hover:bg-[#152C4A]"
+                className="bg-[#00a79d] hover:bg-[#008f86]"
               >
                 <Printer className="h-4 w-4 mr-2" />
                 Printo
@@ -2264,7 +2264,7 @@ const POS = () => {
             </Button>
             <Button 
               onClick={proceedToPrintA4}
-              className="bg-[#1E3A5F] hover:bg-[#152C4A]"
+              className="bg-[#00a79d] hover:bg-[#008f86]"
             >
               <FileDown className="h-4 w-4 mr-2" />
               Vazhdo me Faturën
@@ -2282,14 +2282,14 @@ const POS = () => {
         {/* Cashier Header */}
         <header className="bg-white border-b border-gray-200 px-4 py-3 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="bg-[#1E3A5F] p-1.5 rounded-lg">
+            <div className="bg-[#00a79d] p-1.5 rounded-lg">
               <svg className="w-5 h-5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <rect x="5" y="2" width="14" height="20" rx="2" ry="2"/>
                 <line x1="12" y1="18" x2="12" y2="18"/>
               </svg>
             </div>
             <span className="text-xl font-bold">
-              <span className="text-[#1E3A5F]">Mobilshop</span>
+              <span className="text-[#00a79d]">Mobilshop</span>
               <span className="text-gray-500">urimi</span>
             </span>
             <span className="text-gray-400 mx-2">|</span>
