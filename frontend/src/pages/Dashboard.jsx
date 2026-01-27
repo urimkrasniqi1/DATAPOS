@@ -150,7 +150,7 @@ const Dashboard = () => {
       });
       
       toast.success(
-        `Të dhënat u resetuan: ${response.data.deleted.sales} shitje, ${response.data.deleted.cash_drawers} arka`
+        `Të dhënat u resetuan: ${response.data.deleted.sales} shitje, ${response.data.deleted.cash_drawers} arka. Backup ID: ${response.data.backup_id?.slice(0,8)}...`
       );
       setShowResetDialog(false);
       loadData(); // Refresh dashboard
@@ -167,6 +167,78 @@ const Dashboard = () => {
       case 'daily': return 'Përmbledhja e ditës';
       case 'user_specific': return 'Përdorues të zgjedhur';
       default: return '';
+    }
+  };
+
+  // Backup functionality
+  const loadBackups = async () => {
+    setBackupsLoading(true);
+    try {
+      const response = await api.get('/admin/backups');
+      setBackups(response.data);
+    } catch (error) {
+      toast.error('Gabim gjatë ngarkimit të backup-eve');
+    } finally {
+      setBackupsLoading(false);
+    }
+  };
+
+  const openBackupsDialog = () => {
+    loadBackups();
+    setShowBackupsDialog(true);
+  };
+
+  const openRestoreDialog = (backup) => {
+    setSelectedBackup(backup);
+    setRestorePassword('');
+    setShowRestoreDialog(true);
+  };
+
+  const executeRestore = async () => {
+    if (!restorePassword) {
+      toast.error('Ju lutem shkruani fjalëkalimin');
+      return;
+    }
+    
+    setBackupsLoading(true);
+    try {
+      const response = await api.post(`/admin/backups/${selectedBackup.id}/restore`, {
+        admin_password: restorePassword
+      });
+      
+      toast.success(
+        `Të dhënat u rikthyen: ${response.data.restored.sales} shitje, ${response.data.restored.cash_drawers} arka`
+      );
+      setShowRestoreDialog(false);
+      setShowBackupsDialog(false);
+      loadData(); // Refresh dashboard
+    } catch (error) {
+      toast.error(error.response?.data?.detail || 'Gabim gjatë rikthimit');
+    } finally {
+      setBackupsLoading(false);
+    }
+  };
+
+  const deleteBackup = async (backupId) => {
+    if (!window.confirm('Jeni i sigurt që doni të fshini këtë backup? Kjo veprim nuk mund të kthehet.')) {
+      return;
+    }
+    
+    try {
+      await api.delete(`/admin/backups/${backupId}`);
+      toast.success('Backup u fshi');
+      loadBackups();
+    } catch (error) {
+      toast.error('Gabim gjatë fshirjes');
+    }
+  };
+
+  const getResetTypeText = (type) => {
+    switch (type) {
+      case 'all': return 'Të gjitha';
+      case 'daily': return 'Ditor';
+      case 'user_specific': return 'Përdorues';
+      default: return type;
     }
   };
 
