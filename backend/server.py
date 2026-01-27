@@ -1189,9 +1189,11 @@ async def open_cash_drawer(drawer_data: CashDrawerOpen, current_user: dict = Dep
 
 @api_router.get("/cashier/current", response_model=CashDrawerResponse)
 async def get_current_drawer(current_user: dict = Depends(get_current_user)):
+    tenant_filter = get_tenant_filter(current_user)
     drawer = await db.cash_drawers.find_one({
         "user_id": current_user["id"],
-        "status": CashDrawerStatus.OPEN.value
+        "status": CashDrawerStatus.OPEN.value,
+        **tenant_filter
     }, {"_id": 0})
     if not drawer:
         raise HTTPException(status_code=404, detail="Nuk keni arkë të hapur")
@@ -1199,9 +1201,11 @@ async def get_current_drawer(current_user: dict = Depends(get_current_user)):
 
 @api_router.post("/cashier/transaction")
 async def add_drawer_transaction(transaction: CashDrawerTransaction, current_user: dict = Depends(get_current_user)):
+    tenant_filter = get_tenant_filter(current_user)
     drawer = await db.cash_drawers.find_one({
         "user_id": current_user["id"],
-        "status": CashDrawerStatus.OPEN.value
+        "status": CashDrawerStatus.OPEN.value,
+        **tenant_filter
     }, {"_id": 0})
     if not drawer:
         raise HTTPException(status_code=404, detail="Nuk keni arkë të hapur")
@@ -1220,7 +1224,7 @@ async def add_drawer_transaction(transaction: CashDrawerTransaction, current_use
     }
     
     await db.cash_drawers.update_one(
-        {"id": drawer["id"]},
+        {"id": drawer["id"], **tenant_filter},
         {
             "$set": {"current_balance": new_balance},
             "$push": {"transactions": trans_record}
@@ -1234,9 +1238,11 @@ class CloseDrawerRequest(BaseModel):
 
 @api_router.post("/cashier/close")
 async def close_cash_drawer(request: CloseDrawerRequest, current_user: dict = Depends(get_current_user)):
+    tenant_filter = get_tenant_filter(current_user)
     drawer = await db.cash_drawers.find_one({
         "user_id": current_user["id"],
-        "status": CashDrawerStatus.OPEN.value
+        "status": CashDrawerStatus.OPEN.value,
+        **tenant_filter
     }, {"_id": 0})
     if not drawer:
         raise HTTPException(status_code=404, detail="Nuk keni arkë të hapur")
@@ -1245,7 +1251,7 @@ async def close_cash_drawer(request: CloseDrawerRequest, current_user: dict = De
     discrepancy = actual_balance - drawer["expected_balance"]
     
     await db.cash_drawers.update_one(
-        {"id": drawer["id"]},
+        {"id": drawer["id"], **tenant_filter},
         {"$set": {
             "status": CashDrawerStatus.CLOSED.value,
             "current_balance": actual_balance,
@@ -2030,13 +2036,15 @@ async def create_warehouse(
     warehouse: WarehouseCreate,
     current_user: dict = Depends(require_role([UserRole.ADMIN]))
 ):
-    # If this is set as default, unset other defaults
+    tenant_filter = get_tenant_filter(current_user)
+    # If this is set as default, unset other defaults for this tenant
     if warehouse.is_default:
-        await db.warehouses.update_many({}, {"$set": {"is_default": False}})
+        await db.warehouses.update_many(tenant_filter, {"$set": {"is_default": False}})
     
     new_warehouse = Warehouse(**warehouse.model_dump())
     doc = new_warehouse.model_dump()
     doc['created_at'] = doc['created_at'].isoformat()
+    doc = add_tenant_id(doc, current_user)  # Add tenant_id
     await db.warehouses.insert_one(doc)
     
     await log_audit(current_user["id"], "create", "warehouse", new_warehouse.id)
