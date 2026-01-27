@@ -424,6 +424,23 @@ const SuperAdmin = () => {
                       </Button>
                       <Button 
                         variant="outline" 
+                        size="sm"
+                        className="text-blue-500 hover:bg-blue-50"
+                        onClick={() => openUserDialog(tenant)}
+                        title="Shto Përdorues"
+                      >
+                        <UserPlus className="h-4 w-4" />
+                      </Button>
+                      <Button 
+                        variant="outline" 
+                        size="sm"
+                        onClick={() => openUsersListDialog(tenant)}
+                        title="Shiko Përdoruesit"
+                      >
+                        <Users className="h-4 w-4" />
+                      </Button>
+                      <Button 
+                        variant="outline" 
                         size="sm" 
                         className="text-red-500 hover:bg-red-50"
                         onClick={() => handleDelete(tenant.id)}
