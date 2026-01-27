@@ -1594,9 +1594,35 @@ const POS = () => {
                 <label htmlFor="showComment" className="text-xs text-gray-600">Shfaq në kupon</label>
               </div>
             </div>
+            
+            {/* Comment Templates */}
+            <div className="flex flex-wrap gap-1.5">
+              <span className="text-xs text-gray-500 mr-1">Shabllonet:</span>
+              {[
+                'Garanci 12 muaj',
+                'Pa kthim',
+                'Zbritje speciale',
+                'Kthim brenda 14 ditëve',
+                'Produkt i ri',
+                'Artikull në zbritje'
+              ].map((template) => (
+                <button
+                  key={template}
+                  type="button"
+                  onClick={() => {
+                    setReceiptComment(prev => prev ? `${prev}, ${template}` : template);
+                    setShowCommentOnReceipt(true);
+                  }}
+                  className="px-2 py-0.5 text-xs bg-gray-100 hover:bg-gray-200 rounded border text-gray-700 transition-colors"
+                >
+                  + {template}
+                </button>
+              ))}
+            </div>
+            
             <Textarea
               id="receiptComment"
-              placeholder="P.sh: Garanci 12 muaj, Kthim brenda 14 ditëve..."
+              placeholder="Klikoni shabllonet ose shkruani manualisht..."
               value={receiptComment}
               onChange={(e) => setReceiptComment(e.target.value)}
               className="h-14 text-sm resize-none"
@@ -1605,6 +1631,16 @@ const POS = () => {
             <div className="flex items-center justify-between">
               <p className="text-xs text-gray-500">{receiptComment.length}/200 karaktere</p>
               <div className="flex gap-2">
+                {receiptComment && (
+                  <Button 
+                    variant="ghost" 
+                    size="sm" 
+                    className="h-7 text-xs text-gray-500"
+                    onClick={() => setReceiptComment('')}
+                  >
+                    Pastro
+                  </Button>
+                )}
                 {savedReceiptComment && (
                   <Button 
                     variant="ghost" 
