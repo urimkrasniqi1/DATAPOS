@@ -1758,49 +1758,62 @@ const POS = () => {
                     <span>Nëntotali:</span>
                     <span>{(receiptDataForPrint.subtotal || 0).toFixed(2)} €</span>
                   </div>
-                  </div>
                   {receiptDataForPrint.total_discount > 0 && (
-                    <div style={{ display: 'flex', justifyContent: 'space-between', color: '#666' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', color: '#666', padding: '2px 0' }}>
                       <span>Zbritja:</span>
                       <span>-{receiptDataForPrint.total_discount.toFixed(2)} €</span>
                     </div>
                   )}
                   {receiptDataForPrint.total_vat > 0 && (
-                    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                      <span>TVSH:</span>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', padding: '2px 0' }}>
+                      <span>TVSH ({((receiptDataForPrint.total_vat / receiptDataForPrint.subtotal) * 100).toFixed(0) || 18}%):</span>
                       <span>{receiptDataForPrint.total_vat.toFixed(2)} €</span>
                     </div>
                   )}
                 </div>
 
-                {/* === GRAND TOTAL === */}
+                {/* === GRAND TOTAL - FISCAL STYLE === */}
                 <div style={{ 
-                  display: 'flex', 
-                  justifyContent: 'space-between', 
-                  fontSize: '13px', 
-                  fontWeight: 'bold', 
-                  borderTop: '2px solid #000', 
-                  borderBottom: '2px solid #000',
-                  padding: '4px 0',
-                  margin: '4px 0'
+                  backgroundColor: '#000',
+                  color: '#fff',
+                  padding: '8px 10px',
+                  margin: '8px 0',
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  fontSize: '16px',
+                  fontWeight: 'bold'
                 }}>
-                  <span>TOTAL:</span>
+                  <span>TOTALI PËR PAGESË:</span>
                   <span>{(receiptDataForPrint.grand_total || 0).toFixed(2)} €</span>
                 </div>
 
                 {/* === PAYMENT INFO === */}
-                <div style={{ fontSize: '9px', marginBottom: '4px' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                    <span>Pagesa:</span>
-                    <span style={{ fontWeight: '500' }}>{receiptDataForPrint.payment_method === 'cash' ? 'CASH' : 'BANKË'}</span>
+                <div style={{ 
+                  fontSize: '11px', 
+                  marginBottom: '8px',
+                  padding: '8px',
+                  backgroundColor: '#f9f9f9',
+                  border: '1px solid #ddd'
+                }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
+                    <span><strong>Mënyra e Pagesës:</strong></span>
+                    <span style={{ fontWeight: 'bold' }}>{receiptDataForPrint.payment_method === 'cash' ? 'PARA NË DORË' : 'BANKË / KARTË'}</span>
                   </div>
                   {receiptDataForPrint.payment_method === 'cash' && (
                     <>
-                      <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                        <span>Paguar:</span>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '2px' }}>
+                        <span>Shuma e Paguar:</span>
                         <span>{(receiptDataForPrint.cash_amount || 0).toFixed(2)} €</span>
                       </div>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', fontWeight: 'bold', fontSize: '10px' }}>
+                      <div style={{ 
+                        display: 'flex', 
+                        justifyContent: 'space-between', 
+                        fontWeight: 'bold', 
+                        fontSize: '13px',
+                        borderTop: '1px dashed #999',
+                        paddingTop: '4px',
+                        marginTop: '4px'
+                      }}>
                         <span>KUSURI:</span>
                         <span>{(receiptDataForPrint.change_amount || 0).toFixed(2)} €</span>
                       </div>
@@ -1809,7 +1822,7 @@ const POS = () => {
                 </div>
 
                 {/* === COMMENT SECTION === */}
-                {receiptComment && (
+                {showCommentOnReceipt && receiptComment && (
                   <div style={{ 
                     borderTop: '1px dashed #000', 
                     paddingTop: '6px', 
