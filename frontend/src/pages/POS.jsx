@@ -1920,7 +1920,7 @@ const POS = () => {
           {/* Printer selection info for A4 */}
           <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 -mt-2 mb-2">
             <p className="text-sm text-blue-700">
-              <span className="font-medium">💡 Udhëzim:</span> Kur klikoni "Printo", do të hapet dialogu ku mund të zgjidhni printerin dhe madhësinë e letrës (A4).
+              <span className="font-medium">💡 Udhëzim:</span> Kur klikoni &quot;Printo&quot;, do të hapet dialogu ku mund të zgjidhni printerin dhe madhësinë e letrës (A4).
             </p>
           </div>
           <div className="border rounded-lg overflow-hidden">
