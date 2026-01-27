@@ -184,6 +184,13 @@ Sistema POS (Point of Sale) për markete dhe supermarkete me mbështetje multi-f
   - Templates shfaqen në POS receipt preview dialog
   - Backend: /api/comment-templates (GET, POST, PUT, DELETE)
 
+- **Raporte të Eksportueshme (PDF/Excel)**:
+  - Quick date presets: Sot, Dje, 7/30 ditët e fundit, 3 muaj, 1 vit
+  - PDF raport profesional me përmbledhje dhe detaje
+  - Excel raport me formatim të plotë dhe formulat
+  - Raport Shitjesh: Transaksione, Të ardhura, TVSH, Cash vs Kartë
+  - Raport Stoku: Produktet, Stok i ulët, Vlera totale
+
 ## Previous Updates (January 27, 2025)
 - Rregulluar printimi i kuponit termik dhe faturës A4 duke përdorur iframe të fshehur në vend të window.open()
 - Metoda e re e printimit nuk bllokohet nga popup blockers
