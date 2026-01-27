@@ -1559,12 +1559,12 @@ const POS = () => {
         </DialogContent>
       </Dialog>
 
-      {/* Thermal Receipt Preview Dialog */}
+      {/* Thermal Receipt Preview Dialog - Fiscal Style */}
       <Dialog open={showReceiptPreview} onOpenChange={setShowReceiptPreview}>
-        <DialogContent className="sm:max-w-md">
-          <DialogHeader>
+        <DialogContent className="sm:max-w-lg max-h-[95vh] overflow-hidden flex flex-col">
+          <DialogHeader className="pb-2">
             <DialogTitle className="flex items-center justify-between">
-              <span>Kupon Shitje (8cm x 10cm)</span>
+              <span>Kupon Shitje</span>
               <Button
                 onClick={executeThermalPrint}
                 className="bg-[#E53935] hover:bg-[#D32F2F]"
@@ -1576,30 +1576,71 @@ const POS = () => {
             </DialogTitle>
           </DialogHeader>
           
-          {/* Comment input field */}
-          <div className="space-y-2">
-            <Label htmlFor="receiptComment" className="text-sm font-medium">
-              Koment shtesë për kuponin (opsional)
-            </Label>
+          {/* Comment Section with Save Option */}
+          <div className="space-y-3 border-b pb-3">
+            <div className="flex items-center justify-between">
+              <Label htmlFor="receiptComment" className="text-sm font-medium">
+                Koment për kuponin
+              </Label>
+              <div className="flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  id="showComment"
+                  checked={showCommentOnReceipt}
+                  onChange={(e) => setShowCommentOnReceipt(e.target.checked)}
+                  className="rounded border-gray-300"
+                />
+                <label htmlFor="showComment" className="text-xs text-gray-600">Shfaq në kupon</label>
+              </div>
+            </div>
             <Textarea
               id="receiptComment"
-              placeholder="Shkruani një koment që do të shfaqet në kupon..."
+              placeholder="P.sh: Garanci 12 muaj, Kthim brenda 14 ditëve..."
               value={receiptComment}
               onChange={(e) => setReceiptComment(e.target.value)}
-              className="h-16 text-sm resize-none"
-              maxLength={150}
+              className="h-14 text-sm resize-none"
+              maxLength={200}
             />
-            <p className="text-xs text-gray-500">{receiptComment.length}/150 karaktere</p>
+            <div className="flex items-center justify-between">
+              <p className="text-xs text-gray-500">{receiptComment.length}/200 karaktere</p>
+              <div className="flex gap-2">
+                {savedReceiptComment && (
+                  <Button 
+                    variant="ghost" 
+                    size="sm" 
+                    className="h-7 text-xs text-red-500 hover:text-red-700"
+                    onClick={clearSavedComment}
+                  >
+                    Fshi Default
+                  </Button>
+                )}
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  className="h-7 text-xs"
+                  onClick={saveCommentAsDefault}
+                  disabled={!receiptComment}
+                >
+                  <Save className="h-3 w-3 mr-1" />
+                  Ruaj si Default
+                </Button>
+              </div>
+            </div>
+            {savedReceiptComment && (
+              <p className="text-xs text-green-600 bg-green-50 px-2 py-1 rounded">
+                ✓ Koment default: "{savedReceiptComment.substring(0, 50)}{savedReceiptComment.length > 50 ? '...' : ''}"
+              </p>
+            )}
           </div>
 
-          <div className="border rounded-lg overflow-auto max-h-[55vh] bg-white">
+          <div className="border rounded-lg overflow-auto flex-1 bg-gray-50 p-2">
             {receiptDataForPrint && (
               <div id="thermal-receipt-print" style={{ 
                 fontFamily: "'Courier New', 'Lucida Console', monospace", 
-                fontSize: '11px', 
-                width: '80mm', 
-                maxWidth: '80mm',
-                minHeight: '100mm',
+                fontSize: '12px', 
+                width: '90mm', 
+                maxWidth: '90mm',
+                minHeight: '140mm',
                 margin: '0 auto',
                 padding: '3mm',
                 backgroundColor: '#fff',
