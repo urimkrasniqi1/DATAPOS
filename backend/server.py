@@ -1665,7 +1665,8 @@ async def export_pdf_report(
     elements.append(Spacer(1, 20))
     
     if report_type == "sales" and start_date and end_date:
-        query = {"created_at": {"$gte": start_date, "$lte": end_date + "T23:59:59"}}
+        tenant_filter = get_tenant_filter(current_user)
+        query = {"created_at": {"$gte": start_date, "$lte": end_date + "T23:59:59"}, **tenant_filter}
         if branch_id:
             query["branch_id"] = branch_id
         sales = await db.sales.find(query, {"_id": 0}).sort("created_at", -1).to_list(10000)
@@ -1731,7 +1732,8 @@ async def export_pdf_report(
             elements.append(Paragraph("Nuk ka shitje në këtë periudhë.", styles['Normal']))
     
     elif report_type == "stock":
-        products = await db.products.find({}, {"_id": 0}).sort("name", 1).to_list(10000)
+        tenant_filter = get_tenant_filter(current_user)
+        products = await db.products.find(tenant_filter, {"_id": 0}).sort("name", 1).to_list(10000)
         
         # Summary
         total_products = len(products)
