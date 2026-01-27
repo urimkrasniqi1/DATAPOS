@@ -877,15 +877,89 @@ const POS = () => {
     }
   }, [showPayment, paymentMethod]);
 
-  // Keyboard shortcuts: F2 for payment, Enter for barcode/complete sale
+  // Keyboard shortcuts for POS operations
   useEffect(() => {
     const handleKeyDown = (e) => {
-      // F2 - Open payment dialog and focus on cash input
+      // Don't trigger shortcuts when typing in input fields (except specific shortcuts)
+      const isInputActive = document.activeElement?.tagName === 'INPUT' || document.activeElement?.tagName === 'TEXTAREA';
+      
+      // F1 - Ndihma (Help)
+      if (e.key === 'F1') {
+        e.preventDefault();
+        toast.info(
+          <div className="text-sm">
+            <strong>Shkurtesat e Tastierës:</strong><br/>
+            F1 - Ndihma<br/>
+            F2 - Shtyp & Përfundo<br/>
+            F4 - Shtyp A4<br/>
+            F6 - Lista e shitjeve<br/>
+            F9 - Dritarja për pagesë<br/>
+            F10 - Pagesë direkte<br/>
+            F12 - Lista e artikujve<br/>
+            Ctrl+1 - Zgjidh artikullin<br/>
+            Ctrl+* - Ndrysho çmimin<br/>
+            Ctrl++ - Shto sasinë<br/>
+            Ctrl+- - Zbrit sasinë<br/>
+            Delete - Fshij artikullin
+          </div>,
+          { duration: 8000 }
+        );
+        return;
+      }
+      
+      // F2 - Shtyp & Përfundo (Open payment dialog) - EXISTING
       if (e.key === 'F2' && cart.length > 0 && !showPayment && cashDrawer) {
         e.preventDefault();
-        setCashAmount(''); // Clear previous amount
-        setPaymentMethod('cash'); // Default to cash
+        setCashAmount('');
+        setPaymentMethod('cash');
         setShowPayment(true);
+        return;
+      }
+      
+      // F4 - Shtyp A4
+      if (e.key === 'F4') {
+        e.preventDefault();
+        if (cart.length > 0) {
+          setShowA4Invoice(true);
+        } else {
+          toast.error('Shporta është bosh');
+        }
+        return;
+      }
+      
+      // F6 - Lista e shitjeve
+      if (e.key === 'F6') {
+        e.preventDefault();
+        setShowDocuments(true);
+        return;
+      }
+      
+      // F9 - Dritarja për pagesë
+      if (e.key === 'F9' && cart.length > 0 && cashDrawer) {
+        e.preventDefault();
+        setCashAmount('');
+        setPaymentMethod('cash');
+        setShowPayment(true);
+        return;
+      }
+      
+      // F10 - Pagesë direkte (me kartë)
+      if (e.key === 'F10' && cart.length > 0 && cashDrawer) {
+        e.preventDefault();
+        setPaymentMethod('bank');
+        setCashAmount('');
+        setShowPayment(true);
+        // Auto-submit after a short delay
+        setTimeout(() => {
+          handlePayment();
+        }, 100);
+        return;
+      }
+      
+      // F12 - Lista e artikujve
+      if (e.key === 'F12') {
+        e.preventDefault();
+        setShowProductSearch(true);
         return;
       }
       
@@ -901,7 +975,6 @@ const POS = () => {
       // Enter for barcode/search (when not in payment dialog)
       if (e.key === 'Enter' && search && !showPayment && !showProductSearch) {
         e.preventDefault();
-        // First try exact barcode match
         const productByBarcode = products.find(p => p.barcode === search.trim());
         if (productByBarcode) {
           addToCart(productByBarcode);
@@ -909,18 +982,82 @@ const POS = () => {
           setShowSearchResults(false);
           return;
         }
-        // Then try first search result
         if (mainSearchResults.length > 0) {
           addToCart(mainSearchResults[0]);
           setSearch('');
           setShowSearchResults(false);
         }
+        return;
+      }
+      
+      // Delete - Fshij artikullin e zgjedhur
+      if (e.key === 'Delete' && !isInputActive) {
+        e.preventDefault();
+        deleteSelectedItem();
+        return;
+      }
+      
+      // Ctrl+1 - Zgjidh artikullin e parë në shportë
+      if (e.ctrlKey && e.key === '1') {
+        e.preventDefault();
+        if (cart.length > 0) {
+          setSelectedItemIndex(0);
+          toast.info('Artikulli i parë u zgjodh');
+        }
+        return;
+      }
+      
+      // Ctrl+* - Ndrysho çmimin e artikullit të zgjedhur
+      if (e.ctrlKey && (e.key === '*' || e.key === '8')) {
+        e.preventDefault();
+        if (selectedItemIndex !== null && cart[selectedItemIndex]) {
+          const newPrice = prompt('Shkruaj çmimin e ri:', cart[selectedItemIndex].unit_price);
+          if (newPrice !== null && !isNaN(parseFloat(newPrice))) {
+            setCart(prevCart => prevCart.map((item, idx) => 
+              idx === selectedItemIndex 
+                ? { ...item, unit_price: parseFloat(newPrice) }
+                : item
+            ));
+            toast.success('Çmimi u ndryshua');
+          }
+        } else {
+          toast.error('Zgjidhni një artikull së pari (Ctrl+1)');
+        }
+        return;
+      }
+      
+      // Ctrl++ - Shto sasinë
+      if (e.ctrlKey && (e.key === '+' || e.key === '=')) {
+        e.preventDefault();
+        if (selectedItemIndex !== null && cart[selectedItemIndex]) {
+          updateQuantity(cart[selectedItemIndex].product_id, cart[selectedItemIndex].quantity + 1);
+          toast.success('Sasia u shtua');
+        } else {
+          toast.error('Zgjidhni një artikull së pari (Ctrl+1)');
+        }
+        return;
+      }
+      
+      // Ctrl+- - Zbrit sasinë
+      if (e.ctrlKey && e.key === '-') {
+        e.preventDefault();
+        if (selectedItemIndex !== null && cart[selectedItemIndex]) {
+          if (cart[selectedItemIndex].quantity > 1) {
+            updateQuantity(cart[selectedItemIndex].product_id, cart[selectedItemIndex].quantity - 1);
+            toast.success('Sasia u zbrit');
+          } else {
+            toast.error('Sasia minimale është 1');
+          }
+        } else {
+          toast.error('Zgjidhni një artikull së pari (Ctrl+1)');
+        }
+        return;
       }
     };
     
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [search, products, addToCart, showPayment, showProductSearch, mainSearchResults, cart, cashDrawer, paymentMethod, cashAmount, cartTotals.total]);
+  }, [search, products, addToCart, showPayment, showProductSearch, mainSearchResults, cart, cashDrawer, paymentMethod, cashAmount, cartTotals.total, selectedItemIndex, deleteSelectedItem, updateQuantity]);
 
   // Check if cashier should see full POS mode (no sidebar)
   const isCashierFullscreen = user?.role === 'cashier';
