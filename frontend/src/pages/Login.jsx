@@ -159,7 +159,7 @@ const Login = () => {
         {/* Enter Button */}
         <Button
           onClick={handlePinLogin}
-          disabled={pin.length < 4 || loading}
+          disabled={pin.length < 1 || loading}
           className="w-full h-14 bg-[#00a79d] hover:bg-[#008f86] text-white font-semibold rounded-xl shadow-md transition-all duration-200 text-lg flex items-center justify-center gap-2"
         >
           {loading ? (
