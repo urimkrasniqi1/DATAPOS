@@ -164,6 +164,19 @@ Sistema POS (Point of Sale) për markete dhe supermarkete me mbështetje multi-f
   - Dialog 3-hapa: Verifikim fjalëkalimi → Zgjedhja e përdoruesve → Konfirmim
   - Backend endpoints: /api/admin/verify-password, /api/admin/users-for-reset, /api/admin/reset-data
 
+- **Sistem Backup Automatik**:
+  - Backup automatik para çdo resetimi
+  - Dialog "Backup-et e Ruajtura" për të parë të gjitha backup-et
+  - Rikthim (restore) i backup-eve me verifikim fjalëkalimi
+  - Fshirje e backup-eve të vjetra
+  - Backend endpoints: /api/admin/backups, /api/admin/backups/{id}/restore
+
+- **True Silent Printing (Electron)**:
+  - Integrim me Electron IPC për printim pa dialog
+  - Preload.js për expozimin e API-ve të printimit
+  - Fallback në browser print kur nuk është Electron
+  - Detektim automatik nëse po ekzekutohet në Electron
+
 ## Previous Updates (January 27, 2025)
 - Rregulluar printimi i kuponit termik dhe faturës A4 duke përdorur iframe të fshehur në vend të window.open()
 - Metoda e re e printimit nuk bllokohet nga popup blockers
