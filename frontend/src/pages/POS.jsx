@@ -2051,29 +2051,51 @@ const POS = () => {
               </div>
             </div>
             
-            {/* Comment Templates */}
+            {/* Comment Templates from Backend + Fallback hardcoded */}
             <div className="flex flex-wrap gap-1.5">
               <span className="text-xs text-gray-500 mr-1">Shabllonet:</span>
-              {[
-                'Garanci 12 muaj',
-                'Pa kthim',
-                'Zbritje speciale',
-                'Kthim brenda 14 ditëve',
-                'Produkt i ri',
-                'Artikull në zbritje'
-              ].map((template) => (
-                <button
-                  key={template}
-                  type="button"
-                  onClick={() => {
-                    setReceiptComment(prev => prev ? `${prev}, ${template}` : template);
-                    setShowCommentOnReceipt(true);
-                  }}
-                  className="px-2 py-0.5 text-xs bg-gray-100 hover:bg-gray-200 rounded border text-gray-700 transition-colors"
-                >
-                  + {template}
-                </button>
-              ))}
+              {commentTemplates.filter(t => t.is_active).length > 0 ? (
+                // Use templates from backend
+                commentTemplates.filter(t => t.is_active).map((template) => (
+                  <button
+                    key={template.id}
+                    type="button"
+                    onClick={() => {
+                      setReceiptComment(template.content);
+                      setShowCommentOnReceipt(true);
+                    }}
+                    className={`px-2 py-0.5 text-xs rounded border transition-colors ${
+                      template.is_default 
+                        ? 'bg-[#00a79d]/10 border-[#00a79d] text-[#00a79d] hover:bg-[#00a79d]/20' 
+                        : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
+                    }`}
+                  >
+                    {template.is_default && '★ '}{template.title}
+                  </button>
+                ))
+              ) : (
+                // Fallback to hardcoded templates if backend is empty
+                [
+                  'Garanci 12 muaj',
+                  'Pa kthim',
+                  'Zbritje speciale',
+                  'Kthim brenda 14 ditëve',
+                  'Produkt i ri',
+                  'Artikull në zbritje'
+                ].map((template) => (
+                  <button
+                    key={template}
+                    type="button"
+                    onClick={() => {
+                      setReceiptComment(prev => prev ? `${prev}, ${template}` : template);
+                      setShowCommentOnReceipt(true);
+                    }}
+                    className="px-2 py-0.5 text-xs bg-gray-100 hover:bg-gray-200 rounded border text-gray-700 transition-colors"
+                  >
+                    + {template}
+                  </button>
+                ))
+              )}
             </div>
             
             <Textarea
