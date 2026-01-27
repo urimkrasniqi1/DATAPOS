@@ -78,13 +78,6 @@ const Login = () => {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [showAdminLogin, pin, addDigit, removeDigit]);
 
-  // Auto-submit when PIN is 6 digits
-  useEffect(() => {
-    if (pin.length === 6) {
-      handlePinLogin();
-    }
-  }, [pin]);
-
   const numpadButtons = [
     '1', '2', '3',
     '4', '5', '6',
