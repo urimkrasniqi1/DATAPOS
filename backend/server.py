@@ -971,27 +971,31 @@ async def create_branch(branch_data: BranchCreate, current_user: dict = Depends(
     branch = Branch(**branch_data.model_dump())
     doc = branch.model_dump()
     doc['created_at'] = doc['created_at'].isoformat()
+    doc = add_tenant_id(doc, current_user)  # Add tenant_id
     await db.branches.insert_one(doc)
     await log_audit(current_user["id"], "create_branch", "branch", branch.id)
     return BranchResponse(**doc)
 
 @api_router.get("/branches", response_model=List[BranchResponse])
 async def get_branches(current_user: dict = Depends(get_current_user)):
-    branches = await db.branches.find({}, {"_id": 0}).to_list(1000)
+    tenant_filter = get_tenant_filter(current_user)
+    branches = await db.branches.find(tenant_filter, {"_id": 0}).to_list(1000)
     return [BranchResponse(**b) for b in branches]
 
 @api_router.get("/branches/{branch_id}", response_model=BranchResponse)
 async def get_branch(branch_id: str, current_user: dict = Depends(get_current_user)):
-    branch = await db.branches.find_one({"id": branch_id}, {"_id": 0})
+    tenant_filter = get_tenant_filter(current_user)
+    branch = await db.branches.find_one({"id": branch_id, **tenant_filter}, {"_id": 0})
     if not branch:
         raise HTTPException(status_code=404, detail="Dega nuk u gjet")
     return BranchResponse(**branch)
 
 @api_router.put("/branches/{branch_id}", response_model=BranchResponse)
 async def update_branch(branch_id: str, branch_data: BranchCreate, current_user: dict = Depends(require_role([UserRole.ADMIN]))):
+    tenant_filter = get_tenant_filter(current_user)
     update_dict = branch_data.model_dump()
-    await db.branches.update_one({"id": branch_id}, {"$set": update_dict})
-    branch = await db.branches.find_one({"id": branch_id}, {"_id": 0})
+    await db.branches.update_one({"id": branch_id, **tenant_filter}, {"$set": update_dict})
+    branch = await db.branches.find_one({"id": branch_id, **tenant_filter}, {"_id": 0})
     if not branch:
         raise HTTPException(status_code=404, detail="Dega nuk u gjet")
     await log_audit(current_user["id"], "update_branch", "branch", branch_id)
@@ -999,7 +1003,8 @@ async def update_branch(branch_id: str, branch_data: BranchCreate, current_user:
 
 @api_router.delete("/branches/{branch_id}")
 async def delete_branch(branch_id: str, current_user: dict = Depends(require_role([UserRole.ADMIN]))):
-    result = await db.branches.delete_one({"id": branch_id})
+    tenant_filter = get_tenant_filter(current_user)
+    result = await db.branches.delete_one({"id": branch_id, **tenant_filter})
     if result.deleted_count == 0:
         raise HTTPException(status_code=404, detail="Dega nuk u gjet")
     await log_audit(current_user["id"], "delete_branch", "branch", branch_id)
@@ -1100,7 +1105,8 @@ async def delete_product(product_id: str, current_user: dict = Depends(require_r
 # ============ STOCK ROUTES ============
 @api_router.post("/stock/movements", response_model=StockMovementResponse)
 async def create_stock_movement(movement_data: StockMovementCreate, current_user: dict = Depends(require_role([UserRole.ADMIN, UserRole.MANAGER]))):
-    product = await db.products.find_one({"id": movement_data.product_id}, {"_id": 0})
+    tenant_filter = get_tenant_filter(current_user)
+    product = await db.products.find_one({"id": movement_data.product_id, **tenant_filter}, {"_id": 0})
     if not product:
         raise HTTPException(status_code=404, detail="Produkti nuk u gjet")
     
@@ -1117,11 +1123,12 @@ async def create_stock_movement(movement_data: StockMovementCreate, current_user
     movement = StockMovement(**movement_data.model_dump(), user_id=current_user["id"])
     mov_doc = movement.model_dump()
     mov_doc['created_at'] = mov_doc['created_at'].isoformat()
+    mov_doc = add_tenant_id(mov_doc, current_user)  # Add tenant_id
     await db.stock_movements.insert_one(mov_doc)
     
     # Update product stock
     await db.products.update_one(
-        {"id": movement_data.product_id},
+        {"id": movement_data.product_id, **tenant_filter},
         {"$set": {"current_stock": new_stock, "updated_at": datetime.now(timezone.utc).isoformat()}}
     )
     
@@ -1137,7 +1144,7 @@ async def get_stock_movements(
     end_date: Optional[str] = None,
     current_user: dict = Depends(get_current_user)
 ):
-    query = {}
+    query = get_tenant_filter(current_user)  # Filter by tenant
     if product_id:
         query["product_id"] = product_id
     if branch_id:
@@ -1155,10 +1162,12 @@ async def get_stock_movements(
 # ============ CASH DRAWER ROUTES ============
 @api_router.post("/cashier/open", response_model=CashDrawerResponse)
 async def open_cash_drawer(drawer_data: CashDrawerOpen, current_user: dict = Depends(get_current_user)):
+    tenant_filter = get_tenant_filter(current_user)
     # Check if user already has an open drawer
     existing = await db.cash_drawers.find_one({
         "user_id": current_user["id"],
-        "status": CashDrawerStatus.OPEN.value
+        "status": CashDrawerStatus.OPEN.value,
+        **tenant_filter
     })
     if existing:
         raise HTTPException(status_code=400, detail="Arka është tashmë e hapur")
@@ -1172,6 +1181,7 @@ async def open_cash_drawer(drawer_data: CashDrawerOpen, current_user: dict = Dep
     )
     doc = drawer.model_dump()
     doc['opened_at'] = doc['opened_at'].isoformat()
+    doc = add_tenant_id(doc, current_user)  # Add tenant_id
     await db.cash_drawers.insert_one(doc)
     await log_audit(current_user["id"], "open_drawer", "cash_drawer", drawer.id)
     
