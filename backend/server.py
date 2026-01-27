@@ -62,6 +62,12 @@ async def root():
     }
 
 
+@app.get("/health")
+async def health():
+    """Health check endpoint for Kubernetes"""
+    return {"status": "healthy"}
+
+
 @app.get("/api/health")
 async def health_check():
     """Health check endpoint"""
