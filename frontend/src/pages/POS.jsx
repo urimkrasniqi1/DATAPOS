@@ -2112,8 +2112,8 @@ const POS = () => {
                     src="https://customer-assets.emergentagent.com/job_supermarket-pos-12/artifacts/ewy3j4rc_qr%20code.png" 
                     alt="QR Code" 
                     style={{ 
-                      width: '45mm', 
-                      height: '45mm', 
+                      width: '40mm', 
+                      height: '40mm', 
                       maxWidth: '100%',
                       objectFit: 'contain'
                     }} 
@@ -2131,10 +2131,73 @@ const POS = () => {
                 }}>
                   <div>Ky kupon shërben vetëm për evidencë</div>
                   <div style={{ marginTop: '4px' }}>
-                    {companySettings?.company_name || 'Mobilshopurimi'}
+                    {companySettings?.company_name || 'iPOS'}
                   </div>
                   <div style={{ marginTop: '2px' }}>
                     {new Date().toLocaleString('sq-AL')}
+                  </div>
+                </div>
+
+                {/* ═══════════ ZONA E SHKYÇJES PËR ARKËTARIN ═══════════ */}
+                <div style={{ 
+                  marginTop: '15px', 
+                  borderTop: '2px dashed #000', 
+                  paddingTop: '8px'
+                }}>
+                  <div style={{ textAlign: 'center', marginBottom: '8px' }}>
+                    <span style={{ 
+                      fontSize: '8px', 
+                      background: '#000', 
+                      color: '#fff', 
+                      padding: '2px 8px', 
+                      letterSpacing: '1px'
+                    }}>✂ SHKYÇ KËTU ✂</span>
+                  </div>
+                  <div style={{ 
+                    border: '1px solid #000', 
+                    padding: '8px', 
+                    borderRadius: '4px', 
+                    background: '#fafafa'
+                  }}>
+                    <div style={{ 
+                      textAlign: 'center', 
+                      fontSize: '10px', 
+                      fontWeight: 'bold', 
+                      marginBottom: '6px', 
+                      textTransform: 'uppercase', 
+                      borderBottom: '1px solid #ddd', 
+                      paddingBottom: '4px'
+                    }}>
+                      Kopje për Arkëtarin
+                    </div>
+                    <div style={{ fontSize: '9px' }}>
+                      <div style={{ marginBottom: '4px' }}>
+                        <strong>Data:</strong> {new Date(receiptDataForPrint.created_at).toLocaleDateString('sq-AL')}{' '}
+                        <strong>Ora:</strong> {new Date(receiptDataForPrint.created_at).toLocaleTimeString('sq-AL', { hour: '2-digit', minute: '2-digit' })}
+                      </div>
+                      <div style={{ marginBottom: '4px' }}>
+                        <strong>Nr:</strong> {receiptDataForPrint.receipt_number}
+                      </div>
+                      <div style={{ borderTop: '1px dashed #ccc', margin: '6px 0', paddingTop: '6px' }}>
+                        {receiptDataForPrint.items?.map((item, idx) => (
+                          <div key={idx} style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '2px' }}>
+                            <span>{(item.product_name || 'Produkt').substring(0, 20)} x{item.quantity}</span>
+                            <span style={{ fontWeight: 'bold' }}>{(item.total || (item.quantity * item.unit_price)).toFixed(2)}€</span>
+                          </div>
+                        ))}
+                      </div>
+                      <div style={{ 
+                        borderTop: '1px solid #000', 
+                        marginTop: '6px', 
+                        paddingTop: '6px', 
+                        display: 'flex', 
+                        justifyContent: 'space-between', 
+                        fontWeight: 'bold'
+                      }}>
+                        <span>TOTAL:</span>
+                        <span style={{ fontSize: '12px' }}>{(receiptDataForPrint.grand_total || 0).toFixed(2)} EUR</span>
+                      </div>
+                    </div>
                   </div>
                 </div>
 
