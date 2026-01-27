@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { api, useAuth } from '../App';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
 import { Button } from '../components/ui/button';
+import { Input } from '../components/ui/input';
+import { Checkbox } from '../components/ui/checkbox';
 import {
   Select,
   SelectContent,
@@ -10,16 +12,29 @@ import {
   SelectValue,
 } from '../components/ui/select';
 import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from '../components/ui/dialog';
+import {
   DollarSign,
   ShoppingCart,
   Package,
   AlertTriangle,
   TrendingUp,
   TrendingDown,
-  ArrowRight
+  ArrowRight,
+  RotateCcw,
+  Lock,
+  Users,
+  Calendar,
+  Trash2
 } from 'lucide-react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar } from 'recharts';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'sonner';
 
 const Dashboard = () => {
   const { user } = useAuth();
@@ -28,6 +43,15 @@ const Dashboard = () => {
   const [loading, setLoading] = useState(true);
   const [branches, setBranches] = useState([]);
   const [selectedBranch, setSelectedBranch] = useState('all');
+  
+  // Reset functionality states
+  const [showResetDialog, setShowResetDialog] = useState(false);
+  const [resetStep, setResetStep] = useState(1); // 1: password, 2: select users, 3: confirm
+  const [resetPassword, setResetPassword] = useState('');
+  const [resetType, setResetType] = useState(''); // 'all', 'daily', 'user_specific'
+  const [usersForReset, setUsersForReset] = useState([]);
+  const [selectedUsers, setSelectedUsers] = useState([]);
+  const [resetLoading, setResetLoading] = useState(false);
 
   useEffect(() => {
     loadData();
