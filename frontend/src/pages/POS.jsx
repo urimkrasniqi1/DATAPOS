@@ -308,11 +308,19 @@ const POS = () => {
 
     // Create hidden iframe for printing
     const printFrame = document.createElement('iframe');
+    printFrame.id = 'thermal-print-frame';
     printFrame.style.position = 'absolute';
     printFrame.style.top = '-10000px';
     printFrame.style.left = '-10000px';
     printFrame.style.width = '80mm';
     printFrame.style.height = '0';
+    
+    // Remove any existing print frame
+    const existingFrame = document.getElementById('thermal-print-frame');
+    if (existingFrame) {
+      existingFrame.remove();
+    }
+    
     document.body.appendChild(printFrame);
 
     const printDocument = printFrame.contentDocument || printFrame.contentWindow.document;
@@ -372,7 +380,7 @@ const POS = () => {
     printDocument.close();
     
     // Wait for content to load, then print
-    printFrame.onload = () => {
+    setTimeout(() => {
       try {
         printFrame.contentWindow.focus();
         printFrame.contentWindow.print();
@@ -380,16 +388,14 @@ const POS = () => {
         console.error('Print error:', e);
         toast.error('Gabim gjatë printimit. Provoni përsëri.');
       }
-      // Remove iframe after a delay to ensure print dialog has opened
+      // Remove iframe after a delay
       setTimeout(() => {
-        document.body.removeChild(printFrame);
-      }, 1000);
-    };
-    
-    // Trigger load manually if already loaded
-    if (printFrame.contentDocument.readyState === 'complete') {
-      printFrame.onload();
-    }
+        const frame = document.getElementById('thermal-print-frame');
+        if (frame) {
+          frame.remove();
+        }
+      }, 2000);
+    }, 300);
     
     toast.success('Kuponi po dërgohet për printim...');
   };
