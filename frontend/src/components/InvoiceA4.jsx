@@ -34,14 +34,14 @@ const InvoiceA4 = forwardRef(({ sale, companyInfo }, ref) => {
         {/* Company Logo & Info */}
         <div className="flex-1">
           <div className="flex items-center gap-2 mb-2">
-            <div className="bg-[#1E3A5F] p-2 rounded-lg">
+            <div className="bg-[#00a79d] p-2 rounded-lg">
               <svg className="w-6 h-6 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <rect x="5" y="2" width="14" height="20" rx="2" ry="2"/>
                 <line x1="12" y1="18" x2="12" y2="18"/>
               </svg>
             </div>
             <span className="text-2xl font-bold">
-              <span className="text-[#1E3A5F]">{company.company_name || 'Mobilshopurimi'}</span>
+              <span className="text-[#00a79d]">{company.company_name || 'Mobilshopurimi'}</span>
             </span>
           </div>
           <p className="text-sm text-gray-600">{company.address}{company.city ? `, ${company.city}` : ''}</p>
