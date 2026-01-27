@@ -343,7 +343,7 @@ const POS = () => {
   };
 
   // Execute the actual print using iframe (more reliable, no popup blockers)
-  const executeThermalPrint = () => {
+  const executeThermalPrint = (showDialog = true) => {
     const printArea = document.getElementById('thermal-receipt-print');
     if (!printArea) {
       toast.error('Gabim: Kuponi nuk u gjet');
@@ -356,7 +356,7 @@ const POS = () => {
     printFrame.style.position = 'absolute';
     printFrame.style.top = '-10000px';
     printFrame.style.left = '-10000px';
-    printFrame.style.width = '90mm';
+    printFrame.style.width = '110mm';
     printFrame.style.height = '0';
     
     // Remove any existing print frame
@@ -414,7 +414,16 @@ const POS = () => {
     setTimeout(() => {
       try {
         printFrame.contentWindow.focus();
-        printFrame.contentWindow.print();
+        
+        // Check if running in Electron with silent print support
+        if (window.electron && window.electron.print) {
+          // Electron silent print
+          window.electron.print({ silent: !showDialog });
+          toast.success('Kuponi u printua!');
+        } else {
+          // Standard browser print
+          printFrame.contentWindow.print();
+        }
       } catch (e) {
         console.error('Print error:', e);
         toast.error('Gabim gjatë printimit. Provoni përsëri.');
@@ -428,7 +437,17 @@ const POS = () => {
       }, 2000);
     }, 300);
     
-    toast.success('Kuponi po dërgohet për printim...');
+    if (showDialog) {
+      toast.success('Kuponi po dërgohet për printim...');
+    } else {
+      toast.success('Kuponi u dërgua direkt në printer!');
+      setShowReceiptPreview(false); // Close dialog after direct print
+    }
+  };
+
+  // Direct print function (prints and closes dialog)
+  const executeDirectPrint = () => {
+    executeThermalPrint(false);
   };
 
   const handlePayment = async () => {
