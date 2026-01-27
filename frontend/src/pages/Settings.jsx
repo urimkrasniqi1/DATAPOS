@@ -1076,6 +1076,132 @@ const Settings = () => {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* Warehouse Dialog */}
+      <Dialog open={showWarehouseDialog} onOpenChange={setShowWarehouseDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>{editingWarehouse ? 'Modifiko Depon' : 'Shto Depo të Re'}</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div className="space-y-2">
+              <Label>Emri i Depos *</Label>
+              <Input
+                value={warehouseForm.name}
+                onChange={(e) => setWarehouseForm({ ...warehouseForm, name: e.target.value })}
+                placeholder="p.sh. Depoja Qendrore"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label>Kodi</Label>
+              <Input
+                value={warehouseForm.code}
+                onChange={(e) => setWarehouseForm({ ...warehouseForm, code: e.target.value })}
+                placeholder="p.sh. DEP-01"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label>Adresa</Label>
+              <Input
+                value={warehouseForm.address}
+                onChange={(e) => setWarehouseForm({ ...warehouseForm, address: e.target.value })}
+                placeholder="Adresa e depos"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label>Telefoni</Label>
+              <Input
+                value={warehouseForm.phone}
+                onChange={(e) => setWarehouseForm({ ...warehouseForm, phone: e.target.value })}
+                placeholder="+383 XX XXX XXX"
+              />
+            </div>
+            <div className="flex items-center gap-4">
+              <div className="flex items-center gap-2">
+                <Switch
+                  checked={warehouseForm.is_active}
+                  onCheckedChange={(checked) => setWarehouseForm({ ...warehouseForm, is_active: checked })}
+                />
+                <Label>Aktive</Label>
+              </div>
+              <div className="flex items-center gap-2">
+                <Switch
+                  checked={warehouseForm.is_default}
+                  onCheckedChange={(checked) => setWarehouseForm({ ...warehouseForm, is_default: checked })}
+                />
+                <Label>Default</Label>
+              </div>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowWarehouseDialog(false)}>Anulo</Button>
+            <Button onClick={handleSaveWarehouse} className="bg-[#E53935] hover:bg-[#D32F2F]" disabled={!warehouseForm.name}>
+              {editingWarehouse ? 'Ruaj' : 'Shto'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* VAT Dialog */}
+      <Dialog open={showVatDialog} onOpenChange={setShowVatDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>{editingVat ? 'Modifiko Normën TVSH' : 'Shto Normë TVSH të Re'}</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div className="space-y-2">
+              <Label>Emri *</Label>
+              <Input
+                value={vatForm.name}
+                onChange={(e) => setVatForm({ ...vatForm, name: e.target.value })}
+                placeholder="p.sh. TVSH Standard"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label>Norma (%) *</Label>
+              <Input
+                type="number"
+                min="0"
+                max="100"
+                step="0.5"
+                value={vatForm.rate}
+                onChange={(e) => setVatForm({ ...vatForm, rate: parseFloat(e.target.value) || 0 })}
+                placeholder="18"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label>Kodi</Label>
+              <Input
+                value={vatForm.code}
+                onChange={(e) => setVatForm({ ...vatForm, code: e.target.value })}
+                placeholder="p.sh. 18"
+              />
+            </div>
+            <div className="flex items-center gap-4">
+              <div className="flex items-center gap-2">
+                <Switch
+                  checked={vatForm.is_active}
+                  onCheckedChange={(checked) => setVatForm({ ...vatForm, is_active: checked })}
+                />
+                <Label>Aktive</Label>
+              </div>
+              <div className="flex items-center gap-2">
+                <Switch
+                  checked={vatForm.is_default}
+                  onCheckedChange={(checked) => setVatForm({ ...vatForm, is_default: checked })}
+                />
+                <Label>Default</Label>
+              </div>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowVatDialog(false)}>Anulo</Button>
+            <Button onClick={handleSaveVat} className="bg-[#E53935] hover:bg-[#D32F2F]" disabled={!vatForm.name}>
+              {editingVat ? 'Ruaj' : 'Shto'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
