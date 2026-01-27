@@ -155,6 +155,14 @@ Sistema POS (Point of Sale) për markete dhe supermarkete me mbështetje multi-f
   - Delete - Fshij artikullin e zgjedhur
 - **Etiketa vizuale në butona**: F6, F12, Del, F4, F2
 - Rregulluar bug: setShowA4Invoice → setShowInvoiceA4
+- **Logo iPOS e përditësuar** në kupona termike dhe A4
+
+- **Funksionaliteti i Resetimit të të Dhënave** (Admin only):
+  - Reseto Ditën (0) - Fshin shitjet dhe arkat e sotme
+  - Reseto Përdorues - Fshin të dhënat e përdoruesve të zgjedhur
+  - Reseto Të Gjitha - Fshin të gjitha shitjet, arkat dhe lëvizjet e stokut
+  - Dialog 3-hapa: Verifikim fjalëkalimi → Zgjedhja e përdoruesve → Konfirmim
+  - Backend endpoints: /api/admin/verify-password, /api/admin/users-for-reset, /api/admin/reset-data
 
 ## Previous Updates (January 27, 2025)
 - Rregulluar printimi i kuponit termik dhe faturës A4 duke përdorur iframe të fshehur në vend të window.open()
