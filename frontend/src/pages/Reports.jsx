@@ -83,6 +83,9 @@ const Reports = () => {
       if (activeTab === 'sales') {
         const response = await api.get(`/reports/sales?start_date=${startDate}&end_date=${endDate}${branchParam}`);
         setSalesReport(response.data);
+      } else if (activeTab === 'profit') {
+        const response = await api.get(`/reports/profit-loss?start_date=${startDate}&end_date=${endDate}${branchParam}`);
+        setProfitReport(response.data);
       } else if (activeTab === 'stock') {
         const response = await api.get(`/reports/stock?${branchParam.slice(1)}`);
         setStockReport(response.data);
