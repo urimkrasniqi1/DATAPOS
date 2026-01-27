@@ -82,13 +82,11 @@ const MainLayout = () => {
             {sidebarOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
           </Button>
           <div className="flex items-center gap-2">
-            <div className="bg-[#00a79d] p-1.5 rounded-lg">
-              <Smartphone className="h-5 w-5 text-white" />
-            </div>
-            <span className="text-xl font-bold">
-              <span className="text-[#00a79d]">Mobilshop</span>
-              <span className="text-gray-500">urimi</span>
-            </span>
+            <img 
+              src="https://customer-assets.emergentagent.com/job_supermarket-pos-12/artifacts/qhc6ljlw_pos%201%20logo.png" 
+              alt="iPOS" 
+              className="h-8 object-contain"
+            />
           </div>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
