@@ -121,15 +121,11 @@ const MainLayout = () => {
       >
         {/* Logo */}
         <div className="h-16 flex items-center justify-center border-b border-gray-100">
-          <div className="flex items-center gap-2">
-            <div className="bg-[#00a79d] p-2 rounded-lg">
-              <Smartphone className="h-6 w-6 text-white" />
-            </div>
-            <span className="text-2xl font-bold">
-              <span className="text-[#00a79d]">Mobilshop</span>
-              <span className="text-gray-500">urimi</span>
-            </span>
-          </div>
+          <img 
+            src="https://customer-assets.emergentagent.com/job_supermarket-pos-12/artifacts/qhc6ljlw_pos%201%20logo.png" 
+            alt="iPOS" 
+            className="h-10 object-contain"
+          />
         </div>
 
         {/* Navigation */}
