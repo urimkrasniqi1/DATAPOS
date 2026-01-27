@@ -1395,7 +1395,8 @@ async def get_dashboard_stats(
 ):
     today = datetime.now(timezone.utc).replace(hour=0, minute=0, second=0, microsecond=0).isoformat()
     
-    query = {"created_at": {"$gte": today}}
+    tenant_filter = get_tenant_filter(current_user)
+    query = {"created_at": {"$gte": today}, **tenant_filter}
     if branch_id:
         query["branch_id"] = branch_id
     
