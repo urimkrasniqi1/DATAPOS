@@ -326,14 +326,19 @@ const POS = () => {
     setReceiptComment(savedReceiptComment); // Load saved comment as default
     setShowCommentOnReceipt(!!savedReceiptComment);
     
-    // If direct print is enabled, print immediately without showing preview
+    // If direct print is enabled, print immediately without showing preview dialog
     if (directPrintEnabled) {
-      // Need to show the preview briefly to generate the receipt, then print
+      // We need to render the receipt first, then print and close immediately
       setShowReceiptPreview(true);
-      // Use setTimeout to allow the receipt to render first
+      // Use setTimeout to allow the receipt to render first, then print and close
       setTimeout(() => {
-        executeThermalPrint(false); // false = silent print without browser dialog handling
-      }, 100);
+        executeThermalPrint(false);
+        // Close the dialog immediately after sending to print
+        setTimeout(() => {
+          setShowReceiptPreview(false);
+          setReceiptDataForPrint(null);
+        }, 200);
+      }, 150);
     } else {
       setShowReceiptPreview(true);
     }
