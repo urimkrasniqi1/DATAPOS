@@ -238,7 +238,7 @@ const Reports = () => {
                 <Card className="border-0 shadow-sm">
                   <CardContent className="p-6">
                     <p className="text-sm text-gray-500">Të Ardhura Totale</p>
-                    <p className="text-2xl font-bold text-[#E53935]">
+                    <p className="text-2xl font-bold text-[#1E3A5F]">
                       €{salesReport.summary.total_revenue.toFixed(2)}
                     </p>
                   </CardContent>
@@ -605,7 +605,7 @@ const Reports = () => {
                           </TableCell>
                           <TableCell className="text-right">{cashier.total_transactions}</TableCell>
                           <TableCell className="text-right">{cashier.total_items}</TableCell>
-                          <TableCell className="text-right font-bold text-[#E53935]">
+                          <TableCell className="text-right font-bold text-[#1E3A5F]">
                             €{cashier.total_sales.toFixed(2)}
                           </TableCell>
                         </TableRow>

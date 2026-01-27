@@ -241,8 +241,8 @@ const AuditLogs = () => {
                       </TableCell>
                       <TableCell>
                         <div className="flex items-center gap-2">
-                          <div className="h-8 w-8 rounded-full bg-[#E53935]/10 flex items-center justify-center">
-                            <span className="text-sm font-medium text-[#E53935]">
+                          <div className="h-8 w-8 rounded-full bg-[#1E3A5F]/10 flex items-center justify-center">
+                            <span className="text-sm font-medium text-[#1E3A5F]">
                               {user?.full_name?.charAt(0) || 'U'}
                             </span>
                           </div>

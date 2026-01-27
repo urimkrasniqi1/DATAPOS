@@ -120,7 +120,7 @@ const Branches = () => {
           <p className="text-gray-500">Menaxho filialet e biznesit</p>
         </div>
         <Button
-          className="bg-[#E53935] hover:bg-[#D32F2F] gap-2"
+          className="bg-[#1E3A5F] hover:bg-[#152C4A] gap-2"
           onClick={() => {
             resetForm();
             setShowDialog(true);
@@ -177,8 +177,8 @@ const Branches = () => {
               <CardHeader className="pb-2">
                 <div className="flex items-start justify-between">
                   <div className="flex items-center gap-3">
-                    <div className="h-10 w-10 rounded-lg bg-[#E53935]/10 flex items-center justify-center">
-                      <Building2 className="h-5 w-5 text-[#E53935]" />
+                    <div className="h-10 w-10 rounded-lg bg-[#1E3A5F]/10 flex items-center justify-center">
+                      <Building2 className="h-5 w-5 text-[#1E3A5F]" />
                     </div>
                     <div>
                       <CardTitle className="text-lg">{branch.name}</CardTitle>
@@ -276,7 +276,7 @@ const Branches = () => {
               <Button type="button" variant="outline" onClick={() => setShowDialog(false)}>
                 Anulo
               </Button>
-              <Button type="submit" className="bg-[#E53935] hover:bg-[#D32F2F]" data-testid="save-branch-btn">
+              <Button type="submit" className="bg-[#1E3A5F] hover:bg-[#152C4A]" data-testid="save-branch-btn">
                 {editingBranch ? 'Ruaj Ndryshimet' : 'Krijo Degën'}
               </Button>
             </DialogFooter>

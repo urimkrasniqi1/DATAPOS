@@ -122,8 +122,8 @@ const Dashboard = () => {
                   <span className="text-sm text-green-500">+12.5%</span>
                 </div>
               </div>
-              <div className="h-12 w-12 rounded-full bg-[#E53935]/10 flex items-center justify-center">
-                <DollarSign className="h-6 w-6 text-[#E53935]" />
+              <div className="h-12 w-12 rounded-full bg-[#1E3A5F]/10 flex items-center justify-center">
+                <DollarSign className="h-6 w-6 text-[#1E3A5F]" />
               </div>
             </div>
           </CardContent>
@@ -256,7 +256,7 @@ const Dashboard = () => {
               variant="ghost"
               size="sm"
               onClick={() => navigate('/reports')}
-              className="text-[#E53935] hover:text-[#D32F2F]"
+              className="text-[#1E3A5F] hover:text-[#D32F2F]"
             >
               Shiko të gjitha
               <ArrowRight className="h-4 w-4 ml-1" />
@@ -294,7 +294,7 @@ const Dashboard = () => {
           </CardHeader>
           <CardContent className="space-y-3">
             <Button
-              className="w-full justify-start gap-3 h-12 bg-[#E53935] hover:bg-[#D32F2F] text-white"
+              className="w-full justify-start gap-3 h-12 bg-[#1E3A5F] hover:bg-[#152C4A] text-white"
               onClick={() => navigate('/pos')}
               data-testid="quick-action-pos"
             >

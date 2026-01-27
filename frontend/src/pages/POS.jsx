@@ -733,9 +733,9 @@ const POS = () => {
           {/* Cashier Header */}
           <header className="bg-white border-b border-gray-200 px-4 py-3 flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <span className="text-2xl font-bold text-[#E53935]">→</span>
+              <span className="text-2xl font-bold text-[#1E3A5F]">→</span>
               <span className="text-xl font-bold">
-                <span className="text-[#E53935]">t</span>
+                <span className="text-[#1E3A5F]">t</span>
                 <span className="text-gray-400">3</span>
                 <span className="text-[#00B9D7]">next</span>
               </span>
@@ -764,8 +764,8 @@ const POS = () => {
           {/* Open Drawer Content */}
           <div className="flex flex-col items-center justify-center h-[calc(100vh-5rem)]" data-testid="pos-open-drawer">
             <div className="text-center space-y-6">
-              <div className="h-24 w-24 mx-auto bg-[#E53935]/10 rounded-full flex items-center justify-center">
-                <Calculator className="h-12 w-12 text-[#E53935]" />
+              <div className="h-24 w-24 mx-auto bg-[#1E3A5F]/10 rounded-full flex items-center justify-center">
+                <Calculator className="h-12 w-12 text-[#1E3A5F]" />
               </div>
               <div>
                 <h2 className="text-3xl font-bold text-gray-900">Arka është e Mbyllur</h2>
@@ -774,7 +774,7 @@ const POS = () => {
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <Button
                   onClick={() => setShowOpenDrawer(true)}
-                  className="bg-[#E53935] hover:bg-[#D32F2F] text-white px-8 py-6 text-lg"
+                  className="bg-[#1E3A5F] hover:bg-[#152C4A] text-white px-8 py-6 text-lg"
                   data-testid="open-drawer-btn"
                 >
                   <Calculator className="h-5 w-5 mr-2" />
@@ -813,7 +813,7 @@ const POS = () => {
                   </div>
                   <Button
                     onClick={handleOpenDrawer}
-                    className="w-full bg-[#E53935] hover:bg-[#D32F2F]"
+                    className="w-full bg-[#1E3A5F] hover:bg-[#152C4A]"
                     data-testid="confirm-open-drawer"
                   >
                     Konfirmo
@@ -830,14 +830,14 @@ const POS = () => {
     return (
       <div className="flex flex-col items-center justify-center h-[70vh]" data-testid="pos-open-drawer">
         <div className="text-center space-y-4">
-          <div className="h-20 w-20 mx-auto bg-[#E53935]/10 rounded-full flex items-center justify-center">
-            <Calculator className="h-10 w-10 text-[#E53935]" />
+          <div className="h-20 w-20 mx-auto bg-[#1E3A5F]/10 rounded-full flex items-center justify-center">
+            <Calculator className="h-10 w-10 text-[#1E3A5F]" />
           </div>
           <h2 className="text-2xl font-bold text-gray-900">Arka është e Mbyllur</h2>
           <p className="text-gray-500">Hapni arkën për të filluar shitjen</p>
           <Button
             onClick={() => setShowOpenDrawer(true)}
-            className="bg-[#E53935] hover:bg-[#D32F2F] text-white px-8 py-6 text-lg"
+            className="bg-[#1E3A5F] hover:bg-[#152C4A] text-white px-8 py-6 text-lg"
             data-testid="open-drawer-btn"
           >
             Hap Arkën
@@ -865,7 +865,7 @@ const POS = () => {
               </div>
               <Button
                 onClick={handleOpenDrawer}
-                className="w-full bg-[#E53935] hover:bg-[#D32F2F]"
+                className="w-full bg-[#1E3A5F] hover:bg-[#152C4A]"
                 data-testid="confirm-open-drawer"
               >
                 Konfirmo
@@ -925,7 +925,7 @@ const POS = () => {
                         <p className="text-sm text-gray-500">Barkod: {product.barcode || '-'}</p>
                       </div>
                       <div className="text-right">
-                        <p className="font-bold text-[#E53935]">€{(product.sale_price || 0).toFixed(2)}</p>
+                        <p className="font-bold text-[#1E3A5F]">€{(product.sale_price || 0).toFixed(2)}</p>
                         <p className={`text-xs ${product.current_stock > 0 ? 'text-green-600' : 'text-red-500 font-semibold'}`}>
                           {product.current_stock > 0 ? `Stok: ${product.current_stock}` : 'Pa stok!'}
                         </p>
@@ -982,7 +982,7 @@ const POS = () => {
                     return (
                       <TableRow 
                         key={item.product_id} 
-                        className={`table-row-hover cursor-pointer ${selectedItemIndex === index ? 'bg-[#E53935]/10' : ''}`}
+                        className={`table-row-hover cursor-pointer ${selectedItemIndex === index ? 'bg-[#1E3A5F]/10' : ''}`}
                         onClick={() => setSelectedItemIndex(index)}
                       >
                         <TableCell className="w-12">{index + 1}</TableCell>
@@ -1214,7 +1214,7 @@ const POS = () => {
         {/* Pa TVSH - Toggle VAT (vetëm admin/manager) */}
         {(user?.role === 'admin' || user?.role === 'manager') && (
           <Button
-            className={`flex-1 lg:h-14 flex items-center justify-center gap-2 ${applyNoVat ? 'bg-orange-500 hover:bg-orange-600' : 'bg-[#E53935] hover:bg-[#D32F2F]'}`}
+            className={`flex-1 lg:h-14 flex items-center justify-center gap-2 ${applyNoVat ? 'bg-orange-500 hover:bg-orange-600' : 'bg-[#1E3A5F] hover:bg-[#152C4A]'}`}
             onClick={handleNoVat}
             data-testid="pos-no-vat-btn"
           >
@@ -1254,7 +1254,7 @@ const POS = () => {
             <div className="grid grid-cols-2 gap-2">
               <Button
                 variant={paymentMethod === 'cash' ? 'default' : 'outline'}
-                className={paymentMethod === 'cash' ? 'bg-[#E53935] hover:bg-[#D32F2F]' : ''}
+                className={paymentMethod === 'cash' ? 'bg-[#1E3A5F] hover:bg-[#152C4A]' : ''}
                 onClick={() => setPaymentMethod('cash')}
                 data-testid="payment-cash-btn"
               >
@@ -1263,7 +1263,7 @@ const POS = () => {
               </Button>
               <Button
                 variant={paymentMethod === 'bank' ? 'default' : 'outline'}
-                className={paymentMethod === 'bank' ? 'bg-[#E53935] hover:bg-[#D32F2F]' : ''}
+                className={paymentMethod === 'bank' ? 'bg-[#1E3A5F] hover:bg-[#152C4A]' : ''}
                 onClick={() => setPaymentMethod('bank')}
                 data-testid="payment-bank-btn"
               >
@@ -1348,7 +1348,7 @@ const POS = () => {
                 id="printReceipt"
                 checked={printReceipt}
                 onCheckedChange={setPrintReceipt}
-                className="border-[#E53935] data-[state=checked]:bg-[#E53935]"
+                className="border-[#1E3A5F] data-[state=checked]:bg-[#1E3A5F]"
               />
               <label htmlFor="printReceipt" className="text-sm font-medium cursor-pointer flex-1">
                 Shtyp kupon për klientin
@@ -1414,7 +1414,7 @@ const POS = () => {
                         <p className="text-sm text-gray-500">Barkod: {product.barcode || '-'}</p>
                       </div>
                       <div className="text-right">
-                        <p className="font-bold text-[#E53935]">€{(product.sale_price || 0).toFixed(2)}</p>
+                        <p className="font-bold text-[#1E3A5F]">€{(product.sale_price || 0).toFixed(2)}</p>
                         <p className={`text-xs ${product.current_stock > 0 ? 'text-green-600' : 'text-red-500 font-semibold'}`}>
                           {product.current_stock > 0 ? `Stok: ${product.current_stock}` : 'Pa stok!'}
                         </p>
@@ -1464,7 +1464,7 @@ const POS = () => {
             <Button variant="outline" onClick={() => { setCustomerName(''); setCustomerNote(''); }}>
               Pastro
             </Button>
-            <Button onClick={() => setShowCustomer(false)} className="bg-[#E53935] hover:bg-[#D32F2F]">
+            <Button onClick={() => setShowCustomer(false)} className="bg-[#1E3A5F] hover:bg-[#152C4A]">
               Ruaj
             </Button>
           </DialogFooter>
@@ -1536,7 +1536,7 @@ const POS = () => {
                     </div>
                     <div className="flex items-center gap-3">
                       <div className="text-right">
-                        <p className="font-bold text-[#E53935]">€{sale.grand_total?.toFixed(2)}</p>
+                        <p className="font-bold text-[#1E3A5F]">€{sale.grand_total?.toFixed(2)}</p>
                         <p className="text-xs text-gray-400 capitalize">{sale.payment_method}</p>
                       </div>
                       <Button
@@ -1568,7 +1568,7 @@ const POS = () => {
               <span>Kupon Shitje</span>
               <Button
                 onClick={executeThermalPrint}
-                className="bg-[#E53935] hover:bg-[#D32F2F]"
+                className="bg-[#1E3A5F] hover:bg-[#152C4A]"
                 size="sm"
               >
                 <Printer className="h-4 w-4 mr-2" />
@@ -1943,7 +1943,7 @@ const POS = () => {
             <Button variant="outline" className="flex-1" onClick={() => setShowReceiptPreview(false)}>
               Mbyll
             </Button>
-            <Button className="flex-1 bg-[#E53935] hover:bg-[#D32F2F]" onClick={executeThermalPrint}>
+            <Button className="flex-1 bg-[#1E3A5F] hover:bg-[#152C4A]" onClick={executeThermalPrint}>
               <Printer className="h-4 w-4 mr-2" />
               Printo Kuponin
             </Button>
@@ -1959,7 +1959,7 @@ const POS = () => {
               <span>Fatura A4 - {currentSaleForPrint?.receipt_number || 'Preview'}</span>
               <Button
                 onClick={executePrint}
-                className="bg-[#E53935] hover:bg-[#D32F2F]"
+                className="bg-[#1E3A5F] hover:bg-[#152C4A]"
               >
                 <Printer className="h-4 w-4 mr-2" />
                 Printo
@@ -2034,7 +2034,7 @@ const POS = () => {
             </Button>
             <Button 
               onClick={proceedToPrintA4}
-              className="bg-[#E53935] hover:bg-[#D32F2F]"
+              className="bg-[#1E3A5F] hover:bg-[#152C4A]"
             >
               <FileDown className="h-4 w-4 mr-2" />
               Vazhdo me Faturën
@@ -2052,14 +2052,14 @@ const POS = () => {
         {/* Cashier Header */}
         <header className="bg-white border-b border-gray-200 px-4 py-3 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="bg-[#E53935] p-1.5 rounded-lg">
+            <div className="bg-[#1E3A5F] p-1.5 rounded-lg">
               <svg className="w-5 h-5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <rect x="5" y="2" width="14" height="20" rx="2" ry="2"/>
                 <line x1="12" y1="18" x2="12" y2="18"/>
               </svg>
             </div>
             <span className="text-xl font-bold">
-              <span className="text-[#E53935]">Mobilshop</span>
+              <span className="text-[#1E3A5F]">Mobilshop</span>
               <span className="text-gray-500">urimi</span>
             </span>
             <span className="text-gray-400 mx-2">|</span>
