@@ -142,8 +142,8 @@ const Dashboard = () => {
                   <span className="text-sm text-green-500">+8.2%</span>
                 </div>
               </div>
-              <div className="h-12 w-12 rounded-full bg-[#00B9D7]/10 flex items-center justify-center">
-                <ShoppingCart className="h-6 w-6 text-[#00B9D7]" />
+              <div className="h-12 w-12 rounded-full bg-[#1E3A5F]/10 flex items-center justify-center">
+                <ShoppingCart className="h-6 w-6 text-[#1E3A5F]" />
               </div>
             </div>
           </CardContent>
@@ -238,7 +238,7 @@ const Dashboard = () => {
                       borderRadius: '8px',
                     }}
                   />
-                  <Bar dataKey="sales" fill="#00B9D7" radius={[0, 4, 4, 0]} />
+                  <Bar dataKey="sales" fill="#1E3A5F" radius={[0, 4, 4, 0]} />
                 </BarChart>
               </ResponsiveContainer>
             </div>

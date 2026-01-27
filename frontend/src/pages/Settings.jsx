@@ -587,7 +587,7 @@ const Settings = () => {
                       checked={posSettings.orientimi_fatures === 'vertikal'}
                       onCheckedChange={(checked) => setPosSettings({ ...posSettings, orientimi_fatures: checked ? 'vertikal' : 'horizontal' })}
                     />
-                    <span className={posSettings.orientimi_fatures === 'vertikal' ? 'text-[#00B9D7]' : 'text-gray-400'}>Vertikal</span>
+                    <span className={posSettings.orientimi_fatures === 'vertikal' ? 'text-[#1E3A5F]' : 'text-gray-400'}>Vertikal</span>
                   </div>
                 </div>
 

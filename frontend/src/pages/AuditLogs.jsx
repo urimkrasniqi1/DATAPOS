@@ -74,7 +74,7 @@ const AuditLogs = () => {
       create_product: 'bg-green-100 text-green-700',
       update_product: 'bg-yellow-100 text-yellow-700',
       delete_product: 'bg-red-100 text-red-700',
-      create_sale: 'bg-[#00B9D7]/20 text-[#00B9D7]',
+      create_sale: 'bg-[#1E3A5F]/20 text-[#1E3A5F]',
       stock_movement: 'bg-purple-100 text-purple-700',
       open_drawer: 'bg-green-100 text-green-700',
       close_drawer: 'bg-orange-100 text-orange-700'

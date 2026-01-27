@@ -737,7 +737,7 @@ const POS = () => {
               <span className="text-xl font-bold">
                 <span className="text-[#1E3A5F]">t</span>
                 <span className="text-gray-400">3</span>
-                <span className="text-[#00B9D7]">next</span>
+                <span className="text-[#1E3A5F]">next</span>
               </span>
               <span className="text-gray-400 mx-2">|</span>
               <span className="text-gray-600">Arka</span>
@@ -901,7 +901,7 @@ const POS = () => {
               }}
               onFocus={() => search.trim() && setShowSearchResults(true)}
               onBlur={() => setTimeout(() => setShowSearchResults(false), 200)}
-              className="pl-10 h-12 border-[#00B9D7] focus:ring-[#00B9D7]"
+              className="pl-10 h-12 border-[#1E3A5F] focus:ring-[#1E3A5F]"
               data-testid="pos-search-input"
             />
             
@@ -944,8 +944,8 @@ const POS = () => {
             )}
           </div>
           {customerName && (
-            <div className="flex items-center gap-2 px-3 py-1 bg-[#00B9D7]/10 rounded-lg">
-              <User className="h-4 w-4 text-[#00B9D7]" />
+            <div className="flex items-center gap-2 px-3 py-1 bg-[#1E3A5F]/10 rounded-lg">
+              <User className="h-4 w-4 text-[#1E3A5F]" />
               <span className="text-sm font-medium">{customerName}</span>
             </div>
           )}
@@ -953,7 +953,7 @@ const POS = () => {
 
         {/* Cart Table */}
         <Card className="flex-1 border-0 shadow-sm overflow-hidden">
-          <div className="bg-[#00B9D7]/10 px-4 py-2 border-b border-[#00B9D7]/20">
+          <div className="bg-[#1E3A5F]/10 px-4 py-2 border-b border-[#1E3A5F]/20">
             <div className="grid grid-cols-12 gap-2 text-xs font-semibold text-gray-600">
               <div className="col-span-1">Nr</div>
               <div className="col-span-3">Emërtimi</div>
@@ -1006,7 +1006,7 @@ const POS = () => {
                                 }
                               }}
                             >
-                              <SelectTrigger className="border-[#00B9D7]">
+                              <SelectTrigger className="border-[#1E3A5F]">
                                 <SelectValue>{item.product_name || 'Zgjidh'}</SelectValue>
                               </SelectTrigger>
                               <SelectContent>
@@ -1080,7 +1080,7 @@ const POS = () => {
           </div>
 
           {/* Cart Totals */}
-          <div className="border-t border-[#00B9D7] bg-gray-50 p-4">
+          <div className="border-t border-[#1E3A5F] bg-gray-50 p-4">
             <div className="flex justify-between items-center">
               <div className="space-y-1 text-sm">
                 <div className="flex gap-8">
@@ -1146,7 +1146,7 @@ const POS = () => {
         {/* Konsumatori - Customer info */}
         <Button
           variant="outline"
-          className={`flex-1 lg:h-14 flex items-center justify-center gap-2 ${customerName ? 'border-[#00B9D7] text-[#00B9D7]' : ''}`}
+          className={`flex-1 lg:h-14 flex items-center justify-center gap-2 ${customerName ? 'border-[#1E3A5F] text-[#1E3A5F]' : ''}`}
           onClick={() => setShowCustomer(true)}
           data-testid="pos-customer-btn"
         >
@@ -1226,7 +1226,7 @@ const POS = () => {
 
       {/* Time Display */}
       <div className="fixed bottom-4 right-4 text-right hidden lg:block">
-        <div className="text-4xl font-bold text-[#00B9D7]">
+        <div className="text-4xl font-bold text-[#1E3A5F]">
           {new Date().toLocaleTimeString('sq-AL', { hour: '2-digit', minute: '2-digit' })}
         </div>
         <div className="text-gray-500">
@@ -1276,7 +1276,7 @@ const POS = () => {
             {paymentMethod === 'cash' && (
               <>
                 <div className="relative">
-                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[#00B9D7] font-bold">€</span>
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[#1E3A5F] font-bold">€</span>
                   <Input
                     ref={cashInputRef}
                     type="text"
@@ -1338,7 +1338,7 @@ const POS = () => {
             {paymentMethod === 'bank' && (
               <div className="p-4 bg-gray-50 rounded-lg text-center">
                 <p className="text-sm text-gray-500 mb-2">Pagesa me kartë/bank</p>
-                <p className="text-2xl font-bold text-[#00B9D7]">€{cartTotals.total.toFixed(2)}</p>
+                <p className="text-2xl font-bold text-[#1E3A5F]">€{cartTotals.total.toFixed(2)}</p>
               </div>
             )}
 
@@ -1489,7 +1489,7 @@ const POS = () => {
               </div>
               <div className="flex justify-between">
                 <span className="text-gray-500">Bilanci i Pritshëm:</span>
-                <span className="font-semibold text-[#00B9D7]">€{cashDrawer?.expected_balance?.toFixed(2) || '0.00'}</span>
+                <span className="font-semibold text-[#1E3A5F]">€{cashDrawer?.expected_balance?.toFixed(2) || '0.00'}</span>
               </div>
             </div>
             <div className="p-4 bg-gray-50 rounded-lg">

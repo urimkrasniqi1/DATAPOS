@@ -122,7 +122,7 @@ const Reports = () => {
     }
   };
 
-  const COLORS = ['#1E3A5F', '#00B9D7', '#10B981', '#F59E0B', '#8B5CF6'];
+  const COLORS = ['#1E3A5F', '#1E3A5F', '#10B981', '#F59E0B', '#8B5CF6'];
 
   return (
     <div className="space-y-6" data-testid="reports-page">
@@ -252,7 +252,7 @@ const Reports = () => {
                 <Card className="border-0 shadow-sm">
                   <CardContent className="p-6">
                     <p className="text-sm text-gray-500">TVSH Total</p>
-                    <p className="text-2xl font-bold text-[#00B9D7]">
+                    <p className="text-2xl font-bold text-[#1E3A5F]">
                       €{salesReport.summary.total_vat.toFixed(2)}
                     </p>
                   </CardContent>
@@ -489,7 +489,7 @@ const Reports = () => {
                 <Card className="border-0 shadow-sm">
                   <CardContent className="p-6">
                     <p className="text-sm text-gray-500">Artikuj në Stok</p>
-                    <p className="text-2xl font-bold text-[#00B9D7]">{stockReport.summary.total_items}</p>
+                    <p className="text-2xl font-bold text-[#1E3A5F]">{stockReport.summary.total_items}</p>
                   </CardContent>
                 </Card>
                 <Card className="border-0 shadow-sm">
