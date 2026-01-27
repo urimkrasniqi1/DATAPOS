@@ -194,6 +194,70 @@ const SuperAdmin = () => {
     }
   };
 
+  // User Management Functions
+  const openUserDialog = (tenant) => {
+    setSelectedTenant(tenant);
+    setUserFormData({
+      username: '',
+      password: '',
+      full_name: '',
+      role: 'admin',
+      pin: ''
+    });
+    setShowUserDialog(true);
+  };
+
+  const openUsersListDialog = async (tenant) => {
+    setSelectedTenant(tenant);
+    setShowUsersListDialog(true);
+    try {
+      const response = await api.get(`/tenants/${tenant.id}/users`);
+      setTenantUsers(response.data);
+    } catch (error) {
+      toast.error('Gabim gjatë ngarkimit të përdoruesve');
+      setTenantUsers([]);
+    }
+  };
+
+  const handleCreateUser = async () => {
+    if (!userFormData.username || !userFormData.password || !userFormData.full_name) {
+      toast.error('Plotësoni të gjitha fushat e detyrueshme');
+      return;
+    }
+    
+    setLoading(true);
+    try {
+      await api.post(`/tenants/${selectedTenant.id}/users`, userFormData);
+      toast.success('Përdoruesi u krijua me sukses!');
+      setShowUserDialog(false);
+      loadTenants();
+    } catch (error) {
+      toast.error(error.response?.data?.detail || 'Gabim gjatë krijimit');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleDeleteUser = async (userId) => {
+    if (!window.confirm('Jeni i sigurt që doni të fshini këtë përdorues?')) return;
+    
+    try {
+      await api.delete(`/tenants/${selectedTenant.id}/users/${userId}`);
+      toast.success('Përdoruesi u fshi');
+      // Refresh user list
+      const response = await api.get(`/tenants/${selectedTenant.id}/users`);
+      setTenantUsers(response.data);
+      loadTenants();
+    } catch (error) {
+      toast.error('Gabim gjatë fshirjes');
+    }
+  };
+
+  const copyToClipboard = (text) => {
+    navigator.clipboard.writeText(text);
+    toast.success('U kopjua!');
+  };
+
   if (user?.role !== 'super_admin') {
     return (
       <div className="flex items-center justify-center h-full">
