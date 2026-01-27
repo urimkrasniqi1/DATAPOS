@@ -14,7 +14,7 @@ function createWindow() {
     height: 900,
     minWidth: 1024,
     minHeight: 768,
-    title: 'iPOS',
+    title: 'MobilshopurimiPOS',
     icon: path.join(__dirname, 'public/favicon.ico'),
     webPreferences: {
       nodeIntegration: false,
