@@ -37,7 +37,7 @@ const MainLayout = () => {
   };
 
   const menuItems = [
-    { path: '/dashboard', icon: LayoutDashboard, label: 'Paneli', roles: ['admin', 'manager', 'cashier'] },
+    { path: '/dashboard', icon: LayoutDashboard, label: 'Paneli', roles: ['admin', 'manager', 'cashier', 'super_admin'] },
     { path: '/pos', icon: ShoppingCart, label: 'Arka', roles: ['admin', 'manager', 'cashier'] },
     { path: '/products', icon: Package, label: 'Produktet', roles: ['admin', 'manager'] },
     { path: '/stock', icon: Warehouse, label: 'Stoku', roles: ['admin', 'manager'] },
@@ -46,6 +46,7 @@ const MainLayout = () => {
     { path: '/reports', icon: BarChart3, label: 'Raportet', roles: ['admin', 'manager'] },
     { path: '/audit-logs', icon: ClipboardList, label: 'Audit Log', roles: ['admin'] },
     { path: '/settings', icon: Settings, label: 'Cilësimet', roles: ['admin'] },
+    { path: '/super-admin', icon: Building2, label: 'Menaxho Firmat', roles: ['super_admin'] },
   ];
 
   const filteredMenu = menuItems.filter(item => item.roles.includes(user?.role));
