@@ -2459,6 +2459,32 @@ async def delete_backup(
     return {"message": "Backup u fshi me sukses"}
 
 # ============ INIT ROUTES ============
+@api_router.post("/init/super-admin")
+async def create_super_admin():
+    """Create initial Super Admin - can only be done once"""
+    existing = await db.users.find_one({"role": UserRole.SUPER_ADMIN})
+    if existing:
+        return {"message": "Super Admin ekziston tashmë"}
+    
+    super_admin = {
+        "id": str(uuid.uuid4()),
+        "username": "superadmin",
+        "password_hash": hash_password("super@admin123"),
+        "full_name": "Super Administrator",
+        "role": UserRole.SUPER_ADMIN,
+        "tenant_id": None,  # Super admin has no tenant
+        "is_active": True,
+        "created_at": datetime.now(timezone.utc).isoformat()
+    }
+    await db.users.insert_one(super_admin)
+    
+    return {
+        "message": "Super Admin u krijua me sukses",
+        "username": "superadmin",
+        "password": "super@admin123",
+        "note": "Ndryshoni fjalëkalimin menjëherë pas hyrjes!"
+    }
+
 @api_router.post("/init/admin")
 async def create_initial_admin():
     existing = await db.users.find_one({"role": "admin"})
