@@ -30,7 +30,7 @@ async def login(request: LoginRequest):
     
     tenant_id = user.get("tenant_id")
     
-    if tenant_id and user.get("role") != UserRole.SUPER_ADMIN:
+    if tenant_id and user.get("role") != UserRole.SUPER_ADMIN and user.get("role") != "super_admin":
         tenant = await db.tenants.find_one({"id": tenant_id}, {"_id": 0})
         if tenant and tenant.get("status") == "suspended":
             raise HTTPException(status_code=403, detail="Firma juaj është pezulluar. Kontaktoni administratorin.")
@@ -57,7 +57,7 @@ async def login(request: LoginRequest):
             is_active=user.get("is_active", True),
             created_at=created_at or datetime.now(timezone.utc).isoformat(),
             pin=user.get("pin"),
-            tenant_id=current_user.get("tenant_id")
+            tenant_id=user.get("tenant_id")
         )
     )
 
