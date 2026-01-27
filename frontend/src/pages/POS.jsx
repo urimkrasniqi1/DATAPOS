@@ -1445,7 +1445,7 @@ const POS = () => {
 
       {/* Right Side - Action Buttons */}
       <div className="w-full lg:w-48 flex flex-row lg:flex-col gap-2">
-        {/* Dokumentin - View recent documents/sales */}
+        {/* Dokumentin - View recent documents/sales - F6 */}
         <Button
           variant="outline"
           className="flex-1 lg:h-14 flex items-center justify-center gap-2"
@@ -1454,9 +1454,10 @@ const POS = () => {
         >
           <FileText className="h-5 w-5" />
           <span className="hidden lg:inline">Dokumentin</span>
+          <span className="text-xs bg-gray-200 px-1.5 py-0.5 rounded ml-1">F6</span>
         </Button>
 
-        {/* Kërko artikullin - Search and add product */}
+        {/* Kërko artikullin - Search and add product - F12 */}
         <Button
           variant="outline"
           className="flex-1 lg:h-14 flex items-center justify-center gap-2"
@@ -1465,6 +1466,7 @@ const POS = () => {
         >
           <Package className="h-5 w-5" />
           <span className="hidden lg:inline">Kërko artikullin</span>
+          <span className="text-xs bg-gray-200 px-1.5 py-0.5 rounded ml-1">F12</span>
         </Button>
 
         {/* Shtyp Noten - Print note/receipt */}
@@ -1478,7 +1480,7 @@ const POS = () => {
           <span className="hidden lg:inline">Shtyp Noten</span>
         </Button>
 
-        {/* Fshij artikullin - Delete selected item */}
+        {/* Fshij artikullin - Delete selected item - Delete */}
         <Button
           variant="outline"
           className="flex-1 lg:h-14 flex items-center justify-center gap-2"
@@ -1487,6 +1489,7 @@ const POS = () => {
         >
           <Trash2 className="h-5 w-5" />
           <span className="hidden lg:inline">Fshij artikullin</span>
+          <span className="text-xs bg-gray-200 px-1.5 py-0.5 rounded ml-1">Del</span>
         </Button>
 
         {/* Konsumatori - Customer info */}
@@ -1511,7 +1514,7 @@ const POS = () => {
           <span className="hidden lg:inline">Parametrat</span>
         </Button>
 
-        {/* Printo A4 - Print A4 Invoice */}
+        {/* Printo A4 - Print A4 Invoice - F4 */}
         <Button
           variant="outline"
           className="flex-1 lg:h-14 flex items-center justify-center gap-2 border-blue-500 text-blue-600 hover:bg-blue-50"
@@ -1521,6 +1524,7 @@ const POS = () => {
         >
           <FileDown className="h-5 w-5" />
           <span className="hidden lg:inline">Printo A4</span>
+          <span className="text-xs bg-blue-100 px-1.5 py-0.5 rounded ml-1">F4</span>
         </Button>
 
         {/* Shtyp - Print and finish (payment) - F2 */}
