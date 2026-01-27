@@ -129,7 +129,12 @@ Sistema POS (Point of Sale) për markete dhe supermarkete me mbështetje multi-f
     └── PRD.md
 ```
 
-## Latest Updates (January 26, 2025)
+## Latest Updates (January 27, 2025)
+- Rregulluar printimi i kuponit termik dhe faturës A4 duke përdorur iframe të fshehur në vend të window.open()
+- Metoda e re e printimit nuk bllokohet nga popup blockers
+- Shtuar mesazhe të sakta gabimi dhe suksesi gjatë printimit
+
+## Previous Updates (January 26, 2025)
 - Shtuar tekst informues për zgjedhjen e printerit në dialogun e kuponit termik
 - Shtuar tekst informues për zgjedhjen e printerit në dialogun e faturës A4
 - Shtuar banner informues në Settings > SHABLLONET E FATURAVE për udhëzime printimi
