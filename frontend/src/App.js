@@ -19,6 +19,31 @@ import SuperAdmin from './pages/SuperAdmin';
 // Layout
 import MainLayout from './components/MainLayout';
 
+// Remove Emergent badge
+const removeEmergentBadge = () => {
+  const badge = document.getElementById('emergent-badge');
+  if (badge) badge.remove();
+  
+  // Also remove any elements with emergent in href
+  document.querySelectorAll('a[href*="emergent"]').forEach(el => el.remove());
+  
+  // Remove fixed position elements that might be badges
+  document.querySelectorAll('body > a[style*="position: fixed"]').forEach(el => {
+    if (el.textContent?.includes('Emergent') || el.innerHTML?.includes('emergent')) {
+      el.remove();
+    }
+  });
+};
+
+// Run on load and periodically
+if (typeof window !== 'undefined') {
+  removeEmergentBadge();
+  setTimeout(removeEmergentBadge, 100);
+  setTimeout(removeEmergentBadge, 500);
+  setTimeout(removeEmergentBadge, 1000);
+  setTimeout(removeEmergentBadge, 2000);
+}
+
 // Determine backend URL - for desktop app use localhost, otherwise use env variable
 const isElectron = window.navigator.userAgent.toLowerCase().includes('electron');
 const BACKEND_URL = isElectron ? 'http://127.0.0.1:8001' : (process.env.REACT_APP_BACKEND_URL || '');
