@@ -112,7 +112,10 @@ async def update_company_settings(
                 "vat_number": tenant.get("vat_number", ""),
                 "bank_name": tenant.get("bank_name"),
                 "bank_account": tenant.get("bank_account"),
-                "logo_url": tenant.get("logo_url", "")
+                "logo_url": tenant.get("logo_url", ""),
+                "stamp_url": tenant.get("stamp_url", ""),  # Vula digjitale
+                "whatsapp_qr_url": tenant.get("whatsapp_qr_url", "")  # QR code WhatsApp
+            }
             }
     
     # Fallback to settings collection for super_admin or legacy
