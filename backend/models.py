@@ -58,12 +58,16 @@ class TenantUpdate(BaseModel):
     email: Optional[str] = None
     phone: Optional[str] = None
     address: Optional[str] = None
+    city: Optional[str] = None
     logo_url: Optional[str] = None
+    stamp_url: Optional[str] = None  # Vula digjitale
     primary_color: Optional[str] = None
     secondary_color: Optional[str] = None
     stripe_payment_link: Optional[str] = None
     status: Optional[TenantStatus] = None
     subscription_expires: Optional[str] = None
+    nui: Optional[str] = None
+    nf: Optional[str] = None
 
 class TenantResponse(BaseModel):
     id: str
@@ -72,7 +76,9 @@ class TenantResponse(BaseModel):
     email: str
     phone: Optional[str] = None
     address: Optional[str] = None
+    city: Optional[str] = None
     logo_url: Optional[str] = None
+    stamp_url: Optional[str] = None  # Vula digjitale
     primary_color: str
     secondary_color: str
     stripe_payment_link: Optional[str] = None
@@ -81,12 +87,15 @@ class TenantResponse(BaseModel):
     created_at: str
     users_count: Optional[int] = 0
     sales_count: Optional[int] = 0
+    nui: Optional[str] = None
+    nf: Optional[str] = None
 
 class TenantPublicInfo(BaseModel):
     id: str
     name: str
     company_name: str
     logo_url: Optional[str] = None
+    stamp_url: Optional[str] = None  # Vula digjitale
     primary_color: str
     secondary_color: str
 
