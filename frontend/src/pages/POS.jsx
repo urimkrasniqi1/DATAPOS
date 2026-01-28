@@ -1179,11 +1179,20 @@ const POS = () => {
           {/* Cashier Header */}
           <header className="bg-white border-b border-gray-200 px-4 py-3 flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <span className="text-2xl font-bold text-[#00a79d]">→</span>
-              <span className="text-xl font-bold">
-                <span className="text-[#00a79d]">t</span>
-                <span className="text-gray-400">3</span>
-                <span className="text-[#00a79d]">next</span>
+              {/* Company Logo */}
+              {companySettings?.logo_url ? (
+                <img 
+                  src={companySettings.logo_url} 
+                  alt="Logo" 
+                  className="h-8 w-auto object-contain"
+                  onError={(e) => e.target.style.display = 'none'}
+                />
+              ) : (
+                <span className="text-2xl font-bold text-[#00a79d]">→</span>
+              )}
+              {/* Company Name */}
+              <span className="text-xl font-bold text-[#00a79d]">
+                {companySettings?.company_name || 'DataPOS'}
               </span>
               <span className="text-gray-400 mx-2">|</span>
               <span className="text-gray-600">Arka</span>
