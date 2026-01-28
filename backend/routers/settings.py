@@ -46,7 +46,8 @@ async def get_company_settings(current_user: dict = Depends(get_current_user)):
                 "vat_number": tenant.get("vat_number", ""),
                 "bank_name": tenant.get("bank_name"),
                 "bank_account": tenant.get("bank_account"),
-                "logo_url": tenant.get("logo_url", "")
+                "logo_url": tenant.get("logo_url", ""),
+                "stamp_url": tenant.get("stamp_url", "")  # Vula digjitale
             }
     
     # Fallback to settings collection for super_admin or legacy data
