@@ -1,71 +1,90 @@
 <analysis>**original_problem_statement:**
 The user, a Software Architect, initially requested a modern, single-company Point of Sale (POS) system. The project's scope then expanded significantly to transform the application into a multi-tenant SaaS platform. This new system needed to support multiple companies (tenants) with isolated data, managed by a central Super Admin.
 
-Recent work has focused on implementing and stabilizing this multi-tenant architecture, including fixing a critical data isolation bug, refactoring the backend for maintainability, addressing deployment-related errors, and handling a series of specific UI/UX change requests from the user.
+The latest user requests focused on adding tenant-specific customization features, including the ability to upload a digital stamp for invoices, add an optional customer name to receipts, and dynamically display the tenant's name in the POS header. The user also requested the implementation of subdomain-based tenant routing (e.g., ).
 
 **PRODUCT REQUIREMENTS (Multi-Tenant SaaS):**
 -   **Architecture:** A multi-tenant system where all data (users, products, sales) is isolated by a .
 -   **Roles:**
-    -   **Super Admin:** Manages all tenant companies (create, edit, manage users).
+    -   **Super Admin:** Manages all tenant companies.
     -   **Tenant Admin:** Manages a single company's settings, users, and data.
     -   **Cashier:** Operates within a single tenant's context.
--   **Tenant Management:** A dedicated Super Admin Dashboard for tenant and user management.
--   **Branding:** Each tenant has their own branding (logo, name), which should be reflected in the UI and on documents like receipts.
--   **Dynamic Naming:** The application title in the browser should be DataPOS by default and change to reflect the tenant's name when accessed via a subdomain.
+-   **Branding & Customization:**
+    -   Each tenant must have their own branding (logo, name, digital stamp) reflected in the UI and on documents (receipts, invoices).
+    -   Tenants should be able to manage their own branding from a dedicated settings page.
+-   **Dynamic Naming & Routing:**
+    -   The application title in the browser should reflect the tenant's name when accessed via a subdomain.
+    -   The application should automatically identify the tenant based on the subdomain and display a branded login page.
 
 **User's preferred language**: Albanian (Shqip)
 
 **what currently exists?**
-The application is a functional multi-tenant POS system with a modular FastAPI backend and a React frontend. The backend code, previously a 2500-line monolith in , has been successfully refactored into a clean, modular structure using . A critical data isolation bug has been fixed, and all data operations are now correctly filtered by .
+The application is a functional multi-tenant POS system. A critical issue with tenant branding on receipts and invoices has been fixed by refactoring the backend settings endpoint to correctly pull data from the  collection instead of a legacy  collection.
 
-The frontend features a Super Admin dashboard for comprehensive tenant and user management. Several user-requested features have been implemented, including setting the default product VAT to 0%, removing the Made with Emergent badge, and implementing dynamic page titles based on the tenant. A mechanism to automatically create/update the Super Admin user on application startup has been added to resolve deployment issues.
+Several new features have been added:
+1.  **Digital Stamp:** Tenants can now upload a digital stamp image via their settings page, which is automatically displayed on A4 invoices. This involved creating a new file upload endpoint.
+2.  **Tenant-Managed Settings:** A dedicated settings page () was created for tenant admins to manage their company profile, including uploading their logo and new digital stamp.
+3.  **Optional Customer Name on Receipt:** A field was added to the payment dialog to let the cashier enter a customer's name, which now appears on the printed receipt.
+4.  **Dynamic POS Header:** The POS header now dynamically displays the name of the logged-in tenant's company.
+5.  **Subdomain Routing Logic:** The backend and frontend logic to support subdomain-based tenant identification has been implemented. A public API endpoint gets tenant data by subdomain, and a new  in the frontend fetches this data to display a branded login page.
+
+A major refactoring of the monolithic  has begun, with the creation of new component files in .
 
 **Last working item**:
-    - Last item agent was working: Updating the receipt generation logic in  to ensure it dynamically displays the specific company data (name, logo) of the currently logged-in tenant, instead of using hardcoded values.
-    - Status: USER VERIFICATION PENDING
-    - Agent Testing Done: N
-    - Which testing method agent to use? screenshot tool. Log in as a tenant admin (ensure the tenant has a logo set in the Super Admin dashboard), create a sale, and check the receipt preview to confirm the correct company logo and name appear.
+    - Last item agent was working: Implementing subdomain-based tenant routing. The agent created a public backend endpoint () and the corresponding frontend logic ( in , UI updates in ) to automatically detect a tenant from the URL and display a branded login page.
+    - Status: IN PROGRESS
+    - Agent Testing Done: N (Full end-to-end test was not possible. The backend endpoint was successfully tested with , but the frontend behavior could not be verified without simulating a custom hostname.)
+    - Which testing method agent to use? manual testing by user. The user needs to be instructed on how to set up a CNAME record for their domain ( pointing to the preview URL) to test the functionality.
     - User Testing Done: N
 
 **All Pending/In progress Issue list**:
-  There are no outstanding critical bugs. The last major blocker (data isolation) has been resolved and verified.
+  - Issue 1: Verify Subdomain Routing (Priority: P0)
+
+  Issues Detail:
+  - Issue 1: 
+     - Attempted fixes: The backend endpoint and frontend context have been fully implemented. The login page is coded to display tenant branding when the context is populated.
+     - Next debug checklist: 
+        1. Instruct the user to create a  record in their DNS provider (Namecheap) for  pointing to the application's preview URL.
+        2. Ask the user to access the application via a tenant-specific subdomain (e.g., ).
+        3. Verify if the login page correctly displays the mobilshopurimi logo and company name.
+     - Why fix this issue and what will be achieved with the fix? This will complete a core requirement for the SaaS platform, allowing tenants to have a fully branded and distinct entry point to the application.
+     - Status:  USER VERIFICATION PENDING
+     - Is recurring issue? N
+     - Should Test frontend/backend/both after fix? Should Test frontend
+     - Blocked on other issue: None. Blocked on user action (DNS configuration).
 
 **In progress Task List**:
-  - Task 1: Verify tenant-specific branding on receipts and invoices. (Priority: P0)
+  - Task 1: Complete the refactoring of  (Priority: P0)
 
  Task Detail:
   - Task 1: 
-     - Where to resume: Testing the functionality. Log in as a tenant admin for a company with a defined logo, perform a sale, and view the receipt preview in  and the A4 invoice to ensure the correct logo and company details are displayed.
-     - What will be achieved with this? This will confirm that all customer-facing documents are correctly branded for each tenant, completing a key multi-tenancy requirement.
-     - Status:  USER VERIFICATION PENDING
+     - Where to resume: The basic component files have been created in . The next step is to move the state management (e.g., , ) and handler functions from  into custom hooks or directly into the new components. Then, replace the monolithic JSX in  with the new, imported components, passing down props and handlers as needed.
+     - What will be achieved with this? It will drastically reduce the technical debt of the most complex file in the application, making future feature development and bug fixing significantly easier and faster.
+     - Status:  IN PROGRESS
      - Should Test frontend/backend/both after fix? Should Test frontend
-     - Blocked on something: None
+     - Blocked on something: None.
 
 **Upcoming and Future Tasks**
     Upcoming Tasks:
-    - **P0: CRITICAL Refactoring **: This file is a monolith with over 2100 lines of code. It is the most significant piece of technical debt and makes new features or fixes difficult. It MUST be decomposed into smaller, manageable React components and custom hooks.
-    - **P1: Stripe Integration**: The database schema and Super Admin UI have placeholders for a Stripe payment link per tenant, but the actual integration has not been implemented. This involves adding the UI element to store the link and potentially creating a webhook or display logic.
-
+    - **P1: Stripe Integration**: The database schema and Super Admin UI have placeholders for a Stripe payment link per tenant, but the actual integration has not been implemented.
     Future Tasks:
-    - **P2: Subdomain-Based Tenant Routing**: While the app's title changes based on the subdomain, the core logic to automatically identify and route a user to their tenant based on the URL (e.g., ) is not yet implemented.
     - **P2: Verify Silent Printing (Electron)**: The silent printing feature for the Electron desktop app was partially implemented in previous sessions but was never fully tested or confirmed to be working.
+    - **P2: Client Management**: User has expressed interest in saving frequent customer names for quick selection during sales.
 
 **Completed work in this session**
-- **Backend Refactoring (CRITICAL):** The monolithic  was successfully broken down into a modular structure using FastAPI's . The main server file is now minimal, with all logic separated into .
-- **Multi-Tenant Data Isolation (FIXED):** Resolved the critical bug where  was not being saved on new documents. Implemented and verified tenant-based data filtering across all models (products, sales, users, etc.).
-- **Super Admin User Management:** Added functionality to the Super Admin dashboard for creating, viewing, and deleting users (admins and cashiers) for any tenant.
-- **Deployment Issue Resolution:**
-  - Replaced  with direct  usage to fix a dependency conflict ().
-  - Implemented an automatic Super Admin creation/update function () on server startup to ensure the superuser is always available in deployment environments.
-  - Added a public-facing  endpoint as a manual fallback for initializing the superuser.
-- **UI/UX Enhancements:**
-  - **Dynamic Title:** The browser tab title now correctly displays DataPOS by default, or the tenant's name when accessed via a subdomain.
-  - **Badge Removal:** The Made with Emergent badge has been successfully removed from the UI.
-  - **Default VAT:** The default VAT rate for new products has been changed from 20% to 0%.
-  - **Credentials Update:** The Super Admin credentials were changed to  /  as per the user's request.
+- **Receipt/Invoice Branding (FIXED & VERIFIED):** Corrected the backend logic to fetch tenant branding (logo, name) from the  collection. Removed all hardcoded branding from , , and .
+- **Digital Stamp Feature (DONE):**
+  - Added a  field to the  model.
+  - Created a new backend endpoint () for uploading images as base64 data URLs.
+  - Updated the tenant's settings page () to allow uploading a digital stamp.
+  - Updated  to display the stamp.
+- **Tenant Self-Service Settings Page (DONE):** Heavily modified  to allow tenant admins to manage their own company logo and digital stamp.
+- **Optional Customer Name on Receipt (DONE):** Added an input field to the payment dialog to manually add a customer's name, which now appears on the thermal receipt.
+- **Dynamic POS Header Name (DONE):** The POS header now dynamically displays the name of the logged-in tenant's company instead of a hardcoded value.
+- **Refactoring of  (STARTED):** Created new component files in  as the first step to breaking down the monolith.
 
 **Earlier issues found/mentioned but not fixed**
-   - ** Refactoring**: This has been identified as critical technical debt in previous sessions and remains the highest priority for refactoring work.
+   - The core issue of refactoring  is now in progress.
 
 **Known issue recurrence from previous fork**
   - None.
@@ -74,74 +93,65 @@ The frontend features a Super Admin dashboard for comprehensive tenant and user 
 
 
 **Key Technical Concepts**
-- **Multi-Tenancy**: Data is fully isolated using a  on all relevant MongoDB collections.
-- **Backend**: FastAPI (modularized with ), Python.
-- **Frontend**: React, Tailwind CSS, shadcn/ui.
-- **Database**: MongoDB.
-- **Authentication**: JWT with  for password hashing. System supports , , and  roles.
-- **Deployment**: Patched for Kubernetes environments with an auto-initializing Super Admin.
+- **File Uploads**: Implemented via a new FastAPI endpoint that converts uploaded files to base64 data URLs for easy storage in MongoDB and rendering in the frontend.
+- **React Context for Theming**: A new  was created to fetch tenant-specific data based on the URL's subdomain, allowing for a dynamically branded login experience.
 
 **key DB schema**
-  - **tenants**: 
-  - **users**: 
-  - **products**:  (enforced)
-  - **sales**:  (enforced)
-  - (All other data collections now correctly include and are filtered by )
+  - **tenants**:  (Added )
 
 **changes in tech stack**
-  - The  library was removed in favor of direct  usage to resolve a deployment dependency conflict.
+  - No changes in core technologies.
 
 **All files of reference**
-- : This new directory contains the refactored backend logic.
-- : The main application entry point, now greatly simplified.
-- : Password hashing logic was updated.
-- : Heavily modified to add user management capabilities.
-- : Logic for receipt branding was updated. **Still needs refactoring.**
-- : Contains new logic for dynamic page titles and badge removal.
-- : Default title changed.
-- : Added styles to hide the Emergent badge.
+- : Updated to fetch company settings from the  collection.
+- : Updated with a new public endpoint for subdomain lookups.
+- : New file to handle all image uploads.
+- : Added  to the  model.
+- : Transformed into a settings page for tenants to manage their branding.
+- : Modified to use  and display tenant branding.
+- : Modified to include the new .
+- : Modified to display the digital stamp.
+- : Received numerous small fixes for branding and new features; remains the primary target for refactoring.
+- : New directory containing placeholder components for the  refactor.
 
 **Areas that need refactoring**:
-- ** (CRITICAL)**: This is a monolithic file exceeding 2100 lines. It is difficult to maintain and must be broken down into smaller, reusable components and custom hooks as the next priority.
+- ** (CRITICAL)**: This task has been started but is far from complete. The file is still over 2600 lines long. Finishing this refactor is the highest technical priority.
 
 **key api endpoints**
-- : **GET** - A public endpoint to initialize or reset the Super Admin user, crucial for new deployments.
-- : **POST, GET** - New endpoints for the Super Admin to add and list users for a specific tenant.
-- : **GET** - A root-level (no  prefix) health check endpoint for Kubernetes.
+- : **POST** - New public endpoint for uploading files (logo, stamp). Returns a base64 data URL.
+- : **GET** - New public endpoint to fetch tenant details for branded login pages.
 
 **Critical Info for New Agent**
 - **User Language**: The user communicates exclusively in **Albanian (Shqip)**. All UI text and communication must be in Albanian.
-- **Backend Is Refactored**: The backend is no longer a single  file. All feature logic is now located in the respective files under .
-- **Super Admin Initialization**: A function in  automatically creates/updates the Super Admin on startup. The public endpoint  is available as a manual trigger for production environments.
-- **PRIORITY 1: Refactor **: After verifying the last fix (receipt branding), the next and most important task is to refactor the monolithic  file to reduce technical debt.
+- **Subdomain Testing**: The subdomain routing feature has been implemented but not tested. You will need to guide the user on setting up a CNAME record ( pointing to the preview URL) to verify this.
+- ** Refactor is Top Priority**: After verifying the subdomain feature, the immediate next task is to complete the refactoring of  by moving state and logic into the new components in .
 
 **documents and test reports created in this job**
-  - /app/memory/PRD.md
-  - /app/test_reports/iteration_5.json
+  - /app/memory/PRD.md (Updated with new features)
 
 **Last 10 User Messages and any pending HUMAN messages**
-- 10. User asks to change the dynamic title based on subdomains and to change the default app name to DataPOS.
-- 9. User reports being unable to log in as Super Admin after linking a custom domain ().
-- 8. User asks to change the Super Admin credentials to  / .
-- 7. User asks again to remove the Made with Emergent badge.
-- 6. User asks for instructions on how to connect a domain from Namecheap.
-- 5. User provides deployment error logs and asks for a fix ( error).
-- 4. User asks to remove the Made with Emergent badge.
-- 3. User asks to change the default VAT for new products to 0%.
-- 2. User reports being unable to create new admins for a tenant and requests a feature to do so from the Super Admin dashboard.
-- 1. User asks for confirmation that the data isolation issue between tenants is fixed.
+- 10. User asked how to connect a subdomain (e.g., ). (In Progress)
+- 9. User provided a screenshot indicating the POS header name should be dynamic. (Completed)
+- 8. User asked to add an optional field for the customer's name on the receipt. (Completed)
+- 7. User confirmed to proceed with adding the digital stamp feature. (Completed)
+- 6. User received summary of receipt branding fix and was asked for next steps. (Responded)
+- 5. (Agent Finish Tool)
+- 4. (Agent Finish Tool)
+- 3. (Agent Finish Tool)
+- 2. User asked for confirmation of data isolation fix. (Completed in previous session, re-verified in this session)
+- 1. User says po vazhdo (Proceed). (Acknowledged)
 
 **Project Health Check:**
-- **Broken**: No critical features are broken.
+- **Broken**: No critical features are broken. Subdomain routing is unverified.
 - **Mocked**: None.
-- **Technical Debt**: **HIGH**. The successful backend refactoring has significantly reduced debt there, but the frontend monolith at  remains a major risk and liability.
+- **Technical Debt**: **HIGH**. The  monolith remains the biggest risk, although the process to dismantle it has begun.
 
 **3rd Party Integrations**
 - **Electron**: Used for the desktop app shell. Contains a partially implemented silent printing feature that requires testing.
 - **Stripe**: Planned for tenant billing. A  field exists in the  model, but no API integration has been built.
 
 **Testing status**
-  - Testing agent used after significant changes: YES (for multi-tenant data isolation)
+  - Testing agent used after significant changes: NO
   - Troubleshoot agent used after agent stuck in loop: NO
   - Test files created: []
   - Known regressions: None.
@@ -151,9 +161,8 @@ The frontend features a Super Admin dashboard for comprehensive tenant and user 
     - Username: 
     - Password: 
 - **Tenant Admin / Cashier**:
-    - Create a new tenant via the Super Admin dashboard. An initial admin user is created automatically.
-    - Additional users (admin or cashier) can be created for any tenant via the Super Admin dashboard's user management tools.
+    - Use the Super Admin dashboard to create tenants and users. The agent created  (role: admin) and  (role: cashier) for the  tenant with passwords/PINs that may have been reset. It's best to create a new test tenant and user if login issues occur.
 
 **What agent forgot to execute**
-- The agent did not run a final verification test (e.g., screenshot) after implementing the tenant-specific branding on receipts.
-- The critical refactoring of  has been consistently postponed and is now the most urgent piece of technical debt to address.</analysis>
+- The agent did not fully test the subdomain routing feature due to environment limitations. It requires coordination with the user to test.
+- The agent started the  refactoring but did not complete it, leaving the application with significant technical debt.</analysis>
