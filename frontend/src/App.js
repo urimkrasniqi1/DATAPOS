@@ -77,8 +77,31 @@ const isElectron = window.navigator.userAgent.toLowerCase().includes('electron')
 const BACKEND_URL = isElectron ? 'http://127.0.0.1:8001' : (process.env.REACT_APP_BACKEND_URL || '');
 const API = `${BACKEND_URL}/api`;
 
+// Get subdomain from current URL
+const getSubdomain = () => {
+  const hostname = window.location.hostname;
+  const parts = hostname.split('.');
+  // Check if it's a subdomain (e.g., mobilshopurimi.datapos.pro)
+  if (parts.length > 2 && parts[0] !== 'www' && parts[0] !== 'app' && parts[0] !== 'localhost') {
+    return parts[0].toLowerCase();
+  }
+  // Also check for preview URLs (e.g., mobilshopurimi.saaspos-2.preview.emergentagent.com)
+  if (parts.length > 3 && parts[0] !== 'www' && parts[0] !== 'app') {
+    return parts[0].toLowerCase();
+  }
+  return null;
+};
+
 // Auth Context
 const AuthContext = createContext(null);
+
+// Tenant Context for subdomain-based routing
+const TenantContext = createContext(null);
+
+export const useTenant = () => {
+  const context = useContext(TenantContext);
+  return context; // Can be null if no subdomain
+};
 
 export const useAuth = () => {
   const context = useContext(AuthContext);
