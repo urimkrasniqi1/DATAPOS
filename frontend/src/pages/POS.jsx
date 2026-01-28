@@ -511,12 +511,25 @@ const POS = () => {
       </div>
     `).join('');
     
+    // Use company logo if available, otherwise use default
+    const logoUrl = companySettings?.logo_url || 'https://customer-assets.emergentagent.com/job_retailsys-1/artifacts/9i1h1bxb_logo%20icon.png';
+    const companyName = companySettings?.company_name || 'DataPOS';
+    const companyAddress = companySettings?.address || '';
+    const companyCity = companySettings?.city || '';
+    const companyPhone = companySettings?.phone || '';
+    const companyEmail = companySettings?.email || '';
+    const companyNUI = companySettings?.nui || '';
+    const companyNF = companySettings?.nf || '';
+    
     return `
       <div style="text-align: center; margin-bottom: 8px;">
-        <img src="https://customer-assets.emergentagent.com/job_retailsys-1/artifacts/9i1h1bxb_logo%20icon.png" alt="Logo" style="height: 45px; max-width: 60mm;" />
-        <div style="font-size: 14px; font-weight: bold;">${companySettings?.company_name || 'MobilshopurimiPOS'}</div>
-        <div style="font-size: 9px;">${companySettings?.address || ''}</div>
-        <div style="font-size: 9px;">Tel: ${companySettings?.phone || ''}</div>
+        ${logoUrl ? `<img src="${logoUrl}" alt="Logo" style="height: 45px; max-width: 60mm;" onerror="this.style.display='none'" />` : ''}
+        <div style="font-size: 14px; font-weight: bold;">${companyName}</div>
+        ${companyAddress ? `<div style="font-size: 9px;">${companyAddress}${companyCity ? ', ' + companyCity : ''}</div>` : ''}
+        ${companyPhone ? `<div style="font-size: 9px;">Tel: ${companyPhone}</div>` : ''}
+        ${companyEmail ? `<div style="font-size: 9px;">${companyEmail}</div>` : ''}
+        ${companyNUI ? `<div style="font-size: 9px;">NUI: ${companyNUI}</div>` : ''}
+        ${companyNF ? `<div style="font-size: 9px;">NF: ${companyNF}</div>` : ''}
       </div>
       <div style="border-top: 2px dashed #000; margin: 8px 0;"></div>
       <div style="text-align: center; margin: 8px 0;">
@@ -555,9 +568,6 @@ const POS = () => {
       <div style="text-align: center; margin: 10px 0;">
         <div style="font-size: 12px; font-weight: bold;">FALEMINDERIT!</div>
         <div style="font-size: 9px;">Ju mirëpresim përsëri!</div>
-      </div>
-      <div style="text-align: center; margin: 4px 0; padding: 0;">
-        <img src="https://customer-assets.emergentagent.com/job_supermarket-pos-12/artifacts/ewy3j4rc_qr%20code.png" alt="QR" style="width: 30mm; height: 30mm;" />
       </div>
       <div style="text-align: center; font-size: 8px; color: #666; border-top: 1px dashed #000; padding-top: 8px;">
         <div>Ky kupon shërben vetëm për evidencë</div>
