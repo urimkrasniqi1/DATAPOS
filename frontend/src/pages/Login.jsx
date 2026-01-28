@@ -247,13 +247,25 @@ const Login = () => {
               Kthehu
             </button>
 
-            {/* Logo */}
-            <div className="flex items-center justify-center mb-8">
-              <img 
-                src="https://customer-assets.emergentagent.com/job_retailsys-1/artifacts/9i1h1bxb_logo%20icon.png" 
-                alt="MobilshopurimiPOS" 
-                className="h-14 object-contain"
-              />
+            {/* Logo - Show tenant logo if available */}
+            <div className="flex flex-col items-center justify-center mb-8">
+              {tenant?.logo_url ? (
+                <img 
+                  src={tenant.logo_url} 
+                  alt={tenant.company_name || tenant.name}
+                  className="h-14 object-contain mb-2"
+                  onError={(e) => e.target.style.display = 'none'}
+                />
+              ) : (
+                <img 
+                  src="https://customer-assets.emergentagent.com/job_retailsys-1/artifacts/9i1h1bxb_logo%20icon.png" 
+                  alt="DataPOS" 
+                  className="h-14 object-contain mb-2"
+                />
+              )}
+              <h1 className="text-lg font-bold text-[#00a79d]">
+                {tenant?.company_name || tenant?.name || 'DataPOS'}
+              </h1>
             </div>
 
             <form onSubmit={handleAdminLogin} className="space-y-5">
