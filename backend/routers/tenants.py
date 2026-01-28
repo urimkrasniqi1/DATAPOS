@@ -188,6 +188,12 @@ async def update_tenant(tenant_id: str, update: TenantUpdate, current_user: dict
         raise HTTPException(status_code=404, detail="Firma nuk u gjet")
     
     update_data = {k: v for k, v in update.model_dump().items() if v is not None}
+    
+    # Regenerate WhatsApp QR code if phone number changed
+    if "phone" in update_data:
+        new_qr = generate_whatsapp_qr(update_data["phone"])
+        update_data["whatsapp_qr_url"] = new_qr
+    
     if update_data:
         await db.tenants.update_one({"id": tenant_id}, {"$set": update_data})
     
