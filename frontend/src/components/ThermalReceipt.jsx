@@ -143,14 +143,41 @@ const ThermalReceipt = forwardRef(({ sale, companyInfo }, ref) => {
 
       {/* Footer */}
       <div className="text-center border-t border-dashed border-gray-400 pt-2 text-xs">
+        {/* Customer Name if provided */}
+        {sale?.customer_name && (
+          <div className="mb-2 pb-2 border-b border-dashed border-gray-300">
+            <span className="text-gray-600">Klient: </span>
+            <span className="font-medium">{sale.customer_name}</span>
+          </div>
+        )}
+        
         <div className="font-semibold">Faleminderit!</div>
         <div className="text-gray-500">Mirë se vini përsëri</div>
-        <div className="mt-2 text-gray-400 text-xs">
-          --------------------------------
-        </div>
-        <div className="text-gray-400 text-xs">
-          Mobilshopurimi POS
-        </div>
+        
+        {/* WhatsApp QR Code */}
+        {company.whatsapp_qr_url && (
+          <div className="mt-3 flex flex-col items-center">
+            <img 
+              src={company.whatsapp_qr_url} 
+              alt="WhatsApp QR" 
+              className="mx-auto"
+              style={{ width: '80px', height: '80px' }}
+            />
+            <div className="text-xs text-gray-500 mt-1">Skanoni për WhatsApp</div>
+          </div>
+        )}
+        
+        {!company.whatsapp_qr_url && (
+          <div className="mt-2 text-gray-400 text-xs">
+            --------------------------------
+          </div>
+        )}
+        
+        {company.company_name && (
+          <div className="text-gray-400 text-xs mt-1">
+            {company.company_name}
+          </div>
+        )}
       </div>
 
       {/* Print Styles */}
