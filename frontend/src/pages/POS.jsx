@@ -1356,7 +1356,7 @@ const POS = () => {
 
   // Full screen POS layout for cashier
   const posContent = (
-    <div className={`${isCashierFullscreen ? 'h-[calc(100vh-5rem)]' : 'h-[calc(100vh-8rem)]'} flex flex-col lg:flex-row gap-responsive`} data-testid="pos-page">
+    <div className={`${isCashierFullscreen ? 'h-[calc(100vh-5rem)]' : 'h-[calc(100vh-8rem)]'} flex flex-col lg:flex-row gap-responsive ${screenSize === 'small' ? 'pos-compact text-sm' : ''}`} data-testid="pos-page">
       {/* Left Side - Product Search & Cart */}
       <div className="flex-1 flex flex-col">
         {/* Header with search */}
