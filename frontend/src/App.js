@@ -139,17 +139,17 @@ api.interceptors.response.use(
 // Tenant Provider - Fetches tenant info based on subdomain
 const TenantProvider = ({ children }) => {
   const [tenant, setTenant] = useState(null);
-  const [tenantLoading, setTenantLoading] = useState(true);
-  const [tenantError, setTenantError] = useState(null);
+  const [tenantLoading, setTenantLoading] = useState(false);
 
   useEffect(() => {
     const subdomain = getSubdomain();
     
     if (!subdomain) {
-      setTenantLoading(false);
       return;
     }
 
+    setTenantLoading(true);
+    
     // Fetch tenant info from API
     const fetchTenant = async () => {
       try {
@@ -163,13 +163,7 @@ const TenantProvider = ({ children }) => {
         localStorage.setItem('tenant_context', JSON.stringify(response.data));
       } catch (error) {
         console.error('Failed to fetch tenant:', error);
-        if (error.response?.status === 404) {
-          setTenantError('Firma nuk u gjet');
-        } else if (error.response?.status === 403) {
-          setTenantError('Firma është pezulluar');
-        } else {
-          setTenantError('Gabim gjatë ngarkimit të firmës');
-        }
+        // Don't show error, just continue with default branding
       } finally {
         setTenantLoading(false);
       }
@@ -178,7 +172,7 @@ const TenantProvider = ({ children }) => {
     fetchTenant();
   }, []);
 
-  const value = { tenant, tenantLoading, tenantError, subdomain: getSubdomain() };
+  const value = { tenant, tenantLoading, subdomain: getSubdomain() };
 
   return <TenantContext.Provider value={value}>{children}</TenantContext.Provider>;
 };
