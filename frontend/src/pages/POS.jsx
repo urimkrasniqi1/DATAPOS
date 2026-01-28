@@ -2394,7 +2394,7 @@ const POS = () => {
                 }}>
                   <div>Ky kupon shërben vetëm për evidencë</div>
                   <div style={{ marginTop: '2px' }}>
-                    {companySettings?.company_name || 'MobilshopurimiPOS'} • {new Date().toLocaleString('sq-AL')}
+                    {companySettings?.company_name || 'DataPOS'} • {new Date().toLocaleString('sq-AL')}
                   </div>
                 </div>
 
