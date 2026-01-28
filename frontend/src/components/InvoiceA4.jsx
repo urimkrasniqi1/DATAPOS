@@ -124,8 +124,25 @@ const InvoiceA4 = forwardRef(({ sale, companyInfo }, ref) => {
         </tbody>
       </table>
 
-      {/* Totals */}
-      <div className="flex justify-end mb-8">
+      {/* Totals and Stamp Section */}
+      <div className="flex justify-between items-end mb-8">
+        {/* Digital Stamp - Vula Digjitale */}
+        <div className="flex flex-col items-center">
+          {company.stamp_url && (
+            <div className="text-center">
+              <img 
+                src={company.stamp_url} 
+                alt="Vula Digjitale" 
+                className="max-w-[150px] max-h-[150px] object-contain opacity-90"
+                style={{ mixBlendMode: 'multiply' }}
+                onError={(e) => e.target.style.display = 'none'}
+              />
+              <p className="text-xs text-gray-500 mt-1">Vula Digjitale</p>
+            </div>
+          )}
+        </div>
+
+        {/* Totals */}
         <div className="w-72">
           <div className="flex justify-between py-2 border-b border-gray-200">
             <span className="text-gray-600">Nëntotali:</span>
