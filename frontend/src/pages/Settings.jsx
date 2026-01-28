@@ -79,7 +79,13 @@ const Settings = () => {
     bank_name: '',
     bank_account: '',
     website: '',
+    logo_url: '',
+    stamp_url: '',
   });
+  
+  // Logo and stamp upload states
+  const [uploadingLogo, setUploadingLogo] = useState(false);
+  const [uploadingStamp, setUploadingStamp] = useState(false);
 
   // POS Settings
   const [posSettings, setPosSettings] = useState({
