@@ -143,9 +143,9 @@ Created modular components in `/app/frontend/src/components/pos/`:
 - [ ] Stripe payment integration
 
 ### P2 (Medium) - TODO
-- [ ] Subdomain-based tenant routing (company-a.datapos.pro)
 - [ ] Silent printing verification (Electron)
 - [ ] Email notifications for low stock
+- [ ] Client management (save frequent customer names)
 
 ### P3 (Low) - TODO
 - [ ] Dashboard customization per tenant
