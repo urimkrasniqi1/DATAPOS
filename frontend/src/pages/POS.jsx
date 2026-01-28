@@ -2262,6 +2262,12 @@ const POS = () => {
                     <span>Arkëtar:</span>
                     <span>{user?.full_name || '-'}</span>
                   </div>
+                  {receiptDataForPrint.customer_name && (
+                    <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '4px', paddingTop: '4px', borderTop: '1px dashed #ccc' }}>
+                      <span>Klienti:</span>
+                      <span style={{ fontWeight: 'bold' }}>{receiptDataForPrint.customer_name}</span>
+                    </div>
+                  )}
                 </div>
 
                 {/* Separator */}
