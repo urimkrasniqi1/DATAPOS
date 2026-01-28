@@ -85,7 +85,7 @@ const POS = () => {
   const [showBuyerForm, setShowBuyerForm] = useState(false);
   const [currentSaleForPrint, setCurrentSaleForPrint] = useState(null);
   const [companySettings, setCompanySettings] = useState(null);
-  const [printReceipt, setPrintReceipt] = useState(true); // Default: print receipt
+  const [printReceipt, setPrintReceipt] = useState(false); // Default: pa kupon, arkëtari zgjedh
   const [buyerInfo, setBuyerInfo] = useState({
     name: '',
     address: '',
