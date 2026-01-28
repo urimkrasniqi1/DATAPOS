@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../App';
+import { useAuth, useTenant } from '../App';
 import { Input } from '../components/ui/input';
 import { Button } from '../components/ui/button';
-import { Delete, CornerDownLeft, User, Lock, Eye, EyeOff, ArrowLeft } from 'lucide-react';
+import { Delete, CornerDownLeft, User, Lock, Eye, EyeOff, ArrowLeft, AlertCircle, Loader2 } from 'lucide-react';
 
 const Login = () => {
   const [pin, setPin] = useState('');
@@ -14,6 +14,12 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
   const { login } = useAuth();
   const navigate = useNavigate();
+  
+  // Get tenant context from subdomain
+  const tenantContext = useTenant();
+  const tenant = tenantContext?.tenant;
+  const tenantLoading = tenantContext?.tenantLoading;
+  const tenantError = tenantContext?.tenantError;
 
   // Handle PIN login (for cashiers) - redirects to POS/Arka
   const handlePinLogin = async () => {
