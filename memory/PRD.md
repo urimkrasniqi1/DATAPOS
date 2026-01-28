@@ -11,19 +11,29 @@ Sistema POS (Point of Sale) multi-tenant SaaS për kompani të ndryshme. Çdo ko
 
 ## What's Been Implemented
 
+### Digital Stamp (Vula Digjitale) - January 28, 2025 ✅ NEW
+- Upload endpoint `/api/upload/stamp` for tenant digital stamps
+- Upload endpoint `/api/upload/logo` for tenant logos
+- Base64 storage for images (no external dependencies)
+- Settings page updated with Logo and Stamp upload sections
+- InvoiceA4 component updated to display digital stamp
+- Stamp appears next to totals with "Vula Digjitale" label
+- Each tenant can upload their own stamp from Settings
+
 ### Backend Refactoring (COMPLETE - January 27, 2025)
-**server.py refaktoruar nga 2700+ rreshta në 68 rreshta!**
+**server.py refaktoruar nga 2700+ rreshta në ~75 rreshta!**
 
 Struktura e re modulare:
 ```
 /app/backend/
 ├── server.py          # Main app, routers registration
 ├── database.py        # MongoDB connection
-├── models.py          # All Pydantic models
+├── models.py          # All Pydantic models (updated with stamp_url)
 ├── auth.py            # JWT, password hashing, dependencies
 └── routers/
     ├── auth.py        # /api/auth/*
     ├── tenants.py     # /api/tenants/* (Super Admin)
+    ├── upload.py      # NEW: /api/upload/* (Logo, Stamp uploads)
     ├── users.py       # /api/users/*
     ├── branches.py    # /api/branches/*
     ├── products.py    # /api/products/*
@@ -35,8 +45,22 @@ Struktura e re modulare:
     └── admin.py       # Reset data, backups, audit, init
 ```
 
+### POS.jsx Refactoring Started - January 28, 2025 ⏳ IN PROGRESS
+Created modular components in `/app/frontend/src/components/pos/`:
+- `ProductSearchDialog.jsx` - Product search modal
+- `PaymentDialog.jsx` - Payment/checkout modal with numpad
+- `CustomerDialog.jsx` - Customer info modal
+- `ParamsDialog.jsx` - Drawer parameters modal
+- `DocumentsDialog.jsx` - Recent documents modal
+- `BuyerFormDialog.jsx` - Buyer info for A4 invoice
+- `POSActionButtons.jsx` - Right side action buttons
+- `POSCart.jsx` - Shopping cart table
+- `POSHeader.jsx` - Header with search and user info
+
+**Note**: Components created but NOT YET integrated into POS.jsx. Integration pending.
+
 ### Multi-Tenant System (COMPLETE)
-- [x] Tenant model me branding (logo, ngjyra, emri kompanisë)
+- [x] Tenant model me branding (logo, ngjyra, emri kompanisë, vula digjitale)
 - [x] Super Admin role dhe dashboard (`/super-admin`)
 - [x] Tenant CRUD (Create, Read, Update, Delete) nga Super Admin
 - [x] Automatic admin user creation kur krijohet tenant
@@ -48,9 +72,9 @@ Struktura e re modulare:
 ### Tenant-Specific Branding (COMPLETE - January 28, 2025)
 - [x] Company settings now pull from tenant record for tenant users
 - [x] Thermal receipt shows tenant's logo, name, address, phone
-- [x] A4 Invoice shows tenant's logo and company details
+- [x] A4 Invoice shows tenant's logo, company details, AND DIGITAL STAMP
 - [x] Print note uses dynamic company name
-- [x] All hardcoded "Mobilshopurimi" references replaced with "DataPOS" default
+- [x] All hardcoded references replaced with "DataPOS" default
 
 ### UI/UX Enhancements (COMPLETE)
 - [x] Dynamic page title (DataPOS default, tenant name via subdomain)
@@ -64,7 +88,7 @@ Struktura e re modulare:
 - [x] POS/Checkout page with thermal receipt printing
 - [x] Products, Stock, Users, Branches management
 - [x] Reports with date filters, charts, PDF/Excel export
-- [x] Settings page (Company, POS, Warehouses, VAT)
+- [x] Settings page (Company, POS, Warehouses, VAT, Logo, Stamp uploads)
 - [x] **Super Admin Dashboard** (`/super-admin`) - Tenant management
 - [x] Albanian language interface
 - [x] PWA support
@@ -77,24 +101,32 @@ Struktura e re modulare:
 - Backend refactoring: SUCCESS - All endpoints working
 - Multi-tenant isolation: VERIFIED - Tenants cannot see each other's data
 - Tenant-specific branding: VERIFIED - Receipt and Invoice show correct tenant logo/info
-- Frontend: All pages functional
+- Digital stamp upload: VERIFIED - Stamp displays on A4 invoice
+- POS components: CREATED - Ready for integration
 
-## Files Modified (January 28, 2025)
-- `/app/backend/routers/settings.py` - Company settings now pulls from tenant record
-- `/app/frontend/src/pages/POS.jsx` - Logo and company name now dynamic
-- `/app/frontend/src/components/ThermalReceipt.jsx` - Added tenant logo support
-- `/app/frontend/src/components/InvoiceA4.jsx` - Added tenant logo support
+## Files Modified/Created (January 28, 2025)
+**Backend:**
+- `/app/backend/routers/upload.py` - NEW: File upload endpoints
+- `/app/backend/routers/settings.py` - Added stamp_url to company response
+- `/app/backend/models.py` - Added stamp_url to Tenant models
+- `/app/backend/server.py` - Registered upload router
+
+**Frontend:**
+- `/app/frontend/src/pages/Settings.jsx` - Added Logo and Stamp upload UI
+- `/app/frontend/src/components/InvoiceA4.jsx` - Added digital stamp display
+- `/app/frontend/src/components/pos/` - NEW: 9 modular POS components
 
 ## Prioritized Backlog
 
-### P0 (Critical) - DONE
+### P0 (Critical) - DONE ✅
 - [x] Multi-tenant data isolation
 - [x] Super Admin dashboard
 - [x] Backend refactoring (server.py)
 - [x] Tenant-specific branding on receipts/invoices
+- [x] Digital stamp (Vula Digjitale) upload and display
 
-### P1 (High) - TODO
-- [ ] **Refactor frontend POS.jsx** (2100+ lines) into smaller components
+### P1 (High) - IN PROGRESS ⏳
+- [ ] **Complete POS.jsx refactoring** - Integrate created components
 - [ ] Stripe payment integration
 
 ### P2 (Medium) - TODO
@@ -112,4 +144,12 @@ Struktura e re modulare:
 - Backend: FastAPI with modular routers
 - Frontend: React 18 + Tailwind CSS + shadcn/ui
 - Authentication: JWT with bcrypt password hashing
+- File Storage: Base64 data URLs (no external storage needed)
 - Deployment: Kubernetes with auto Super Admin initialization
+
+## API Endpoints (New)
+- `POST /api/upload/logo` - Upload company logo
+- `POST /api/upload/stamp` - Upload digital stamp
+- `POST /api/upload/tenant/{tenant_id}/logo` - Upload logo for specific tenant (Super Admin)
+- `POST /api/upload/tenant/{tenant_id}/stamp` - Upload stamp for specific tenant (Super Admin)
+- `DELETE /api/upload/tenant/{tenant_id}/stamp` - Delete stamp
