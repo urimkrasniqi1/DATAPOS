@@ -44,6 +44,34 @@ if (typeof window !== 'undefined') {
   setTimeout(removeEmergentBadge, 2000);
 }
 
+// Update page title based on subdomain or tenant
+const updatePageTitle = (userData) => {
+  const hostname = window.location.hostname;
+  const parts = hostname.split('.');
+  
+  // Check if it's a subdomain (e.g., firma.datapos.pro)
+  if (parts.length > 2 && parts[0] !== 'www' && parts[0] !== 'app') {
+    const subdomain = parts[0];
+    const companyName = subdomain.charAt(0).toUpperCase() + subdomain.slice(1);
+    document.title = `${companyName} - POS`;
+  } else if (userData?.role === 'super_admin') {
+    document.title = 'DataPOS - Admin';
+  } else {
+    document.title = 'DataPOS';
+  }
+};
+
+// Set initial title based on subdomain
+if (typeof window !== 'undefined') {
+  const hostname = window.location.hostname;
+  const parts = hostname.split('.');
+  if (parts.length > 2 && parts[0] !== 'www' && parts[0] !== 'app') {
+    const subdomain = parts[0];
+    const companyName = subdomain.charAt(0).toUpperCase() + subdomain.slice(1);
+    document.title = `${companyName} - POS`;
+  }
+}
+
 // Determine backend URL - for desktop app use localhost, otherwise use env variable
 const isElectron = window.navigator.userAgent.toLowerCase().includes('electron');
 const BACKEND_URL = isElectron ? 'http://127.0.0.1:8001' : (process.env.REACT_APP_BACKEND_URL || '');
