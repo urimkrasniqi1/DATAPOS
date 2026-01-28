@@ -157,7 +157,6 @@ async def update_company_settings(
                 "stamp_url": tenant.get("stamp_url", ""),  # Vula digjitale
                 "whatsapp_qr_url": tenant.get("whatsapp_qr_url", "")  # QR code WhatsApp
             }
-            }
     
     # Fallback to settings collection for super_admin or legacy
     tenant_filter = get_tenant_filter(current_user)
