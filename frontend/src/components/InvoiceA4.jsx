@@ -3,13 +3,14 @@ import React, { forwardRef } from 'react';
 // Invoice A4 Component for printing
 const InvoiceA4 = forwardRef(({ sale, companyInfo }, ref) => {
   const defaultCompany = {
-    company_name: 'Mobilshopurimi',
-    address: 'Adresa e kompanisë',
+    company_name: 'DataPOS',
+    address: '',
     city: '',
-    phone: '+383 XX XXX XXX',
-    email: 'info@mobilshopurimi.com',
-    nui: 'XXXXXXXXX',
-    nf: 'XXXXXXXXX',
+    phone: '',
+    email: '',
+    nui: '',
+    nf: '',
+    logo_url: '',
   };
 
   const company = companyInfo && companyInfo.company_name ? companyInfo : defaultCompany;
@@ -34,19 +35,29 @@ const InvoiceA4 = forwardRef(({ sale, companyInfo }, ref) => {
         {/* Company Logo & Info */}
         <div className="flex-1">
           <div className="flex items-center gap-2 mb-2">
-            <div className="bg-[#00a79d] p-2 rounded-lg">
-              <svg className="w-6 h-6 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <rect x="5" y="2" width="14" height="20" rx="2" ry="2"/>
-                <line x1="12" y1="18" x2="12" y2="18"/>
-              </svg>
-            </div>
+            {/* Show company logo if available, otherwise show default icon */}
+            {company.logo_url ? (
+              <img 
+                src={company.logo_url} 
+                alt="Logo" 
+                className="h-10 w-auto object-contain"
+                onError={(e) => e.target.style.display = 'none'}
+              />
+            ) : (
+              <div className="bg-[#00a79d] p-2 rounded-lg">
+                <svg className="w-6 h-6 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <rect x="5" y="2" width="14" height="20" rx="2" ry="2"/>
+                  <line x1="12" y1="18" x2="12" y2="18"/>
+                </svg>
+              </div>
+            )}
             <span className="text-2xl font-bold">
-              <span className="text-[#00a79d]">{company.company_name || 'Mobilshopurimi'}</span>
+              <span className="text-[#00a79d]">{company.company_name || 'DataPOS'}</span>
             </span>
           </div>
-          <p className="text-sm text-gray-600">{company.address}{company.city ? `, ${company.city}` : ''}</p>
-          <p className="text-sm text-gray-600">Tel: {company.phone}</p>
-          <p className="text-sm text-gray-600">Email: {company.email}</p>
+          {company.address && <p className="text-sm text-gray-600">{company.address}{company.city ? `, ${company.city}` : ''}</p>}
+          {company.phone && <p className="text-sm text-gray-600">Tel: {company.phone}</p>}
+          {company.email && <p className="text-sm text-gray-600">Email: {company.email}</p>}
         </div>
 
         {/* Invoice Info */}
@@ -61,11 +72,11 @@ const InvoiceA4 = forwardRef(({ sale, companyInfo }, ref) => {
       <div className="grid grid-cols-2 gap-8 mb-6">
         <div className="bg-gray-50 p-4 rounded">
           <h3 className="font-bold text-gray-800 mb-2 text-sm uppercase">Shitësi</h3>
-          <p className="font-semibold">{company.company_name || 'Mobilshopurimi'}</p>
+          <p className="font-semibold">{company.company_name || 'DataPOS'}</p>
           {company.nui && <p className="text-sm text-gray-600">NUI: {company.nui}</p>}
           {company.nf && <p className="text-sm text-gray-600">NF: {company.nf}</p>}
           {company.vat_number && <p className="text-sm text-gray-600">TVSH: {company.vat_number}</p>}
-          <p className="text-sm text-gray-600">{company.address}</p>
+          {company.address && <p className="text-sm text-gray-600">{company.address}</p>}
           {company.city && <p className="text-sm text-gray-600">{company.city} {company.postal_code}</p>}
         </div>
         <div className="bg-gray-50 p-4 rounded">
