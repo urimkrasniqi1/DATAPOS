@@ -86,6 +86,7 @@ async def get_tenant_by_subdomain(subdomain: str):
         company_name=tenant.get("company_name") or tenant["name"],
         logo_url=tenant.get("logo_url"),
         stamp_url=tenant.get("stamp_url"),
+        whatsapp_qr_url=tenant.get("whatsapp_qr_url"),
         primary_color=tenant.get("primary_color", "#00a79d"),
         secondary_color=tenant.get("secondary_color", "#E0F7FA")
     )
