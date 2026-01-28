@@ -4,6 +4,17 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Hide Emergent badge */
+#emergent-badge,
+a[href*="emergent"],
+div[style*="position: fixed"][style*="bottom"][style*="right"] > a,
+body > a[style*="position: fixed"][style*="z-index: 9999"] {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+}
+
 body {
     margin: 0;
     font-family: 'Inter', sans-serif;
