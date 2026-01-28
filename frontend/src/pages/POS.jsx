@@ -540,6 +540,7 @@ const POS = () => {
         <div style="display: flex; justify-content: space-between;"><span>Data:</span><span>${new Date(saleData.created_at).toLocaleDateString('sq-AL')}</span></div>
         <div style="display: flex; justify-content: space-between;"><span>Ora:</span><span>${new Date(saleData.created_at).toLocaleTimeString('sq-AL')}</span></div>
         <div style="display: flex; justify-content: space-between;"><span>Arkëtar:</span><span>${user?.full_name || '-'}</span></div>
+        ${saleData.customer_name ? `<div style="display: flex; justify-content: space-between; margin-top: 4px; padding-top: 4px; border-top: 1px dashed #ccc;"><span>Klienti:</span><span style="font-weight: bold;">${saleData.customer_name}</span></div>` : ''}
       </div>
       <div style="border-top: 1px dashed #000; margin: 8px 0;"></div>
       <div style="font-size: 9px; font-weight: bold; display: flex; border-bottom: 1px solid #000; padding-bottom: 4px;">
