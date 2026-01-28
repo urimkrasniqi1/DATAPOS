@@ -4,10 +4,10 @@
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
         <meta name="theme-color" content="#00a79d" />
-        <meta name="description" content="MobilshopurimiPOS - Sistem për menaxhimin e shitjeve" />
+        <meta name="description" content="DataPOS - Sistem për menaxhimin e shitjeve" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-        <meta name="apple-mobile-web-app-title" content="MobilshopurimiPOS" />
+        <meta name="apple-mobile-web-app-title" content="DataPOS" />
         <meta name="mobile-web-app-capable" content="yes" />
         <link rel="icon" type="image/png" href="https://customer-assets.emergentagent.com/job_retailsys-1/artifacts/9i1h1bxb_logo%20icon.png" />
         <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
@@ -25,7 +25,21 @@
         work correctly both with client-side routing and a non-root public URL.
         Learn how to configure a non-root public URL by running `npm run build`.
         -->
-        <title>MobilshopurimiPOS</title>
+        <title>DataPOS</title>
+        <script>
+            // Dynamic title based on subdomain
+            (function() {
+                var hostname = window.location.hostname;
+                var parts = hostname.split('.');
+                // Check if it's a subdomain (e.g., firma.datapos.pro)
+                if (parts.length > 2 && parts[0] !== 'www' && parts[0] !== 'app') {
+                    var subdomain = parts[0];
+                    // Capitalize first letter
+                    var companyName = subdomain.charAt(0).toUpperCase() + subdomain.slice(1);
+                    document.title = companyName + ' - POS';
+                }
+            })();
+        </script>
         <script src="https://assets.emergent.sh/scripts/emergent-main.js"></script>
         <!--
         These two scripts have been added for the Visual Edits, please do not edit or remove them
