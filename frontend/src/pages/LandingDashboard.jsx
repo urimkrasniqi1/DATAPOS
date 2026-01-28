@@ -65,50 +65,44 @@ const LandingDashboard = () => {
           {/* Buttons Grid */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8 mb-16">
             {/* Windows Button */}
-            <button
-              onClick={() => setShowWindowsModal(true)}
-              className="group relative bg-gradient-to-b from-white/[0.08] to-white/[0.02] backdrop-blur-sm rounded-2xl p-8 border border-white/10 hover:border-[#00a79d]/50 transition-all duration-500 flex flex-col items-center text-center overflow-hidden"
+            <div
+              className="group relative bg-gradient-to-b from-white/[0.08] to-white/[0.02] backdrop-blur-sm rounded-2xl p-8 border border-white/10 flex flex-col items-center text-center overflow-hidden opacity-60"
             >
-              <div className="absolute inset-0 bg-gradient-to-b from-[#00a79d]/0 to-[#00a79d]/0 group-hover:from-[#00a79d]/5 group-hover:to-[#00a79d]/10 transition-all duration-500"></div>
+              <div className="absolute top-4 right-4 bg-[#00a79d]/20 text-[#00a79d] text-xs font-semibold px-3 py-1 rounded-full">
+                SË SHPEJTI
+              </div>
               <div className="relative">
-                <div className="w-20 h-20 bg-white/5 group-hover:bg-[#00a79d]/20 rounded-2xl flex items-center justify-center mb-6 transition-all duration-500 group-hover:scale-110">
-                  <Monitor className="w-10 h-10 text-gray-400 group-hover:text-[#00a79d] transition-colors duration-500" />
+                <div className="w-20 h-20 bg-white/5 rounded-2xl flex items-center justify-center mb-6">
+                  <Monitor className="w-10 h-10 text-gray-500" />
                 </div>
-                <h3 className="text-xl font-semibold text-white mb-2">
+                <h3 className="text-xl font-semibold text-gray-400 mb-2">
                   Windows
                 </h3>
-                <p className="text-gray-500 text-sm mb-4">
+                <p className="text-gray-600 text-sm mb-4">
                   Aplikacion desktop
                 </p>
-                <div className="inline-flex items-center gap-2 text-[#00a79d] text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                  <Download className="w-4 h-4" />
-                  <span>Shkarko tani</span>
-                </div>
               </div>
-            </button>
+            </div>
 
             {/* macOS Button */}
-            <button
-              onClick={() => setShowMacModal(true)}
-              className="group relative bg-gradient-to-b from-white/[0.08] to-white/[0.02] backdrop-blur-sm rounded-2xl p-8 border border-white/10 hover:border-[#00a79d]/50 transition-all duration-500 flex flex-col items-center text-center overflow-hidden"
+            <div
+              className="group relative bg-gradient-to-b from-white/[0.08] to-white/[0.02] backdrop-blur-sm rounded-2xl p-8 border border-white/10 flex flex-col items-center text-center overflow-hidden opacity-60"
             >
-              <div className="absolute inset-0 bg-gradient-to-b from-[#00a79d]/0 to-[#00a79d]/0 group-hover:from-[#00a79d]/5 group-hover:to-[#00a79d]/10 transition-all duration-500"></div>
+              <div className="absolute top-4 right-4 bg-[#00a79d]/20 text-[#00a79d] text-xs font-semibold px-3 py-1 rounded-full">
+                SË SHPEJTI
+              </div>
               <div className="relative">
-                <div className="w-20 h-20 bg-white/5 group-hover:bg-[#00a79d]/20 rounded-2xl flex items-center justify-center mb-6 transition-all duration-500 group-hover:scale-110">
-                  <Apple className="w-10 h-10 text-gray-400 group-hover:text-[#00a79d] transition-colors duration-500" />
+                <div className="w-20 h-20 bg-white/5 rounded-2xl flex items-center justify-center mb-6">
+                  <Apple className="w-10 h-10 text-gray-500" />
                 </div>
-                <h3 className="text-xl font-semibold text-white mb-2">
+                <h3 className="text-xl font-semibold text-gray-400 mb-2">
                   macOS
                 </h3>
-                <p className="text-gray-500 text-sm mb-4">
+                <p className="text-gray-600 text-sm mb-4">
                   Aplikacion desktop
                 </p>
-                <div className="inline-flex items-center gap-2 text-[#00a79d] text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                  <Download className="w-4 h-4" />
-                  <span>Shkarko tani</span>
-                </div>
               </div>
-            </button>
+            </div>
 
             {/* Use Online Button */}
             <button
