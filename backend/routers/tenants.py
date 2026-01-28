@@ -120,6 +120,9 @@ async def create_tenant(tenant: TenantCreate, current_user: dict = Depends(get_c
     if existing_email:
         raise HTTPException(status_code=400, detail="Email-i ekziston tashmë")
     
+    # Generate WhatsApp QR code if phone is provided
+    whatsapp_qr = generate_whatsapp_qr(tenant.phone) if tenant.phone else None
+    
     tenant_id = str(uuid.uuid4())
     tenant_data = {
         "id": tenant_id,
@@ -129,6 +132,7 @@ async def create_tenant(tenant: TenantCreate, current_user: dict = Depends(get_c
         "phone": tenant.phone,
         "address": tenant.address,
         "logo_url": tenant.logo_url,
+        "whatsapp_qr_url": whatsapp_qr,  # Auto-generated QR code
         "primary_color": tenant.primary_color,
         "secondary_color": tenant.secondary_color,
         "stripe_payment_link": tenant.stripe_payment_link,
