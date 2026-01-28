@@ -98,7 +98,7 @@ const Login = () => {
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-gray-100 to-gray-200">
       <div className="fixed top-0 left-0 right-0 h-1 bg-[#00a79d]" />
       
-      {!tenantLoading && !showAdminLogin ? (
+      {!tenantLoading && !showAdminLogin && (
         // PIN Login View
         <div className="w-full max-w-sm mx-4">
           <div className="bg-white rounded-2xl shadow-xl overflow-hidden p-8">
