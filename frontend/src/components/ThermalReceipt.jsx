@@ -36,7 +36,19 @@ const ThermalReceipt = forwardRef(({ sale, companyInfo }, ref) => {
     >
       {/* Header */}
       <div className="text-center border-b border-dashed border-gray-400 pb-2 mb-2">
-        <div className="text-lg font-bold">{company.company_name || 'Mobilshopurimi'}</div>
+        {/* Logo if available */}
+        {company.logo_url && (
+          <div className="mb-2">
+            <img 
+              src={company.logo_url} 
+              alt="Logo" 
+              className="mx-auto" 
+              style={{ height: '40px', maxWidth: '60mm', objectFit: 'contain' }}
+              onError={(e) => e.target.style.display = 'none'}
+            />
+          </div>
+        )}
+        <div className="text-lg font-bold">{company.company_name || 'DataPOS'}</div>
         {company.address && <div className="text-xs">{company.address}</div>}
         {company.city && <div className="text-xs">{company.city}</div>}
         {company.phone && <div className="text-xs">Tel: {company.phone}</div>}
