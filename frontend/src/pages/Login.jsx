@@ -305,7 +305,7 @@ const Login = () => {
             </form>
           </div>
         </div>
-      ) : null}
+      )}
     </div>
   );
 };
