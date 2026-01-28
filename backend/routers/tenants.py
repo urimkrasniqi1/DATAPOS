@@ -265,8 +265,9 @@ async def create_tenant_user(tenant_id: str, user_data: TenantUserCreate, curren
     
     await log_audit(current_user["id"], "create_tenant_user", "user", new_user["id"], {"tenant_id": tenant_id})
     
-    # Return without password_hash
-    new_user.pop("password_hash")
+    # Return without password_hash and _id
+    new_user.pop("password_hash", None)
+    new_user.pop("_id", None)
     return {"message": "Përdoruesi u krijua me sukses", "user": new_user}
 
 
