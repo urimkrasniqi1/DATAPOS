@@ -300,6 +300,9 @@ const AppRoutes = () => {
 
   return (
     <Routes>
+      {/* Landing Dashboard - Entry Point */}
+      <Route path="/" element={isAuthenticated ? <Navigate to={user?.role === 'cashier' ? '/pos' : '/dashboard'} /> : <LandingDashboard />} />
+      
       <Route path="/login" element={isAuthenticated ? <Navigate to={user?.role === 'cashier' ? '/pos' : '/dashboard'} /> : <Login />} />
       
       {/* Cashier gets POS without MainLayout */}
@@ -309,8 +312,8 @@ const AppRoutes = () => {
         </ProtectedRoute>
       } />
       
-      <Route path="/" element={<ProtectedRoute><MainLayout /></ProtectedRoute>}>
-        <Route index element={<Navigate to="/dashboard" replace />} />
+      <Route path="/app" element={<ProtectedRoute><MainLayout /></ProtectedRoute>}>
+        <Route index element={<Navigate to="/app/dashboard" replace />} />
         <Route path="dashboard" element={<Dashboard />} />
         <Route path="products" element={
           <ProtectedRoute allowedRoles={['admin', 'manager']}>
@@ -354,7 +357,18 @@ const AppRoutes = () => {
         } />
       </Route>
 
-      <Route path="*" element={<Navigate to="/dashboard" replace />} />
+      {/* Legacy routes - redirect to new paths */}
+      <Route path="/dashboard" element={<Navigate to="/app/dashboard" replace />} />
+      <Route path="/products" element={<Navigate to="/app/products" replace />} />
+      <Route path="/stock" element={<Navigate to="/app/stock" replace />} />
+      <Route path="/users" element={<Navigate to="/app/users" replace />} />
+      <Route path="/branches" element={<Navigate to="/app/branches" replace />} />
+      <Route path="/reports" element={<Navigate to="/app/reports" replace />} />
+      <Route path="/settings" element={<Navigate to="/app/settings" replace />} />
+      <Route path="/audit-logs" element={<Navigate to="/app/audit-logs" replace />} />
+      <Route path="/super-admin" element={<Navigate to="/app/super-admin" replace />} />
+
+      <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );
 };
