@@ -135,9 +135,11 @@ Created modular components in `/app/frontend/src/components/pos/`:
 - [x] Backend refactoring (server.py)
 - [x] Tenant-specific branding on receipts/invoices
 - [x] Digital stamp (Vula Digjitale) upload and display
+- [x] **WhatsApp QR Code** - Auto-generated, displayed on receipt
 
 ### P1 (High) - IN PROGRESS ⏳
 - [ ] **Complete POS.jsx refactoring** - Integrate created components
+- [ ] Subdomain-based tenant routing (company-a.datapos.pro) - Backend done, needs DNS config
 - [ ] Stripe payment integration
 
 ### P2 (Medium) - TODO
