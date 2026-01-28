@@ -1774,7 +1774,7 @@ const POS = () => {
                 </div>
 
                 {/* Numpad */}
-                <div className="grid grid-cols-3 gap-2">
+                <div className="grid grid-cols-3 gap-2 numpad-responsive">
                   {['7', '8', '9', '4', '5', '6', '1', '2', '3', '.', '0'].map((num) => (
                     <button
                       key={num}
