@@ -755,6 +755,51 @@ const Settings = () => {
                     </div>
                   </div>
                 </div>
+
+                {/* WhatsApp QR Code Section */}
+                <Separator className="my-4" />
+                <div className="space-y-4">
+                  <Label className="text-base font-semibold">QR Code për WhatsApp</Label>
+                  <p className="text-sm text-gray-500">
+                    Ky QR code lidhet me numrin e telefonit të firmës dhe shfaqet në kuponin termik. 
+                    Klientët mund ta skanojnë për t'ju kontaktuar në WhatsApp.
+                  </p>
+                  
+                  <div className="flex items-start gap-4">
+                    {companyData.whatsapp_qr_url ? (
+                      <div className="relative">
+                        <img 
+                          src={companyData.whatsapp_qr_url} 
+                          alt="WhatsApp QR Code" 
+                          className="w-24 h-24 object-contain border rounded-lg bg-white"
+                        />
+                      </div>
+                    ) : (
+                      <div className="w-24 h-24 border-2 border-dashed rounded-lg flex items-center justify-center bg-gray-50">
+                        <div className="text-center">
+                          <div className="text-2xl text-gray-400">📱</div>
+                          <span className="text-xs text-gray-400">QR</span>
+                        </div>
+                      </div>
+                    )}
+                    <div className="flex-1">
+                      <Button 
+                        variant="outline" 
+                        onClick={handleRegenerateQR}
+                        disabled={regeneratingQR || !companyData.phone}
+                      >
+                        {regeneratingQR ? 'Po gjenerohet...' : companyData.whatsapp_qr_url ? 'Ri-gjenero QR Code' : 'Gjenero QR Code'}
+                      </Button>
+                      {!companyData.phone && (
+                        <p className="text-xs text-orange-600 mt-2">⚠️ Vendosni numrin e telefonit dhe ruajeni për të gjeneruar QR code</p>
+                      )}
+                      {companyData.phone && (
+                        <p className="text-xs text-gray-500 mt-2">Numri: {companyData.phone}</p>
+                      )}
+                      <p className="text-xs text-green-600 mt-1">💡 QR code do të shfaqet në kuponin termik</p>
+                    </div>
+                  </div>
+                </div>
               </CardContent>
             </Card>
 
