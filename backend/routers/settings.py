@@ -63,7 +63,57 @@ async def update_company_settings(
     settings: CompanySettingsUpdate,
     current_user: dict = Depends(require_role([UserRole.ADMIN]))
 ):
-    """Update company settings"""
+    """Update company settings - saves to tenant for tenant users"""
+    tenant_id = current_user.get("tenant_id")
+    update_data = {k: v for k, v in settings.model_dump().items() if v is not None}
+    
+    # For tenant users, update the tenant record
+    if tenant_id:
+        tenant_update = {}
+        if "company_name" in update_data:
+            tenant_update["company_name"] = update_data["company_name"]
+        if "address" in update_data:
+            tenant_update["address"] = update_data["address"]
+        if "city" in update_data:
+            tenant_update["city"] = update_data["city"]
+        if "phone" in update_data:
+            tenant_update["phone"] = update_data["phone"]
+        if "email" in update_data:
+            tenant_update["email"] = update_data["email"]
+        if "nui" in update_data:
+            tenant_update["nui"] = update_data["nui"]
+        if "nf" in update_data:
+            tenant_update["nf"] = update_data["nf"]
+        if "logo_url" in update_data:
+            tenant_update["logo_url"] = update_data["logo_url"]
+        if "vat_number" in update_data:
+            tenant_update["vat_number"] = update_data["vat_number"]
+        
+        if tenant_update:
+            await db.tenants.update_one({"id": tenant_id}, {"$set": tenant_update})
+        
+        await log_audit(current_user["id"], "update_settings", "company", "company")
+        
+        # Return updated tenant data
+        tenant = await db.tenants.find_one({"id": tenant_id}, {"_id": 0})
+        if tenant:
+            return {
+                "company_name": tenant.get("company_name") or tenant.get("name", ""),
+                "address": tenant.get("address", ""),
+                "city": tenant.get("city", ""),
+                "postal_code": tenant.get("postal_code", ""),
+                "phone": tenant.get("phone", ""),
+                "email": tenant.get("email", ""),
+                "website": tenant.get("website"),
+                "nui": tenant.get("nui", ""),
+                "nf": tenant.get("nf", ""),
+                "vat_number": tenant.get("vat_number", ""),
+                "bank_name": tenant.get("bank_name"),
+                "bank_account": tenant.get("bank_account"),
+                "logo_url": tenant.get("logo_url", "")
+            }
+    
+    # Fallback to settings collection for super_admin or legacy
     tenant_filter = get_tenant_filter(current_user)
     settings_query = {"type": "company", **tenant_filter} if tenant_filter else {"type": "company"}
     
@@ -71,7 +121,6 @@ async def update_company_settings(
     
     if existing:
         current_data = existing.get("data", {})
-        update_data = {k: v for k, v in settings.model_dump().items() if v is not None}
         current_data.update(update_data)
         
         await db.settings.update_one(
