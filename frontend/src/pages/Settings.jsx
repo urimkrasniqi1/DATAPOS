@@ -81,11 +81,13 @@ const Settings = () => {
     website: '',
     logo_url: '',
     stamp_url: '',
+    whatsapp_qr_url: '',
   });
   
   // Logo and stamp upload states
   const [uploadingLogo, setUploadingLogo] = useState(false);
   const [uploadingStamp, setUploadingStamp] = useState(false);
+  const [regeneratingQR, setRegeneratingQR] = useState(false);
 
   // POS Settings
   const [posSettings, setPosSettings] = useState({
