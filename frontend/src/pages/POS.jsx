@@ -764,7 +764,8 @@ const POS = () => {
           total_vat: cartTotals.vat,
           grand_total: cartTotals.total,
           cash_amount: parseFloat(cashAmount) || 0,
-          change_amount: changeAmount
+          change_amount: changeAmount,
+          customer_name: customerName || null
         };
         printThermalReceipt(receiptData);
       }
