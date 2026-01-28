@@ -1,4 +1,4 @@
-# MobilshopurimiPOS - Multi-Tenant SaaS POS System
+# DataPOS - Multi-Tenant SaaS POS System
 
 ## Original Problem Statement
 Sistema POS (Point of Sale) multi-tenant SaaS për kompani të ndryshme. Çdo kompani (tenant) ka të dhënat e veta të izoluara plotësisht. Një Super Admin menaxhon të gjitha firmat nga një dashboard qendror.
@@ -9,7 +9,7 @@ Sistema POS (Point of Sale) multi-tenant SaaS për kompani të ndryshme. Çdo ko
 3. **Menaxher** - Menaxhon produktet, stokun, sheh raporte brenda firmës
 4. **Arkëtar** - Kryen shitje, hap/mbyll arkën brenda firmës
 
-## What's Been Implemented (January 2025)
+## What's Been Implemented
 
 ### Backend Refactoring (COMPLETE - January 27, 2025)
 **server.py refaktoruar nga 2700+ rreshta në 68 rreshta!**
@@ -17,22 +17,22 @@ Sistema POS (Point of Sale) multi-tenant SaaS për kompani të ndryshme. Çdo ko
 Struktura e re modulare:
 ```
 /app/backend/
-├── server.py          # 68 lines - Main app, routers registration
-├── database.py        # 13 lines - MongoDB connection
-├── models.py          # 525 lines - All Pydantic models
-├── auth.py            # 93 lines - JWT, password hashing, dependencies
+├── server.py          # Main app, routers registration
+├── database.py        # MongoDB connection
+├── models.py          # All Pydantic models
+├── auth.py            # JWT, password hashing, dependencies
 └── routers/
-    ├── auth.py        # 82 lines - /api/auth/*
-    ├── tenants.py     # 161 lines - /api/tenants/* (Super Admin)
-    ├── users.py       # 106 lines - /api/users/*
-    ├── branches.py    # 70 lines - /api/branches/*
-    ├── products.py    # 126 lines - /api/products/*
-    ├── stock.py       # 77 lines - /api/stock/*
-    ├── cashier.py     # 124 lines - /api/cashier/*
-    ├── sales.py       # 160 lines - /api/sales/*
-    ├── reports.py     # 506 lines - /api/reports/* + PDF/Excel export
-    ├── settings.py    # 352 lines - Settings, warehouses, VAT, templates
-    └── admin.py       # 316 lines - Reset data, backups, audit, init
+    ├── auth.py        # /api/auth/*
+    ├── tenants.py     # /api/tenants/* (Super Admin)
+    ├── users.py       # /api/users/*
+    ├── branches.py    # /api/branches/*
+    ├── products.py    # /api/products/*
+    ├── stock.py       # /api/stock/*
+    ├── cashier.py     # /api/cashier/*
+    ├── sales.py       # /api/sales/*
+    ├── reports.py     # /api/reports/* + PDF/Excel export
+    ├── settings.py    # Settings, warehouses, VAT, templates
+    └── admin.py       # Reset data, backups, audit, init
 ```
 
 ### Multi-Tenant System (COMPLETE)
@@ -44,6 +44,19 @@ Struktura e re modulare:
 - [x] Super Admin can see all tenants, tenant admin sees only own data
 - [x] Tenant status management (Active, Trial, Suspended)
 - [x] Stripe payment link storage per tenant
+
+### Tenant-Specific Branding (COMPLETE - January 28, 2025)
+- [x] Company settings now pull from tenant record for tenant users
+- [x] Thermal receipt shows tenant's logo, name, address, phone
+- [x] A4 Invoice shows tenant's logo and company details
+- [x] Print note uses dynamic company name
+- [x] All hardcoded "Mobilshopurimi" references replaced with "DataPOS" default
+
+### UI/UX Enhancements (COMPLETE)
+- [x] Dynamic page title (DataPOS default, tenant name via subdomain)
+- [x] "Made with Emergent" badge removed
+- [x] Default VAT for new products changed to 0%
+- [x] Super Admin credentials: `urimi1806` / `1806`
 
 ### Frontend (React + Shadcn UI)
 - [x] Login page with PIN and admin login
@@ -57,13 +70,20 @@ Struktura e re modulare:
 - [x] PWA support
 
 ## Demo Credentials
-- **Super Admin**: `superadmin` / `super@admin123`
-- **Tenant Admin (example)**: `admin_testfirma` / `password123`
+- **Super Admin**: `urimi1806` / `1806`
+- **Tenant Admin (mobilshopurimi)**: `mobiladmin` / `1806`
 
-## Test Results (January 27, 2025)
+## Test Results (January 28, 2025)
 - Backend refactoring: SUCCESS - All endpoints working
 - Multi-tenant isolation: VERIFIED - Tenants cannot see each other's data
+- Tenant-specific branding: VERIFIED - Receipt and Invoice show correct tenant logo/info
 - Frontend: All pages functional
+
+## Files Modified (January 28, 2025)
+- `/app/backend/routers/settings.py` - Company settings now pulls from tenant record
+- `/app/frontend/src/pages/POS.jsx` - Logo and company name now dynamic
+- `/app/frontend/src/components/ThermalReceipt.jsx` - Added tenant logo support
+- `/app/frontend/src/components/InvoiceA4.jsx` - Added tenant logo support
 
 ## Prioritized Backlog
 
@@ -71,73 +91,25 @@ Struktura e re modulare:
 - [x] Multi-tenant data isolation
 - [x] Super Admin dashboard
 - [x] Backend refactoring (server.py)
+- [x] Tenant-specific branding on receipts/invoices
 
 ### P1 (High) - TODO
 - [ ] **Refactor frontend POS.jsx** (2100+ lines) into smaller components
-- [ ] Frontend dynamic branding (load tenant logo/colors after login)
+- [ ] Stripe payment integration
 
 ### P2 (Medium) - TODO
-- [ ] Subdomain-based tenant routing (company-a.ipos.com)
-- [ ] True silent printing verification (Electron)
-- [ ] Stripe payment integration for subscriptions
+- [ ] Subdomain-based tenant routing (company-a.datapos.pro)
+- [ ] Silent printing verification (Electron)
+- [ ] Email notifications for low stock
 
-### P3 (Nice to Have) - TODO
-- [ ] Mobile app
-- [ ] E-commerce integration
-- [ ] Advanced analytics with AI
+### P3 (Low) - TODO
+- [ ] Dashboard customization per tenant
+- [ ] Mobile app (React Native)
+- [ ] Multi-currency support
 
-## Code Architecture
-```
-/app
-├── backend/
-│   ├── server.py           # 68 lines - Main entry point
-│   ├── database.py         # MongoDB connection
-│   ├── models.py           # Pydantic models
-│   ├── auth.py             # Authentication utilities
-│   ├── routers/            # API endpoints (modular)
-│   └── server_old.py       # Backup of old monolithic file
-├── frontend/
-│   ├── public/
-│   └── src/
-│       ├── App.js
-│       ├── components/
-│       │   ├── MainLayout.jsx
-│       │   └── ui/          # Shadcn components
-│       └── pages/
-│           ├── Login.jsx
-│           ├── Dashboard.jsx
-│           ├── POS.jsx      # NEEDS REFACTORING - 2100+ lines
-│           ├── Products.jsx
-│           ├── Stock.jsx
-│           ├── Users.jsx
-│           ├── Branches.jsx
-│           ├── Reports.jsx
-│           ├── Settings.jsx
-│           ├── AuditLogs.jsx
-│           └── SuperAdmin.jsx
-└── memory/
-    └── PRD.md
-```
-
-## API Endpoints Summary
-All endpoints are prefixed with `/api`
-
-| Router | Prefix | Description |
-|--------|--------|-------------|
-| auth | /auth | Login, user info |
-| tenants | /tenants | Super Admin tenant management |
-| users | /users | User CRUD |
-| branches | /branches | Branch CRUD |
-| products | /products | Product CRUD |
-| stock | /stock | Stock movements |
-| cashier | /cashier | Cash drawer operations |
-| sales | /sales | Sales transactions |
-| reports | /reports | Dashboard, reports, PDF/Excel |
-| settings | /settings | Company & POS settings |
-| warehouses | /warehouses | Warehouse CRUD |
-| vat-rates | /vat-rates | VAT rate CRUD |
-| comment-templates | /comment-templates | Receipt templates |
-| admin | /admin | Data reset, backups |
-| audit-logs | /audit-logs | Audit trail |
-| categories | /categories | Product categories |
-| init | /init | Super admin initialization |
+## Technical Notes
+- Database: MongoDB with motor async driver
+- Backend: FastAPI with modular routers
+- Frontend: React 18 + Tailwind CSS + shadcn/ui
+- Authentication: JWT with bcrypt password hashing
+- Deployment: Kubernetes with auto Super Admin initialization
