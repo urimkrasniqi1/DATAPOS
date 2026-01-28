@@ -3,6 +3,9 @@ from fastapi import APIRouter, HTTPException, Depends
 from typing import List
 from datetime import datetime, timezone
 import uuid
+import qrcode
+import io
+import base64
 
 from database import db
 from models import (
@@ -21,6 +24,44 @@ router = APIRouter(prefix="/settings", tags=["Settings"])
 warehouses_router = APIRouter(prefix="/warehouses", tags=["Warehouses"])
 vat_router = APIRouter(prefix="/vat-rates", tags=["VAT Rates"])
 templates_router = APIRouter(prefix="/comment-templates", tags=["Comment Templates"])
+
+
+def generate_whatsapp_qr(phone: str) -> str:
+    """Generate QR code for WhatsApp link as base64 data URL"""
+    if not phone:
+        return None
+    
+    # Clean phone number - remove spaces and special chars except +
+    clean_phone = ''.join(c for c in phone if c.isdigit() or c == '+')
+    if clean_phone.startswith('+'):
+        clean_phone = clean_phone[1:]  # Remove + for wa.me link
+    
+    if not clean_phone:
+        return None
+    
+    # Create WhatsApp link
+    whatsapp_url = f"https://wa.me/{clean_phone}"
+    
+    # Generate QR code
+    qr = qrcode.QRCode(
+        version=1,
+        error_correction=qrcode.constants.ERROR_CORRECT_L,
+        box_size=6,
+        border=2,
+    )
+    qr.add_data(whatsapp_url)
+    qr.make(fit=True)
+    
+    # Create image
+    img = qr.make_image(fill_color="black", back_color="white")
+    
+    # Convert to base64
+    buffer = io.BytesIO()
+    img.save(buffer, format='PNG')
+    buffer.seek(0)
+    
+    img_base64 = base64.b64encode(buffer.getvalue()).decode('utf-8')
+    return f"data:image/png;base64,{img_base64}"
 
 
 # ============ COMPANY SETTINGS ============
