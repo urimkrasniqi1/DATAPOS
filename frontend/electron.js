@@ -1,4 +1,4 @@
-const { app, BrowserWindow, Menu, ipcMain, shell } = require('electron');
+const { app, BrowserWindow, Menu, ipcMain, shell, session } = require('electron');
 const path = require('path');
 
 let mainWindow;
@@ -7,7 +7,7 @@ let mainWindow;
 const PRODUCTION_URL = 'https://datapos.pro';
 
 // Determine if we're in development or production
-const isDev = process.env.NODE_ENV === 'development' || !app.isPackaged;
+const isDev = process.env.NODE_ENV === 'development';
 
 function createWindow() {
   mainWindow = new BrowserWindow({
@@ -21,6 +21,8 @@ function createWindow() {
       nodeIntegration: false,
       contextIsolation: true,
       preload: path.join(__dirname, 'preload.js'),
+      webSecurity: true,
+      allowRunningInsecureContent: false,
     },
     autoHideMenuBar: true,
   });
@@ -28,18 +30,22 @@ function createWindow() {
   // Remove menu bar for cleaner look
   Menu.setApplicationMenu(null);
 
+  // Clear cache on start to avoid stale data issues
+  session.defaultSession.clearCache();
+
   if (isDev) {
     // In development, load from React dev server
     mainWindow.loadURL('http://localhost:3000');
-    // mainWindow.webContents.openDevTools();
+    mainWindow.webContents.openDevTools();
   } else {
-    // In production, load from your deployed domain
+    // In production, ALWAYS load from deployed domain
+    console.log('Loading production URL:', PRODUCTION_URL);
     mainWindow.loadURL(PRODUCTION_URL);
   }
 
   // Handle external links - open in default browser
   mainWindow.webContents.setWindowOpenHandler(({ url }) => {
-    if (url.startsWith('http')) {
+    if (url.startsWith('http') && !url.includes('datapos.pro')) {
       shell.openExternal(url);
       return { action: 'deny' };
     }
@@ -60,6 +66,11 @@ function createWindow() {
     if (errorCode === -106) { // ERR_INTERNET_DISCONNECTED
       mainWindow.loadFile(path.join(__dirname, 'offline.html'));
     }
+  });
+
+  // Debug: Log when page finishes loading
+  mainWindow.webContents.on('did-finish-load', () => {
+    console.log('Page loaded successfully');
   });
 }
 
