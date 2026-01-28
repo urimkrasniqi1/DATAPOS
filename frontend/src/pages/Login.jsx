@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth, useTenant } from '../App';
 import { Input } from '../components/ui/input';
 import { Button } from '../components/ui/button';
-import { Delete, CornerDownLeft, User, Lock, Eye, EyeOff, ArrowLeft, AlertCircle, Loader2 } from 'lucide-react';
+import { Delete, CornerDownLeft, User, Lock, Eye, EyeOff, ArrowLeft, Loader2 } from 'lucide-react';
 
 const Login = () => {
   const [pin, setPin] = useState('');
