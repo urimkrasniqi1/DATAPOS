@@ -143,6 +143,10 @@ const AuthProvider = ({ children }) => {
       localStorage.setItem('t3next_user', JSON.stringify(userData));
       sessionStorage.setItem('ipos_session_active', 'true');
       setUser(userData);
+      
+      // Update document title based on tenant
+      updatePageTitle(userData);
+      
       toast.success('Mirësevini!');
       return { success: true };
     } catch (error) {
