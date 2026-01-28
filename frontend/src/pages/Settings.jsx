@@ -358,6 +358,92 @@ const Settings = () => {
     }
   };
 
+  // Logo upload handler
+  const handleLogoUpload = async (event) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+    
+    // Validate file type
+    const allowedTypes = ['image/png', 'image/jpeg', 'image/jpg', 'image/gif', 'image/webp'];
+    if (!allowedTypes.includes(file.type)) {
+      toast.error('Formati i file-it nuk lejohet. Përdorni: PNG, JPG, GIF, WEBP');
+      return;
+    }
+    
+    // Validate file size (max 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error('File-i është shumë i madh. Maksimumi: 5MB');
+      return;
+    }
+    
+    setUploadingLogo(true);
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+      
+      const response = await api.post('/upload/logo', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+      });
+      
+      setCompanyData(prev => ({ ...prev, logo_url: response.data.url }));
+      toast.success('Logo u ngarkua me sukses!');
+    } catch (error) {
+      toast.error(error.response?.data?.detail || 'Gabim gjatë ngarkimit të logos');
+    } finally {
+      setUploadingLogo(false);
+    }
+  };
+
+  // Stamp upload handler (Vula Digjitale)
+  const handleStampUpload = async (event) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+    
+    // Validate file type
+    const allowedTypes = ['image/png', 'image/jpeg', 'image/jpg', 'image/gif', 'image/webp'];
+    if (!allowedTypes.includes(file.type)) {
+      toast.error('Formati i file-it nuk lejohet. Përdorni: PNG, JPG, GIF, WEBP');
+      return;
+    }
+    
+    // Validate file size (max 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error('File-i është shumë i madh. Maksimumi: 5MB');
+      return;
+    }
+    
+    setUploadingStamp(true);
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+      
+      const response = await api.post('/upload/stamp', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+      });
+      
+      setCompanyData(prev => ({ ...prev, stamp_url: response.data.url }));
+      toast.success('Vula digjitale u ngarkua me sukses!');
+    } catch (error) {
+      toast.error(error.response?.data?.detail || 'Gabim gjatë ngarkimit të vulës');
+    } finally {
+      setUploadingStamp(false);
+    }
+  };
+
+  // Remove stamp
+  const handleRemoveStamp = async () => {
+    if (!window.confirm('Jeni të sigurt që doni të fshini vulën digjitale?')) return;
+    
+    try {
+      await api.delete('/upload/tenant/current/stamp').catch(() => {});
+      setCompanyData(prev => ({ ...prev, stamp_url: '' }));
+      toast.success('Vula digjitale u fshi');
+    } catch (error) {
+      // Just clear locally if API fails
+      setCompanyData(prev => ({ ...prev, stamp_url: '' }));
+    }
+  };
+
   const editBranch = (branch) => {
     setEditingBranch(branch);
     setbranchForm({
