@@ -136,6 +136,53 @@ api.interceptors.response.use(
   }
 );
 
+// Tenant Provider - Fetches tenant info based on subdomain
+const TenantProvider = ({ children }) => {
+  const [tenant, setTenant] = useState(null);
+  const [tenantLoading, setTenantLoading] = useState(true);
+  const [tenantError, setTenantError] = useState(null);
+
+  useEffect(() => {
+    const subdomain = getSubdomain();
+    
+    if (!subdomain) {
+      setTenantLoading(false);
+      return;
+    }
+
+    // Fetch tenant info from API
+    const fetchTenant = async () => {
+      try {
+        const response = await axios.get(`${API}/tenants/by-subdomain/${subdomain}`);
+        setTenant(response.data);
+        
+        // Update page title with tenant name
+        document.title = `${response.data.company_name || response.data.name} - POS`;
+        
+        // Store tenant context for login
+        localStorage.setItem('tenant_context', JSON.stringify(response.data));
+      } catch (error) {
+        console.error('Failed to fetch tenant:', error);
+        if (error.response?.status === 404) {
+          setTenantError('Firma nuk u gjet');
+        } else if (error.response?.status === 403) {
+          setTenantError('Firma është pezulluar');
+        } else {
+          setTenantError('Gabim gjatë ngarkimit të firmës');
+        }
+      } finally {
+        setTenantLoading(false);
+      }
+    };
+
+    fetchTenant();
+  }, []);
+
+  const value = { tenant, tenantLoading, tenantError, subdomain: getSubdomain() };
+
+  return <TenantContext.Provider value={value}>{children}</TenantContext.Provider>;
+};
+
 // Auth Provider
 const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
