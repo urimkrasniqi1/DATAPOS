@@ -1806,6 +1806,25 @@ const POS = () => {
                 <Printer className="h-4 w-4 text-gray-400" />
               </div>
               
+              {/* Customer Name Input - Optional */}
+              {printReceipt && (
+                <div className="p-3 bg-gray-50 rounded-lg border border-gray-200">
+                  <Label htmlFor="receiptCustomerName" className="text-sm font-medium text-gray-700">
+                    Emri i Klientit (opsional)
+                  </Label>
+                  <Input
+                    id="receiptCustomerName"
+                    type="text"
+                    value={customerName}
+                    onChange={(e) => setCustomerName(e.target.value)}
+                    placeholder="Shkruaj emrin e klientit..."
+                    className="mt-1.5 h-9"
+                    data-testid="receipt-customer-name-input"
+                  />
+                  <p className="text-xs text-gray-500 mt-1">Emri do të shfaqet në kupon</p>
+                </div>
+              )}
+              
               {/* Direct Print Option - only show if printReceipt is checked */}
               {printReceipt && (
                 <div className="flex items-center gap-3 p-3 bg-blue-50 rounded-lg border border-blue-100">
