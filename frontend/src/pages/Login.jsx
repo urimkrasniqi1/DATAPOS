@@ -99,17 +99,53 @@ const Login = () => {
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-gray-100 to-gray-200">
       <div className="fixed top-0 left-0 right-0 h-1 bg-[#00a79d]" />
       
-      {!showAdminLogin ? (
+      {/* Loading tenant info */}
+      {tenantLoading && (
+        <div className="text-center">
+          <Loader2 className="h-8 w-8 animate-spin text-[#00a79d] mx-auto mb-2" />
+          <p className="text-gray-500">Duke ngarkuar...</p>
+        </div>
+      )}
+      
+      {/* Tenant error */}
+      {tenantError && !tenantLoading && (
+        <div className="text-center p-8 bg-white rounded-2xl shadow-xl max-w-sm mx-4">
+          <AlertCircle className="h-16 w-16 text-red-500 mx-auto mb-4" />
+          <h2 className="text-xl font-bold text-gray-800 mb-2">Gabim</h2>
+          <p className="text-gray-600 mb-4">{tenantError}</p>
+          <p className="text-sm text-gray-400">
+            Kontrolloni adresën ose kontaktoni administratorin
+          </p>
+        </div>
+      )}
+      
+      {!tenantLoading && !tenantError && !showAdminLogin ? (
         // PIN Login View
         <div className="w-full max-w-sm mx-4">
           <div className="bg-white rounded-2xl shadow-xl overflow-hidden p-8">
-            {/* Logo */}
-            <div className="flex items-center justify-center mb-8">
-              <img 
-                src="https://customer-assets.emergentagent.com/job_retailsys-1/artifacts/9i1h1bxb_logo%20icon.png" 
-                alt="MobilshopurimiPOS" 
-                className="h-16 object-contain"
-              />
+            {/* Logo - Show tenant logo if available, otherwise default */}
+            <div className="flex flex-col items-center justify-center mb-8">
+              {tenant?.logo_url ? (
+                <img 
+                  src={tenant.logo_url} 
+                  alt={tenant.company_name || tenant.name}
+                  className="h-16 object-contain mb-2"
+                  onError={(e) => e.target.style.display = 'none'}
+                />
+              ) : (
+                <img 
+                  src="https://customer-assets.emergentagent.com/job_retailsys-1/artifacts/9i1h1bxb_logo%20icon.png" 
+                  alt="DataPOS" 
+                  className="h-16 object-contain mb-2"
+                />
+              )}
+              {/* Show tenant/company name */}
+              <h1 className="text-xl font-bold text-[#00a79d]">
+                {tenant?.company_name || tenant?.name || 'DataPOS'}
+              </h1>
+              {tenant && (
+                <p className="text-sm text-gray-500 mt-1">Sistemi POS</p>
+              )}
             </div>
 
             {/* PIN Display */}
