@@ -2665,15 +2665,25 @@ const POS = () => {
         {/* Cashier Header */}
         <header className="bg-white border-b border-gray-200 px-4 py-3 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="bg-[#00a79d] p-1.5 rounded-lg">
-              <svg className="w-5 h-5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <rect x="5" y="2" width="14" height="20" rx="2" ry="2"/>
-                <line x1="12" y1="18" x2="12" y2="18"/>
-              </svg>
-            </div>
-            <span className="text-xl font-bold">
-              <span className="text-[#00a79d]">Mobilshop</span>
-              <span className="text-gray-500">urimi</span>
+            {/* Company Logo */}
+            {companySettings?.logo_url ? (
+              <img 
+                src={companySettings.logo_url} 
+                alt="Logo" 
+                className="h-8 w-auto object-contain"
+                onError={(e) => e.target.style.display = 'none'}
+              />
+            ) : (
+              <div className="bg-[#00a79d] p-1.5 rounded-lg">
+                <svg className="w-5 h-5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <rect x="5" y="2" width="14" height="20" rx="2" ry="2"/>
+                  <line x1="12" y1="18" x2="12" y2="18"/>
+                </svg>
+              </div>
+            )}
+            {/* Company Name */}
+            <span className="text-xl font-bold text-[#00a79d]">
+              {companySettings?.company_name || 'DataPOS'}
             </span>
             <span className="text-gray-400 mx-2">|</span>
             <span className="text-gray-600">Arka</span>
