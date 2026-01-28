@@ -4,8 +4,6 @@ import { Monitor, Apple, Globe, Shield, Zap, Clock } from 'lucide-react';
 
 const LandingDashboard = () => {
   const navigate = useNavigate();
-  const [showWindowsModal, setShowWindowsModal] = useState(false);
-  const [showMacModal, setShowMacModal] = useState(false);
 
   const handleUseOnline = () => {
     navigate('/login');
