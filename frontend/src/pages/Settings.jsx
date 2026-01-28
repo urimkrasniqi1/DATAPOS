@@ -623,6 +623,117 @@ const Settings = () => {
                     placeholder="IBAN ose numri i llogarisë"
                   />
                 </div>
+
+                {/* Logo Upload Section */}
+                <Separator className="my-4" />
+                <div className="space-y-4">
+                  <Label className="text-base font-semibold">Logo e Kompanisë</Label>
+                  <p className="text-sm text-gray-500">Ngarkoni logon e kompanisë që do të shfaqet në fatura dhe dokumente</p>
+                  
+                  <div className="flex items-start gap-4">
+                    {companyData.logo_url ? (
+                      <div className="relative">
+                        <img 
+                          src={companyData.logo_url} 
+                          alt="Logo" 
+                          className="w-24 h-24 object-contain border rounded-lg bg-gray-50"
+                        />
+                        <button 
+                          onClick={() => setCompanyData({ ...companyData, logo_url: '' })}
+                          className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs hover:bg-red-600"
+                        >
+                          ×
+                        </button>
+                      </div>
+                    ) : (
+                      <div className="w-24 h-24 border-2 border-dashed rounded-lg flex items-center justify-center bg-gray-50">
+                        <Upload className="h-8 w-8 text-gray-400" />
+                      </div>
+                    )}
+                    <div className="flex-1">
+                      <input
+                        type="file"
+                        accept="image/png,image/jpeg,image/jpg,image/gif,image/webp"
+                        onChange={handleLogoUpload}
+                        className="hidden"
+                        id="logo-upload"
+                        disabled={uploadingLogo}
+                      />
+                      <label htmlFor="logo-upload">
+                        <Button 
+                          variant="outline" 
+                          className="cursor-pointer" 
+                          disabled={uploadingLogo}
+                          asChild
+                        >
+                          <span>
+                            <Upload className="h-4 w-4 mr-2" />
+                            {uploadingLogo ? 'Po ngarkohet...' : 'Ngarko Logo'}
+                          </span>
+                        </Button>
+                      </label>
+                      <p className="text-xs text-gray-500 mt-2">PNG, JPG, GIF ose WEBP. Max 5MB.</p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Digital Stamp Upload Section - Vula Digjitale */}
+                <Separator className="my-4" />
+                <div className="space-y-4">
+                  <Label className="text-base font-semibold">Vula Digjitale</Label>
+                  <p className="text-sm text-gray-500">Ngarkoni vulën digjitale të kompanisë që do të shfaqet në faturën A4</p>
+                  
+                  <div className="flex items-start gap-4">
+                    {companyData.stamp_url ? (
+                      <div className="relative">
+                        <img 
+                          src={companyData.stamp_url} 
+                          alt="Vula Digjitale" 
+                          className="w-24 h-24 object-contain border rounded-lg bg-gray-50"
+                          style={{ mixBlendMode: 'multiply' }}
+                        />
+                        <button 
+                          onClick={handleRemoveStamp}
+                          className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs hover:bg-red-600"
+                        >
+                          ×
+                        </button>
+                      </div>
+                    ) : (
+                      <div className="w-24 h-24 border-2 border-dashed rounded-lg flex items-center justify-center bg-gray-50">
+                        <div className="text-center">
+                          <div className="text-2xl text-gray-400">🔏</div>
+                          <span className="text-xs text-gray-400">Vula</span>
+                        </div>
+                      </div>
+                    )}
+                    <div className="flex-1">
+                      <input
+                        type="file"
+                        accept="image/png,image/jpeg,image/jpg,image/gif,image/webp"
+                        onChange={handleStampUpload}
+                        className="hidden"
+                        id="stamp-upload"
+                        disabled={uploadingStamp}
+                      />
+                      <label htmlFor="stamp-upload">
+                        <Button 
+                          variant="outline" 
+                          className="cursor-pointer" 
+                          disabled={uploadingStamp}
+                          asChild
+                        >
+                          <span>
+                            <Upload className="h-4 w-4 mr-2" />
+                            {uploadingStamp ? 'Po ngarkohet...' : 'Ngarko Vulën'}
+                          </span>
+                        </Button>
+                      </label>
+                      <p className="text-xs text-gray-500 mt-2">Rekomandohet PNG me sfond transparent. Max 5MB.</p>
+                      <p className="text-xs text-blue-600 mt-1">💡 Vula do të shfaqet automatikisht në faturën A4</p>
+                    </div>
+                  </div>
+                </div>
               </CardContent>
             </Card>
 
