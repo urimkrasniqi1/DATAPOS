@@ -99,16 +99,16 @@ const Login = () => {
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-gray-100 to-gray-200">
       <div className="fixed top-0 left-0 right-0 h-1 bg-[#00a79d]" />
       
-      {/* Loading tenant info */}
-      {tenantLoading && (
+      {/* Loading tenant info - only show when we have a subdomain */}
+      {tenantLoading && tenantContext?.subdomain && (
         <div className="text-center">
           <Loader2 className="h-8 w-8 animate-spin text-[#00a79d] mx-auto mb-2" />
           <p className="text-gray-500">Duke ngarkuar...</p>
         </div>
       )}
       
-      {/* Tenant error */}
-      {tenantError && !tenantLoading && (
+      {/* Tenant error - only show when we have a subdomain and there's an error */}
+      {tenantError && !tenantLoading && tenantContext?.subdomain && (
         <div className="text-center p-8 bg-white rounded-2xl shadow-xl max-w-sm mx-4">
           <AlertCircle className="h-16 w-16 text-red-500 mx-auto mb-4" />
           <h2 className="text-xl font-bold text-gray-800 mb-2">Gabim</h2>
@@ -119,7 +119,7 @@ const Login = () => {
         </div>
       )}
       
-      {!tenantLoading && !tenantError && !showAdminLogin ? (
+      {!tenantLoading && (!tenantError || !tenantContext?.subdomain) && !showAdminLogin ? (
         // PIN Login View
         <div className="w-full max-w-sm mx-4">
           <div className="bg-white rounded-2xl shadow-xl overflow-hidden p-8">
