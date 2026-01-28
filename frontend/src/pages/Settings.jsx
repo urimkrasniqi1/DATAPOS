@@ -446,6 +446,25 @@ const Settings = () => {
     }
   };
 
+  // Regenerate WhatsApp QR Code
+  const handleRegenerateQR = async () => {
+    if (!companyData.phone) {
+      toast.error('Vendosni numrin e telefonit dhe ruajeni përpara se të gjeneroni QR code');
+      return;
+    }
+    
+    setRegeneratingQR(true);
+    try {
+      const response = await api.post('/settings/regenerate-whatsapp-qr');
+      setCompanyData(prev => ({ ...prev, whatsapp_qr_url: response.data.whatsapp_qr_url }));
+      toast.success('QR code u gjenerua me sukses!');
+    } catch (error) {
+      toast.error(error.response?.data?.detail || 'Gabim gjatë gjenerimit të QR code');
+    } finally {
+      setRegeneratingQR(false);
+    }
+  };
+
   const editBranch = (branch) => {
     setEditingBranch(branch);
     setbranchForm({
