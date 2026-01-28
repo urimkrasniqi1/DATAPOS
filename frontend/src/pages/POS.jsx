@@ -520,6 +520,7 @@ const POS = () => {
     const companyEmail = companySettings?.email || '';
     const companyNUI = companySettings?.nui || '';
     const companyNF = companySettings?.nf || '';
+    const whatsappQrUrl = companySettings?.whatsapp_qr_url || '';
     
     return `
       <div style="text-align: center; margin-bottom: 8px;">
