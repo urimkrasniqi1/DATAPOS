@@ -19,7 +19,6 @@ const Login = () => {
   const tenantContext = useTenant();
   const tenant = tenantContext?.tenant;
   const tenantLoading = tenantContext?.tenantLoading;
-  const tenantError = tenantContext?.tenantError;
 
   // Handle PIN login (for cashiers) - redirects to POS/Arka
   const handlePinLogin = async () => {
