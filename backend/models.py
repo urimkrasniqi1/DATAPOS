@@ -98,6 +98,7 @@ class TenantPublicInfo(BaseModel):
     company_name: str
     logo_url: Optional[str] = None
     stamp_url: Optional[str] = None  # Vula digjitale
+    whatsapp_qr_url: Optional[str] = None  # QR code për WhatsApp
     primary_color: str
     secondary_color: str
 
