@@ -11,7 +11,18 @@ Sistema POS (Point of Sale) multi-tenant SaaS për kompani të ndryshme. Çdo ko
 
 ## What's Been Implemented
 
-### Digital Stamp (Vula Digjitale) - January 28, 2025 ✅ NEW
+### WhatsApp QR Code Feature - January 28, 2025 ✅ NEW
+- Auto-generated QR code when tenant is created (if phone number provided)
+- QR code links to WhatsApp chat with tenant's phone number (wa.me link)
+- QR code displayed in Settings page with "Ri-gjenero QR Code" button
+- QR code displayed on Thermal Receipt footer
+- Backend endpoints:
+  - `/api/tenants/{id}/regenerate-qr` - Regenerate QR for a tenant (Super Admin)
+  - `/api/settings/regenerate-whatsapp-qr` - Regenerate QR for current tenant
+- When tenant phone number changes, QR is automatically regenerated
+- All existing tenants can regenerate QR from Settings page
+
+### Digital Stamp (Vula Digjitale) - January 28, 2025 ✅
 - Upload endpoint `/api/upload/stamp` for tenant digital stamps
 - Upload endpoint `/api/upload/logo` for tenant logos
 - Base64 storage for images (no external dependencies)
