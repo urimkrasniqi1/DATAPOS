@@ -570,6 +570,12 @@ const POS = () => {
       <div style="text-align: center; margin: 10px 0;">
         <div style="font-size: 12px; font-weight: bold;">FALEMINDERIT!</div>
         <div style="font-size: 9px;">Ju mirëpresim përsëri!</div>
+        ${whatsappQrUrl ? `
+          <div style="margin-top: 10px;">
+            <img src="${whatsappQrUrl}" alt="WhatsApp QR" style="width: 70px; height: 70px;" />
+            <div style="font-size: 8px; color: #666; margin-top: 4px;">Skanoni për WhatsApp</div>
+          </div>
+        ` : ''}
       </div>
       <div style="text-align: center; font-size: 8px; color: #666; border-top: 1px dashed #000; padding-top: 8px;">
         <div>Ky kupon shërben vetëm për evidencë</div>
