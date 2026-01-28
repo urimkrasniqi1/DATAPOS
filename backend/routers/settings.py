@@ -26,7 +26,30 @@ templates_router = APIRouter(prefix="/comment-templates", tags=["Comment Templat
 # ============ COMPANY SETTINGS ============
 @router.get("/company")
 async def get_company_settings(current_user: dict = Depends(get_current_user)):
-    """Get company settings"""
+    """Get company settings - pulls from tenant data for tenant users"""
+    tenant_id = current_user.get("tenant_id")
+    
+    # For tenant users, get company info from the tenant record
+    if tenant_id:
+        tenant = await db.tenants.find_one({"id": tenant_id}, {"_id": 0})
+        if tenant:
+            return {
+                "company_name": tenant.get("company_name") or tenant.get("name", ""),
+                "address": tenant.get("address", ""),
+                "city": tenant.get("city", ""),
+                "postal_code": tenant.get("postal_code", ""),
+                "phone": tenant.get("phone", ""),
+                "email": tenant.get("email", ""),
+                "website": tenant.get("website"),
+                "nui": tenant.get("nui", ""),
+                "nf": tenant.get("nf", ""),
+                "vat_number": tenant.get("vat_number", ""),
+                "bank_name": tenant.get("bank_name"),
+                "bank_account": tenant.get("bank_account"),
+                "logo_url": tenant.get("logo_url", "")
+            }
+    
+    # Fallback to settings collection for super_admin or legacy data
     tenant_filter = get_tenant_filter(current_user)
     settings_query = {"type": "company", **tenant_filter} if tenant_filter else {"type": "company"}
     settings = await db.settings.find_one(settings_query, {"_id": 0})
