@@ -37,16 +37,16 @@ const MainLayout = () => {
   };
 
   const menuItems = [
-    { path: '/dashboard', icon: LayoutDashboard, label: 'Paneli', roles: ['admin', 'manager', 'cashier', 'super_admin'] },
+    { path: '/app/dashboard', icon: LayoutDashboard, label: 'Paneli', roles: ['admin', 'manager', 'cashier', 'super_admin'] },
     { path: '/pos', icon: ShoppingCart, label: 'Arka', roles: ['admin', 'manager', 'cashier'] },
-    { path: '/products', icon: Package, label: 'Produktet', roles: ['admin', 'manager'] },
-    { path: '/stock', icon: Warehouse, label: 'Stoku', roles: ['admin', 'manager'] },
-    { path: '/users', icon: Users, label: 'Përdoruesit', roles: ['admin', 'manager'] },
-    { path: '/branches', icon: Building2, label: 'Degët', roles: ['admin'] },
-    { path: '/reports', icon: BarChart3, label: 'Raportet', roles: ['admin', 'manager'] },
-    { path: '/audit-logs', icon: ClipboardList, label: 'Audit Log', roles: ['admin'] },
-    { path: '/settings', icon: Settings, label: 'Cilësimet', roles: ['admin'] },
-    { path: '/super-admin', icon: Building2, label: 'Menaxho Firmat', roles: ['super_admin'] },
+    { path: '/app/products', icon: Package, label: 'Produktet', roles: ['admin', 'manager'] },
+    { path: '/app/stock', icon: Warehouse, label: 'Stoku', roles: ['admin', 'manager'] },
+    { path: '/app/users', icon: Users, label: 'Përdoruesit', roles: ['admin', 'manager'] },
+    { path: '/app/branches', icon: Building2, label: 'Degët', roles: ['admin'] },
+    { path: '/app/reports', icon: BarChart3, label: 'Raportet', roles: ['admin', 'manager'] },
+    { path: '/app/audit-logs', icon: ClipboardList, label: 'Audit Log', roles: ['admin'] },
+    { path: '/app/settings', icon: Settings, label: 'Cilësimet', roles: ['admin'] },
+    { path: '/app/super-admin', icon: Building2, label: 'Menaxho Firmat', roles: ['super_admin'] },
   ];
 
   const filteredMenu = menuItems.filter(item => item.roles.includes(user?.role));
