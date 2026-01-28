@@ -80,6 +80,7 @@ class TenantResponse(BaseModel):
     city: Optional[str] = None
     logo_url: Optional[str] = None
     stamp_url: Optional[str] = None  # Vula digjitale
+    whatsapp_qr_url: Optional[str] = None  # QR code për WhatsApp
     primary_color: str
     secondary_color: str
     stripe_payment_link: Optional[str] = None
