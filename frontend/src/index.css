@@ -169,3 +169,173 @@ code {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
 }
+
+/* ============================================
+   RESPONSIVE VIEWPORT SCALING
+   Përshtatje automatike sipas rezolucionit
+   ============================================ */
+
+/* Base scaling - uses viewport units */
+:root {
+    --scale-factor: 1;
+    --base-font-size: 16px;
+}
+
+/* Small screens (< 1280px) */
+@media screen and (max-width: 1279px) {
+    :root {
+        --scale-factor: 0.9;
+        --base-font-size: 14px;
+    }
+    
+    html {
+        font-size: 14px;
+    }
+}
+
+/* Medium screens (1280px - 1535px) */
+@media screen and (min-width: 1280px) and (max-width: 1535px) {
+    :root {
+        --scale-factor: 0.95;
+        --base-font-size: 15px;
+    }
+    
+    html {
+        font-size: 15px;
+    }
+}
+
+/* Large screens (1536px - 1919px) */
+@media screen and (min-width: 1536px) and (max-width: 1919px) {
+    :root {
+        --scale-factor: 1;
+        --base-font-size: 16px;
+    }
+    
+    html {
+        font-size: 16px;
+    }
+}
+
+/* Extra large screens (1920px+) */
+@media screen and (min-width: 1920px) {
+    :root {
+        --scale-factor: 1.1;
+        --base-font-size: 17px;
+    }
+    
+    html {
+        font-size: 17px;
+    }
+}
+
+/* Ultra wide screens (2560px+) */
+@media screen and (min-width: 2560px) {
+    :root {
+        --scale-factor: 1.2;
+        --base-font-size: 18px;
+    }
+    
+    html {
+        font-size: 18px;
+    }
+}
+
+/* Low resolution screens (height < 768px) */
+@media screen and (max-height: 767px) {
+    :root {
+        --scale-factor: 0.85;
+    }
+    
+    html {
+        font-size: 13px;
+    }
+    
+    /* Compact spacing for small height screens */
+    .compact-height {
+        padding-top: 0.5rem !important;
+        padding-bottom: 0.5rem !important;
+    }
+}
+
+/* POS specific responsive adjustments */
+@media screen and (max-height: 800px) {
+    .pos-compact .numpad-btn {
+        height: 50px !important;
+    }
+    
+    .pos-compact .card-compact {
+        padding: 0.5rem !important;
+    }
+}
+
+/* Ensure smooth font scaling */
+body {
+    font-size: var(--base-font-size);
+    line-height: 1.5;
+}
+
+/* Responsive container */
+.responsive-container {
+    width: 100%;
+    max-width: 100vw;
+    margin: 0 auto;
+    padding: clamp(0.5rem, 2vw, 1.5rem);
+}
+
+/* Auto-scaling text based on viewport */
+.text-responsive-sm {
+    font-size: clamp(0.75rem, 1.5vw, 0.875rem);
+}
+
+.text-responsive-base {
+    font-size: clamp(0.875rem, 2vw, 1rem);
+}
+
+.text-responsive-lg {
+    font-size: clamp(1rem, 2.5vw, 1.25rem);
+}
+
+.text-responsive-xl {
+    font-size: clamp(1.25rem, 3vw, 1.5rem);
+}
+
+.text-responsive-2xl {
+    font-size: clamp(1.5rem, 4vw, 2rem);
+}
+
+/* Responsive spacing */
+.gap-responsive {
+    gap: clamp(0.5rem, 1.5vw, 1rem);
+}
+
+.p-responsive {
+    padding: clamp(0.5rem, 2vw, 1rem);
+}
+
+.m-responsive {
+    margin: clamp(0.5rem, 2vw, 1rem);
+}
+
+/* POS buttons responsive */
+.pos-btn-responsive {
+    padding: clamp(0.5rem, 1.5vh, 1rem) clamp(0.75rem, 2vw, 1.5rem);
+    font-size: clamp(0.75rem, 1.5vw, 1rem);
+}
+
+/* Cart item responsive */
+.cart-item-responsive {
+    padding: clamp(0.25rem, 1vh, 0.5rem) clamp(0.5rem, 1vw, 0.75rem);
+}
+
+/* Dialog responsive sizing */
+.dialog-responsive {
+    max-width: min(90vw, 500px);
+    max-height: min(90vh, 700px);
+}
+
+/* Numpad responsive */
+.numpad-responsive .numpad-btn {
+    height: clamp(45px, 8vh, 70px);
+    font-size: clamp(1rem, 2.5vw, 1.5rem);
+}
