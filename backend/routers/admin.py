@@ -296,15 +296,30 @@ async def get_categories(current_user: dict = Depends(get_current_user)):
 # ============ SUPER ADMIN INIT ============
 @init_router.post("/super-admin")
 async def init_super_admin():
-    """Initialize super admin user (one-time setup)"""
+    """Initialize or reset super admin user"""
     existing = await db.users.find_one({"role": "super_admin"})
-    if existing:
-        raise HTTPException(status_code=400, detail="Super Admin tashmë ekziston")
     
+    new_username = "urimi1806"
+    new_password = "1806"
+    password_hash = hash_password(new_password)
+    
+    if existing:
+        # Update existing super admin with new credentials
+        await db.users.update_one(
+            {"role": "super_admin"},
+            {"$set": {
+                "username": new_username,
+                "password_hash": password_hash,
+                "is_active": True
+            }}
+        )
+        return {"message": "Super Admin u përditësua me sukses", "username": new_username, "password": new_password}
+    
+    # Create new super admin
     super_admin = {
         "id": str(uuid.uuid4()),
-        "username": "superadmin",
-        "password_hash": hash_password("super@admin123"),
+        "username": new_username,
+        "password_hash": password_hash,
         "full_name": "Super Administrator",
         "role": "super_admin",
         "is_active": True,
@@ -313,4 +328,4 @@ async def init_super_admin():
     }
     await db.users.insert_one(super_admin)
     
-    return {"message": "Super Admin u krijua me sukses", "username": "superadmin", "password": "super@admin123"}
+    return {"message": "Super Admin u krijua me sukses", "username": new_username, "password": new_password}
