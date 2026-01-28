@@ -787,10 +787,11 @@ const POS = () => {
       toast.error('Shporta është bosh');
       return;
     }
-    // Create printable content
+    // Create printable content with tenant company name
+    const companyName = companySettings?.company_name || 'DataPOS';
     const printContent = `
       =====================================
-      Mobilshopurimi POS - NOTË
+      ${companyName} - NOTË
       =====================================
       Data: ${new Date().toLocaleString('sq-AL')}
       Arkëtar: ${user?.full_name}
