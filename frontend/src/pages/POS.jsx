@@ -119,6 +119,9 @@ const POS = () => {
     window.addEventListener('resize', updateScreenSize);
     return () => window.removeEventListener('resize', updateScreenSize);
   }, []);
+
+  // Initial data load
+  useEffect(() => {
     loadData();
     loadCompanySettings();
   }, []);
