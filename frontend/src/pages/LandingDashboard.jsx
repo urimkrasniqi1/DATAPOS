@@ -1,13 +1,6 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Monitor, Apple, Globe, Download, HardDrive, FileDown, Shield, Zap, Clock } from 'lucide-react';
-import { Button } from '../components/ui/button';
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from '../components/ui/dialog';
+import { Monitor, Apple, Globe, Shield, Zap, Clock } from 'lucide-react';
 
 const LandingDashboard = () => {
   const navigate = useNavigate();
