@@ -15,6 +15,41 @@ from auth import hash_password, get_current_user, log_audit
 router = APIRouter(prefix="/tenants", tags=["Tenants"])
 
 
+# ============ PUBLIC ENDPOINT - No Auth Required ============
+@router.get("/by-subdomain/{subdomain}", response_model=TenantPublicInfo)
+async def get_tenant_by_subdomain(subdomain: str):
+    """Get tenant public info by subdomain - PUBLIC ENDPOINT for subdomain routing"""
+    # Clean subdomain - remove www if present
+    subdomain = subdomain.lower().strip()
+    if subdomain == 'www' or subdomain == 'app':
+        raise HTTPException(status_code=404, detail="Firma nuk u gjet")
+    
+    # Search by name (subdomain is the tenant name)
+    tenant = await db.tenants.find_one(
+        {"$or": [
+            {"name": subdomain},
+            {"name": {"$regex": f"^{subdomain}$", "$options": "i"}}
+        ]},
+        {"_id": 0}
+    )
+    
+    if not tenant:
+        raise HTTPException(status_code=404, detail="Firma nuk u gjet")
+    
+    if tenant.get("status") == "suspended":
+        raise HTTPException(status_code=403, detail="Firma është pezulluar")
+    
+    return TenantPublicInfo(
+        id=tenant["id"],
+        name=tenant["name"],
+        company_name=tenant.get("company_name") or tenant["name"],
+        logo_url=tenant.get("logo_url"),
+        stamp_url=tenant.get("stamp_url"),
+        primary_color=tenant.get("primary_color", "#00a79d"),
+        secondary_color=tenant.get("secondary_color", "#E0F7FA")
+    )
+
+
 @router.get("", response_model=List[TenantResponse])
 async def get_all_tenants(current_user: dict = Depends(get_current_user)):
     """Get all tenants - Super Admin only"""
