@@ -2174,16 +2174,19 @@ const POS = () => {
               }}>
                 {/* === FISCAL RECEIPT HEADER === */}
                 <div style={{ textAlign: 'center', marginBottom: '8px' }}>
-                  {/* Logo */}
-                  <div style={{ marginBottom: '8px' }}>
-                    <img 
-                      src="https://customer-assets.emergentagent.com/job_retailsys-1/artifacts/9i1h1bxb_logo%20icon.png" 
-                      alt="Logo" 
-                      style={{ height: '45px', maxWidth: '60mm', objectFit: 'contain' }} 
-                    />
-                  </div>
+                  {/* Logo - uses tenant's logo if available */}
+                  {companySettings?.logo_url && (
+                    <div style={{ marginBottom: '8px' }}>
+                      <img 
+                        src={companySettings.logo_url} 
+                        alt="Logo" 
+                        style={{ height: '45px', maxWidth: '60mm', objectFit: 'contain' }} 
+                        onError={(e) => e.target.style.display = 'none'}
+                      />
+                    </div>
+                  )}
                   <div style={{ fontSize: '14px', fontWeight: 'bold', letterSpacing: '1px' }}>
-                    {companySettings?.company_name || 'MobilshopurimiPOS'}
+                    {companySettings?.company_name || 'DataPOS'}
                   </div>
                   <div style={{ fontSize: '9px', marginTop: '4px' }}>
                     {companySettings?.address || 'Adresa e Biznesit'}
