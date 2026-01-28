@@ -86,6 +86,7 @@ const POS = () => {
   const [currentSaleForPrint, setCurrentSaleForPrint] = useState(null);
   const [companySettings, setCompanySettings] = useState(null);
   const [printReceipt, setPrintReceipt] = useState(false); // Default: pa kupon, arkëtari zgjedh
+  const [screenSize, setScreenSize] = useState('large'); // Për responsive scaling
   const [buyerInfo, setBuyerInfo] = useState({
     name: '',
     address: '',
@@ -97,7 +98,27 @@ const POS = () => {
   const invoiceRef = useRef(null);
   const thermalReceiptRef = useRef(null);
 
+  // Responsive screen size detection
   useEffect(() => {
+    const updateScreenSize = () => {
+      const width = window.innerWidth;
+      const height = window.innerHeight;
+      
+      if (width < 1280 || height < 700) {
+        setScreenSize('small');
+      } else if (width < 1536 || height < 800) {
+        setScreenSize('medium');
+      } else if (width >= 1920) {
+        setScreenSize('xlarge');
+      } else {
+        setScreenSize('large');
+      }
+    };
+    
+    updateScreenSize();
+    window.addEventListener('resize', updateScreenSize);
+    return () => window.removeEventListener('resize', updateScreenSize);
+  }, []);
     loadData();
     loadCompanySettings();
   }, []);
