@@ -511,8 +511,8 @@ const POS = () => {
       </div>
     `).join('');
     
-    // Use company logo if available, otherwise use default
-    const logoUrl = companySettings?.logo_url || 'https://customer-assets.emergentagent.com/job_retailsys-1/artifacts/9i1h1bxb_logo%20icon.png';
+    // Use company logo if available from tenant settings
+    const logoUrl = companySettings?.logo_url || '';
     const companyName = companySettings?.company_name || 'DataPOS';
     const companyAddress = companySettings?.address || '';
     const companyCity = companySettings?.city || '';
