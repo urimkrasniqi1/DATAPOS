@@ -234,6 +234,31 @@ async def update_pos_settings(
     return updated.get("data", {})
 
 
+@router.post("/regenerate-whatsapp-qr")
+async def regenerate_whatsapp_qr_for_tenant(
+    current_user: dict = Depends(require_role([UserRole.ADMIN]))
+):
+    """Regenerate WhatsApp QR code for current tenant"""
+    tenant_id = current_user.get("tenant_id")
+    if not tenant_id:
+        raise HTTPException(status_code=400, detail="Tenant ID nuk u gjet")
+    
+    tenant = await db.tenants.find_one({"id": tenant_id})
+    if not tenant:
+        raise HTTPException(status_code=404, detail="Firma nuk u gjet")
+    
+    phone = tenant.get("phone")
+    if not phone:
+        raise HTTPException(status_code=400, detail="Numri i telefonit nuk është konfiguruar. Vendosni numrin e telefonit në cilësimet e kompanisë.")
+    
+    qr_url = generate_whatsapp_qr(phone)
+    await db.tenants.update_one({"id": tenant_id}, {"$set": {"whatsapp_qr_url": qr_url}})
+    
+    await log_audit(current_user["id"], "regenerate_qr", "tenant", tenant_id)
+    
+    return {"message": "QR code u ri-gjenerua me sukses", "whatsapp_qr_url": qr_url}
+
+
 # ============ WAREHOUSES ============
 @warehouses_router.post("", response_model=WarehouseResponse)
 async def create_warehouse(
