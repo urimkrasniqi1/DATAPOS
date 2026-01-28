@@ -322,6 +322,27 @@ async def get_tenant_public_info(tenant_name: str):
         name=tenant["name"],
         company_name=tenant["company_name"],
         logo_url=tenant.get("logo_url"),
+        whatsapp_qr_url=tenant.get("whatsapp_qr_url"),
         primary_color=tenant["primary_color"],
         secondary_color=tenant["secondary_color"]
     )
+
+
+@router.post("/{tenant_id}/regenerate-qr")
+async def regenerate_whatsapp_qr(tenant_id: str, current_user: dict = Depends(get_current_user)):
+    """Regenerate WhatsApp QR code for a tenant - Super Admin only"""
+    if current_user.get("role") != UserRole.SUPER_ADMIN and current_user.get("role") != "super_admin":
+        raise HTTPException(status_code=403, detail="Vetëm Super Admin ka akses")
+    
+    tenant = await db.tenants.find_one({"id": tenant_id})
+    if not tenant:
+        raise HTTPException(status_code=404, detail="Firma nuk u gjet")
+    
+    phone = tenant.get("phone")
+    if not phone:
+        raise HTTPException(status_code=400, detail="Firma nuk ka numër telefoni")
+    
+    qr_url = generate_whatsapp_qr(phone)
+    await db.tenants.update_one({"id": tenant_id}, {"$set": {"whatsapp_qr_url": qr_url}})
+    
+    return {"message": "QR code u ri-gjenerua me sukses", "whatsapp_qr_url": qr_url}
