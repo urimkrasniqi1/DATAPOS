@@ -230,7 +230,7 @@ const Login = () => {
             Përdor tastet 0-9 • Backspace për fshirje • Enter për kyçje
           </div>
         </div>
-      ) : (
+      ) : !tenantLoading && (!tenantError || !tenantContext?.subdomain) && showAdminLogin ? (
         // Admin Login View
         <div className="w-full max-w-md mx-4">
           <div className="bg-white rounded-2xl shadow-xl overflow-hidden p-8 md:p-10">
