@@ -1,8 +1,8 @@
 {
-  "name": "t3next-pos",
+  "name": "datapos",
   "version": "1.0.0",
-  "description": "t3next Point of Sale System",
-  "author": "t3next",
+  "description": "DataPOS - Sistemi POS Multi-Tenant",
+  "author": "DataPOS",
   "private": true,
   "main": "electron.js",
   "homepage": "./",
@@ -64,13 +64,14 @@
     "build": "craco build",
     "test": "craco test",
     "electron:dev": "concurrently \"cross-env BROWSER=none yarn start\" \"wait-on http://localhost:3000 && cross-env NODE_ENV=development electron .\"",
-    "electron:build": "yarn build && electron-builder --win --dir",
-    "electron:dist": "yarn build && electron-builder --win",
-    "electron:dist:all": "yarn build && electron-builder --win --linux"
+    "electron:build:win": "yarn build && electron-builder --win",
+    "electron:build:mac": "yarn build && electron-builder --mac",
+    "electron:build:linux": "yarn build && electron-builder --linux",
+    "electron:build:all": "yarn build && electron-builder --win --mac --linux"
   },
   "build": {
-    "appId": "com.t3next.pos",
-    "productName": "t3next POS",
+    "appId": "com.datapos.app",
+    "productName": "DataPOS",
     "directories": {
       "output": "dist"
     },
@@ -78,13 +79,6 @@
       "build/**/*",
       "electron.js",
       "package.json"
-    ],
-    "extraResources": [
-      {
-        "from": "../backend",
-        "to": "backend",
-        "filter": ["**/*", "!__pycache__/**", "!*.pyc", "!.env"]
-      }
     ],
     "win": {
       "target": [
@@ -95,6 +89,25 @@
       ],
       "icon": "public/favicon.ico"
     },
+    "mac": {
+      "target": [
+        {
+          "target": "dmg",
+          "arch": ["x64", "arm64"]
+        },
+        {
+          "target": "zip",
+          "arch": ["x64", "arm64"]
+        }
+      ],
+      "icon": "public/icon.icns",
+      "category": "public.app-category.business"
+    },
+    "linux": {
+      "target": ["AppImage", "deb"],
+      "icon": "public/favicon.ico",
+      "category": "Office"
+    },
     "nsis": {
       "oneClick": false,
       "allowToChangeInstallationDirectory": true,
@@ -103,11 +116,21 @@
       "installerHeaderIcon": "public/favicon.ico",
       "createDesktopShortcut": true,
       "createStartMenuShortcut": true,
-      "shortcutName": "t3next POS"
+      "shortcutName": "DataPOS"
     },
-    "linux": {
-      "target": ["AppImage", "deb"],
-      "icon": "public/favicon.ico"
+    "dmg": {
+      "contents": [
+        {
+          "x": 130,
+          "y": 220
+        },
+        {
+          "x": 410,
+          "y": 220,
+          "type": "link",
+          "path": "/Applications"
+        }
+      ]
     }
   },
   "browserslist": {
