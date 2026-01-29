@@ -45,6 +45,18 @@ async def public_register(data: PublicRegistration):
     Public registration endpoint - creates a new tenant with 30-day trial
     No authentication required
     """
+    # Validate username
+    if len(data.username) < 3:
+        raise HTTPException(status_code=400, detail="Username duhet të ketë të paktën 3 karaktere")
+    
+    if not re.match(r'^[a-zA-Z0-9_]+$', data.username):
+        raise HTTPException(status_code=400, detail="Username mund të përmbajë vetëm shkronja, numra dhe _")
+    
+    # Check if username already exists
+    existing_username = await db.users.find_one({"username": data.username.lower()})
+    if existing_username:
+        raise HTTPException(status_code=400, detail="Ky username është përdorur tashmë. Ju lutem zgjidhni një tjetër.")
+    
     # Validate email format
     if not re.match(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$', data.email):
         raise HTTPException(status_code=400, detail="Email-i nuk është i vlefshëm")
@@ -53,11 +65,6 @@ async def public_register(data: PublicRegistration):
     existing_email = await db.tenants.find_one({"email": data.email.lower()})
     if existing_email:
         raise HTTPException(status_code=400, detail="Ky email është regjistruar tashmë. Ju lutem kyçuni ose përdorni email tjetër.")
-    
-    # Check if user with this email exists
-    existing_user = await db.users.find_one({"username": data.email.lower()})
-    if existing_user:
-        raise HTTPException(status_code=400, detail="Ky email është përdorur tashmë")
     
     # Generate unique subdomain
     base_subdomain = generate_subdomain(data.company_name)
@@ -99,10 +106,10 @@ async def public_register(data: PublicRegistration):
     
     await db.tenants.insert_one(tenant_data)
     
-    # Create admin user for the tenant
+    # Create admin user for the tenant with provided username
     admin_user = {
         "id": str(uuid.uuid4()),
-        "username": data.email.lower(),  # Use email as username
+        "username": data.username.lower(),  # Use provided username
         "password_hash": hash_password(data.password),
         "full_name": data.full_name,
         "role": "admin",
@@ -117,7 +124,8 @@ async def public_register(data: PublicRegistration):
         message="Regjistrimi u krye me sukses! Keni 30 ditë provë falas.",
         tenant_id=tenant_id,
         trial_days=trial_days,
-        trial_expires=trial_expires.isoformat()
+        trial_expires=trial_expires.isoformat(),
+        username=data.username.lower()
     )
 
 
