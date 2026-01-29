@@ -641,6 +641,110 @@ const Dashboard = () => {
         </Card>
       </div>
 
+      {/* Coming Soon Apps */}
+      <Card className="border-0 shadow-sm">
+        <CardHeader className="pb-2">
+          <CardTitle className="text-lg font-semibold flex items-center gap-2">
+            <Sparkles className="h-5 w-5 text-[#00a79d]" />
+            Aplikacione të Reja - Së Shpejti
+          </CardTitle>
+          <p className="text-sm text-gray-500">Sistemet e ardhshme që do të lehtësojnë punën tuaj</p>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {/* Restaurant Management */}
+            <div className="relative p-6 rounded-xl bg-gradient-to-br from-orange-50 to-orange-100 border border-orange-200 overflow-hidden group hover:shadow-md transition-all">
+              <div className="absolute top-3 right-3">
+                <span className="px-2 py-1 text-xs font-semibold bg-orange-500 text-white rounded-full">
+                  SË SHPEJTI
+                </span>
+              </div>
+              <div className="w-14 h-14 bg-orange-500/20 rounded-2xl flex items-center justify-center mb-4">
+                <Utensils className="w-7 h-7 text-orange-600" />
+              </div>
+              <h3 className="font-semibold text-gray-900 mb-2">Menaxhimi i Restoranteve</h3>
+              <p className="text-sm text-gray-600">
+                Sistemi i plotë për menaxhimin e restoranteve: porosi, tavolina, menu dixhitale, stafi i kuzhinës.
+              </p>
+              <ul className="mt-3 space-y-1">
+                <li className="text-xs text-gray-500 flex items-center gap-1">
+                  <div className="w-1 h-1 bg-orange-500 rounded-full"></div>
+                  Menaxhim i tavolinave
+                </li>
+                <li className="text-xs text-gray-500 flex items-center gap-1">
+                  <div className="w-1 h-1 bg-orange-500 rounded-full"></div>
+                  Porosi në kohë reale
+                </li>
+                <li className="text-xs text-gray-500 flex items-center gap-1">
+                  <div className="w-1 h-1 bg-orange-500 rounded-full"></div>
+                  Menu dixhitale me QR
+                </li>
+              </ul>
+            </div>
+
+            {/* Mobile Shop Management */}
+            <div className="relative p-6 rounded-xl bg-gradient-to-br from-blue-50 to-blue-100 border border-blue-200 overflow-hidden group hover:shadow-md transition-all">
+              <div className="absolute top-3 right-3">
+                <span className="px-2 py-1 text-xs font-semibold bg-blue-500 text-white rounded-full">
+                  SË SHPEJTI
+                </span>
+              </div>
+              <div className="w-14 h-14 bg-blue-500/20 rounded-2xl flex items-center justify-center mb-4">
+                <Store className="w-7 h-7 text-blue-600" />
+              </div>
+              <h3 className="font-semibold text-gray-900 mb-2">Menaxhimi i Dyqaneve</h3>
+              <p className="text-sm text-gray-600">
+                Sistemi i avancuar për dyqanet e mobiljeve: inventar, porosi speciale, delivery, garanci.
+              </p>
+              <ul className="mt-3 space-y-1">
+                <li className="text-xs text-gray-500 flex items-center gap-1">
+                  <div className="w-1 h-1 bg-blue-500 rounded-full"></div>
+                  Katalog produktesh
+                </li>
+                <li className="text-xs text-gray-500 flex items-center gap-1">
+                  <div className="w-1 h-1 bg-blue-500 rounded-full"></div>
+                  Porosi me porosi
+                </li>
+                <li className="text-xs text-gray-500 flex items-center gap-1">
+                  <div className="w-1 h-1 bg-blue-500 rounded-full"></div>
+                  Menaxhim i garancioneve
+                </li>
+              </ul>
+            </div>
+
+            {/* Employee Management */}
+            <div className="relative p-6 rounded-xl bg-gradient-to-br from-purple-50 to-purple-100 border border-purple-200 overflow-hidden group hover:shadow-md transition-all">
+              <div className="absolute top-3 right-3">
+                <span className="px-2 py-1 text-xs font-semibold bg-purple-500 text-white rounded-full">
+                  SË SHPEJTI
+                </span>
+              </div>
+              <div className="w-14 h-14 bg-purple-500/20 rounded-2xl flex items-center justify-center mb-4">
+                <Briefcase className="w-7 h-7 text-purple-600" />
+              </div>
+              <h3 className="font-semibold text-gray-900 mb-2">Menaxhimi i Punëtorëve</h3>
+              <p className="text-sm text-gray-600">
+                Sistemi komplet për menaxhimin e punëve dhe punëtorëve: orari, paga, pushime, detyra.
+              </p>
+              <ul className="mt-3 space-y-1">
+                <li className="text-xs text-gray-500 flex items-center gap-1">
+                  <div className="w-1 h-1 bg-purple-500 rounded-full"></div>
+                  Orari i punës
+                </li>
+                <li className="text-xs text-gray-500 flex items-center gap-1">
+                  <div className="w-1 h-1 bg-purple-500 rounded-full"></div>
+                  Llogaritja e pagave
+                </li>
+                <li className="text-xs text-gray-500 flex items-center gap-1">
+                  <div className="w-1 h-1 bg-purple-500 rounded-full"></div>
+                  Menaxhimi i pushimeve
+                </li>
+              </ul>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
       {/* Reset Dialog */}
       <Dialog open={showResetDialog} onOpenChange={setShowResetDialog}>
         <DialogContent className="sm:max-w-md">
