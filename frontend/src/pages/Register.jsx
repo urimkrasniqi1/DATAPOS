@@ -236,6 +236,23 @@ const Register = () => {
               {errors.full_name && <p className="text-red-400 text-xs">{errors.full_name}</p>}
             </div>
 
+            {/* Username */}
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-gray-300">Username (për kyçje) *</label>
+              <div className="relative">
+                <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" />
+                <Input
+                  type="text"
+                  name="username"
+                  placeholder="p.sh. urimi123"
+                  value={formData.username}
+                  onChange={handleChange}
+                  className={`pl-12 h-12 bg-white/5 border-white/10 text-white placeholder:text-gray-500 rounded-xl focus:border-[#00a79d] focus:ring-[#00a79d]/20 ${errors.username ? 'border-red-500' : ''}`}
+                />
+              </div>
+              {errors.username && <p className="text-red-400 text-xs">{errors.username}</p>}
+            </div>
+
             {/* Email */}
             <div className="space-y-2">
               <label className="text-sm font-medium text-gray-300">Email *</label>
