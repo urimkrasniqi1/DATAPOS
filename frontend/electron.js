@@ -3,8 +3,8 @@ const path = require('path');
 
 let mainWindow;
 
-// Production URL - domain-i juaj
-const PRODUCTION_URL = 'https://datapos.pro';
+// Production URL - Emergent preview URL
+const PRODUCTION_URL = 'https://posify-multi.preview.emergentagent.com';
 
 // Determine if we're in development or production
 const isDev = process.env.NODE_ENV === 'development';
