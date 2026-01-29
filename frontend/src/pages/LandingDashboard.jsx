@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Monitor, Apple, Globe, Shield, Zap, Clock, Check, Gift, Star, TrendingUp } from 'lucide-react';
+import { Monitor, Apple, Globe, Shield, Zap, Clock, Check, Gift, Star, TrendingUp, Utensils, Store, Briefcase, Sparkles } from 'lucide-react';
 
 const LandingDashboard = () => {
   const navigate = useNavigate();
@@ -18,6 +18,42 @@ const LandingDashboard = () => {
     { duration: '3 Muaj', price: 60, perMonth: 20, popular: false },
     { duration: '6 Muaj', price: 120, perMonth: 20, popular: false },
     { duration: '12 Muaj', price: 150, originalPrice: 230, perMonth: 12.5, popular: true, savings: 80 },
+  ];
+
+  const comingSoonApps = [
+    {
+      icon: Utensils,
+      title: 'Menaxhimi i Restoranteve',
+      description: 'Sistemi i plotë për menaxhimin e restoranteve: porosi, tavolina, menu dixhitale, stafi i kuzhinës.',
+      features: ['Menaxhim i tavolinave', 'Porosi në kohë reale', 'Menu dixhitale me QR'],
+      gradient: 'from-orange-500/20 to-orange-600/10',
+      borderColor: 'border-orange-500/30',
+      iconBg: 'bg-orange-500/20',
+      iconColor: 'text-orange-400',
+      dotColor: 'bg-orange-400'
+    },
+    {
+      icon: Store,
+      title: 'Menaxhimi i Dyqaneve',
+      description: 'Sistemi i avancuar për dyqanet e mobiljeve: inventar, porosi speciale, delivery, garanci.',
+      features: ['Katalog produktesh', 'Porosi me porosi', 'Menaxhim i garancioneve'],
+      gradient: 'from-blue-500/20 to-blue-600/10',
+      borderColor: 'border-blue-500/30',
+      iconBg: 'bg-blue-500/20',
+      iconColor: 'text-blue-400',
+      dotColor: 'bg-blue-400'
+    },
+    {
+      icon: Briefcase,
+      title: 'Menaxhimi i Punëtorëve',
+      description: 'Sistemi komplet për menaxhimin e punëve dhe punëtorëve: orari, paga, pushime, detyra.',
+      features: ['Orari i punës', 'Llogaritja e pagave', 'Menaxhimi i pushimeve'],
+      gradient: 'from-purple-500/20 to-purple-600/10',
+      borderColor: 'border-purple-500/30',
+      iconBg: 'bg-purple-500/20',
+      iconColor: 'text-purple-400',
+      dotColor: 'bg-purple-400'
+    }
   ];
 
   const features = [
