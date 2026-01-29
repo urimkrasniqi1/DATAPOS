@@ -77,6 +77,19 @@ const SuperAdmin = () => {
     pin: ''
   });
 
+  // Calculate remaining trial days
+  const calculateRemainingDays = (expiresDate) => {
+    if (!expiresDate) return 0;
+    try {
+      const expires = new Date(expiresDate);
+      const now = new Date();
+      const diff = expires - now;
+      return Math.max(0, Math.ceil(diff / (1000 * 60 * 60 * 24)));
+    } catch {
+      return 0;
+    }
+  };
+
   useEffect(() => {
     loadTenants();
   }, []);
