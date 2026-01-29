@@ -692,22 +692,22 @@ const Dashboard = () => {
               <div className="w-14 h-14 bg-blue-500/20 rounded-2xl flex items-center justify-center mb-4">
                 <Store className="w-7 h-7 text-blue-600" />
               </div>
-              <h3 className="font-semibold text-gray-900 mb-2">Menaxhimi i Dyqaneve</h3>
+              <h3 className="font-semibold text-gray-900 mb-2">Menaxhimi i Mobilshopave</h3>
               <p className="text-sm text-gray-600">
-                Sistemi i avancuar për dyqanet e mobiljeve: inventar, porosi speciale, delivery, garanci.
+                Sistemi i avancuar për dyqanet e telefonave: servisim, shitje, inventar, garanci, riparime.
               </p>
               <ul className="mt-3 space-y-1">
                 <li className="text-xs text-gray-500 flex items-center gap-1">
                   <div className="w-1 h-1 bg-blue-500 rounded-full"></div>
-                  Katalog produktesh
+                  Menaxhim i riparimeve
                 </li>
                 <li className="text-xs text-gray-500 flex items-center gap-1">
                   <div className="w-1 h-1 bg-blue-500 rounded-full"></div>
-                  Porosi me porosi
+                  Inventar i telefonave
                 </li>
                 <li className="text-xs text-gray-500 flex items-center gap-1">
                   <div className="w-1 h-1 bg-blue-500 rounded-full"></div>
-                  Menaxhim i garancioneve
+                  Gjurmim i garancive
                 </li>
               </ul>
             </div>
