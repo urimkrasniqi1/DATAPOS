@@ -237,6 +237,7 @@ const Login = () => {
                 setShowAdminLogin(false);
                 setUsername('');
                 setPassword('');
+                setError('');
               }}
               className="flex items-center gap-2 text-gray-500 hover:text-[#00a79d] mb-6 transition-colors"
             >
