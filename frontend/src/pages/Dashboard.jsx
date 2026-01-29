@@ -36,6 +36,73 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContai
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 
+// Trial Banner Component
+const TrialBanner = () => {
+  const [trialInfo, setTrialInfo] = React.useState(null);
+  const { user } = useAuth();
+
+  React.useEffect(() => {
+    const fetchTrialStatus = async () => {
+      if (!user?.tenant_id) return;
+      try {
+        const response = await api.get(`/trial-status/${user.tenant_id}`);
+        setTrialInfo(response.data);
+      } catch (error) {
+        // Silently fail - not critical
+      }
+    };
+    fetchTrialStatus();
+  }, [user?.tenant_id]);
+
+  if (!trialInfo || trialInfo.status !== 'trial') return null;
+
+  const { remaining_days, is_expired } = trialInfo;
+
+  if (is_expired) {
+    return (
+      <div className="bg-red-50 border border-red-200 rounded-lg p-4 flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <div className="p-2 bg-red-100 rounded-full">
+            <AlertTriangle className="h-5 w-5 text-red-600" />
+          </div>
+          <div>
+            <p className="font-semibold text-red-800">Periudha e Provës Ka Përfunduar!</p>
+            <p className="text-sm text-red-600">Ju lutem abonohuni për të vazhduar përdorimin e sistemit.</p>
+          </div>
+        </div>
+        <Button className="bg-red-600 hover:bg-red-700 text-white">
+          Abonohu Tani
+        </Button>
+      </div>
+    );
+  }
+
+  const isUrgent = remaining_days <= 7;
+
+  return (
+    <div className={`${isUrgent ? 'bg-orange-50 border-orange-200' : 'bg-blue-50 border-blue-200'} border rounded-lg p-4 flex items-center justify-between`}>
+      <div className="flex items-center gap-3">
+        <div className={`p-2 ${isUrgent ? 'bg-orange-100' : 'bg-blue-100'} rounded-full`}>
+          <Calendar className={`h-5 w-5 ${isUrgent ? 'text-orange-600' : 'text-blue-600'}`} />
+        </div>
+        <div>
+          <p className={`font-semibold ${isUrgent ? 'text-orange-800' : 'text-blue-800'}`}>
+            Periudha e Provës: {remaining_days} ditë të mbetura
+          </p>
+          <p className={`text-sm ${isUrgent ? 'text-orange-600' : 'text-blue-600'}`}>
+            {isUrgent 
+              ? 'Abonohuni para se të përfundojë periudha e provës!'
+              : 'Po shijoni periudhën falas. Eksporoni të gjitha veçoritë!'}
+          </p>
+        </div>
+      </div>
+      <Button className={`${isUrgent ? 'bg-orange-600 hover:bg-orange-700' : 'bg-blue-600 hover:bg-blue-700'} text-white`}>
+        Shiko Planet
+      </Button>
+    </div>
+  );
+};
+
 const Dashboard = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
