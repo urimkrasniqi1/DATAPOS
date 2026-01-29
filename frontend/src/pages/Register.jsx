@@ -129,10 +129,29 @@ const Register = () => {
               <CheckCircle className="w-10 h-10 text-[#00a79d]" />
             </div>
             <h2 className="text-2xl font-bold text-white mb-4">Regjistrimi u Krye!</h2>
-            <p className="text-gray-400 mb-6">
+            <p className="text-gray-400 mb-4">
               Llogaria juaj u krijua me sukses. Keni <span className="text-[#00a79d] font-semibold">30 ditë provë falas</span> për të testuar sistemin.
             </p>
-            <div className="bg-[#00a79d]/10 border border-[#00a79d]/20 rounded-xl p-4 mb-6">
+            
+            {/* Login Credentials */}
+            <div className="bg-[#0a1628] border border-white/10 rounded-xl p-4 mb-6 text-left">
+              <p className="text-sm text-gray-400 mb-3 text-center">Të dhënat tuaja për kyçje:</p>
+              <div className="space-y-2">
+                <div className="flex items-center justify-between bg-white/5 rounded-lg px-3 py-2">
+                  <span className="text-gray-400 text-sm">Username:</span>
+                  <span className="text-[#00a79d] font-semibold">{formData.username}</span>
+                </div>
+                <div className="flex items-center justify-between bg-white/5 rounded-lg px-3 py-2">
+                  <span className="text-gray-400 text-sm">Fjalëkalimi:</span>
+                  <span className="text-gray-300">••••••••</span>
+                </div>
+              </div>
+              <p className="text-xs text-gray-500 mt-3 text-center">
+                Përdorni këto kredenciale për t'u kyçur në panel
+              </p>
+            </div>
+            
+            <div className="bg-[#00a79d]/10 border border-[#00a79d]/20 rounded-xl p-3 mb-6">
               <p className="text-sm text-gray-300">
                 Duke u ridrejtuar te faqja e kyçjes...
               </p>
