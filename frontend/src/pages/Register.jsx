@@ -60,8 +60,6 @@ const Register = () => {
     
     if (!formData.password) {
       newErrors.password = 'Fjalëkalimi është i detyrueshëm';
-    } else if (formData.password.length < 6) {
-      newErrors.password = 'Fjalëkalimi duhet të ketë të paktën 6 karaktere';
     }
     
     if (formData.password !== formData.confirmPassword) {
