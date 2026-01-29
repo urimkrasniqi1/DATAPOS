@@ -130,9 +130,13 @@ api.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
-      localStorage.removeItem('t3next_token');
-      localStorage.removeItem('t3next_user');
-      window.location.href = '/login';
+      // Only redirect if user was previously logged in (token exists)
+      const token = localStorage.getItem('t3next_token');
+      if (token) {
+        localStorage.removeItem('t3next_token');
+        localStorage.removeItem('t3next_user');
+        window.location.href = '/#/login';
+      }
     }
     return Promise.reject(error);
   }
