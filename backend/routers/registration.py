@@ -1,6 +1,7 @@
 """Public registration endpoint - No auth required"""
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel, EmailStr
+from typing import Optional
 from datetime import datetime, timezone, timedelta
 import uuid
 import re
@@ -14,6 +15,7 @@ router = APIRouter(tags=["Registration"])
 class PublicRegistration(BaseModel):
     company_name: str
     full_name: str
+    username: str
     email: str
     phone: str
     password: str
@@ -25,6 +27,7 @@ class RegistrationResponse(BaseModel):
     tenant_id: str
     trial_days: int
     trial_expires: str
+    username: str
 
 
 def generate_subdomain(company_name: str) -> str:
