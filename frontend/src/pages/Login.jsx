@@ -182,6 +182,13 @@ const Login = () => {
               })}
             </div>
 
+            {/* Error Message for PIN */}
+            {error && !showAdminLogin && (
+              <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-xl text-sm text-center mb-4">
+                {error}
+              </div>
+            )}
+
             {/* Enter Button */}
             <Button
               onClick={handlePinLogin}
@@ -201,7 +208,10 @@ const Login = () => {
             {/* Admin Login Link */}
             <div className="mt-6 pt-6 border-t border-gray-100">
               <button
-                onClick={() => setShowAdminLogin(true)}
+                onClick={() => {
+                  setShowAdminLogin(true);
+                  setError('');
+                }}
                 className="w-full text-center text-[#00a79d] hover:text-[#008f86] font-medium transition-colors flex items-center justify-center gap-2"
               >
                 <User className="h-4 w-4" />
