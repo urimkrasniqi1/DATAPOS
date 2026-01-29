@@ -8,7 +8,7 @@ from contextlib import asynccontextmanager
 import logging
 
 # Import routers
-from routers import auth, tenants, users, branches, products, stock, cashier, sales, reports, upload
+from routers import auth, tenants, users, branches, products, stock, cashier, sales, reports, upload, registration
 from routers.settings import router as settings_router, warehouses_router, vat_router, templates_router
 from routers.admin import router as admin_router, audit_router, categories_router, init_router
 
