@@ -262,12 +262,20 @@ const LandingDashboard = () => {
           <div className="text-center bg-gradient-to-r from-[#00a79d]/10 via-[#00a79d]/20 to-[#00a79d]/10 rounded-2xl p-8 border border-[#00a79d]/20">
             <h2 className="text-2xl font-bold text-white mb-4">Gati për të Filluar?</h2>
             <p className="text-gray-400 mb-6">Regjistrohuni tani dhe merrni 30 ditë provë falas. Pa kartë krediti.</p>
-            <button
-              onClick={handleRegister}
-              className="px-8 py-4 bg-[#00a79d] hover:bg-[#008f86] text-white font-semibold rounded-xl transition-all transform hover:scale-105 text-lg"
-            >
-              Regjistrohu Falas →
-            </button>
+            <div className="flex flex-col items-center gap-3">
+              <button
+                onClick={handleRegister}
+                className="px-8 py-4 bg-[#00a79d] hover:bg-[#008f86] text-white font-semibold rounded-xl transition-all transform hover:scale-105 text-lg"
+              >
+                Regjistrohu Falas →
+              </button>
+              <button
+                onClick={handleLogin}
+                className="text-sm text-gray-400 hover:text-[#00a79d] transition-colors"
+              >
+                Keni llogari? Përdor Online →
+              </button>
+            </div>
           </div>
         </div>
       </main>
