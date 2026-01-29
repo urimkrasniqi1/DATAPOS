@@ -35,12 +35,13 @@ function createWindow() {
 
   if (isDev) {
     // In development, load from React dev server
-    mainWindow.loadURL('http://localhost:3000');
+    mainWindow.loadURL('http://localhost:3000/#/login');
     mainWindow.webContents.openDevTools();
   } else {
-    // In production, ALWAYS load from deployed domain
-    console.log('Loading production URL:', PRODUCTION_URL);
-    mainWindow.loadURL(PRODUCTION_URL);
+    // In production, ALWAYS load from deployed domain - directly to login page
+    const loginURL = PRODUCTION_URL + '/#/login';
+    console.log('Loading production URL:', loginURL);
+    mainWindow.loadURL(loginURL);
   }
 
   // Handle external links - open in default browser
