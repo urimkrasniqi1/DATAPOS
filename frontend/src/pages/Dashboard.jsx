@@ -30,7 +30,11 @@ import {
   Lock,
   Users,
   Calendar,
-  Trash2
+  Trash2,
+  Utensils,
+  Store,
+  Briefcase,
+  Sparkles
 } from 'lucide-react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar } from 'recharts';
 import { useNavigate } from 'react-router-dom';
