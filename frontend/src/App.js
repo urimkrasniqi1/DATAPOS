@@ -304,6 +304,9 @@ const AppRoutes = () => {
       {/* Landing Dashboard - Entry Point */}
       <Route path="/" element={isAuthenticated ? <Navigate to={user?.role === 'cashier' ? '/pos' : '/dashboard'} /> : <LandingDashboard />} />
       
+      {/* Registration Page */}
+      <Route path="/register" element={isAuthenticated ? <Navigate to={user?.role === 'cashier' ? '/pos' : '/dashboard'} /> : <Register />} />
+      
       <Route path="/login" element={isAuthenticated ? <Navigate to={user?.role === 'cashier' ? '/pos' : '/dashboard'} /> : <Login />} />
       
       {/* Cashier gets POS without MainLayout */}
