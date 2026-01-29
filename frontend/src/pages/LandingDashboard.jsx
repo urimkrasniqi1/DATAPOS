@@ -34,9 +34,9 @@ const LandingDashboard = () => {
     },
     {
       icon: Store,
-      title: 'Menaxhimi i Dyqaneve',
-      description: 'Sistemi i avancuar për dyqanet e mobiljeve: inventar, porosi speciale, delivery, garanci.',
-      features: ['Katalog produktesh', 'Porosi me porosi', 'Menaxhim i garancioneve'],
+      title: 'Menaxhimi i Mobilshopave',
+      description: 'Sistemi i avancuar për dyqanet e telefonave: servisim, shitje, inventar, garanci, riparime.',
+      features: ['Menaxhim i riparimeve', 'Inventar i telefonave', 'Gjurmim i garancive'],
       gradient: 'from-blue-500/20 to-blue-600/10',
       borderColor: 'border-blue-500/30',
       iconBg: 'bg-blue-500/20',
