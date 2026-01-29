@@ -312,7 +312,7 @@ const Register = () => {
                 <Input
                   type={showPassword ? 'text' : 'password'}
                   name="password"
-                  placeholder="Minimum 6 karaktere"
+                  placeholder="Shkruani fjalëkalimin"
                   value={formData.password}
                   onChange={handleChange}
                   className={`pl-12 pr-12 h-12 bg-white/5 border-white/10 text-white placeholder:text-gray-500 rounded-xl focus:border-[#00a79d] focus:ring-[#00a79d]/20 ${errors.password ? 'border-red-500' : ''}`}
