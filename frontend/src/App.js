@@ -74,9 +74,9 @@ if (typeof window !== 'undefined') {
   }
 }
 
-// Determine backend URL - for desktop app use localhost, otherwise use env variable
+// Determine backend URL - always use the production URL for consistency
 const isElectron = window.navigator.userAgent.toLowerCase().includes('electron');
-const BACKEND_URL = isElectron ? 'http://127.0.0.1:8001' : (process.env.REACT_APP_BACKEND_URL || '');
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || 'https://posify-multi.preview.emergentagent.com';
 const API = `${BACKEND_URL}/api`;
 
 // Get subdomain from current URL
