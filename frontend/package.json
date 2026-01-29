@@ -78,7 +78,15 @@
     "files": [
       "build/**/*",
       "electron.js",
+      "preload.js",
+      "offline.html",
       "package.json"
+    ],
+    "extraResources": [
+      {
+        "from": "electron.js",
+        "to": "electron.js"
+      }
     ],
     "win": {
       "target": [
@@ -86,51 +94,27 @@
           "target": "nsis",
           "arch": ["x64"]
         }
-      ],
-      "icon": "public/favicon.ico"
+      ]
     },
     "mac": {
       "target": [
         {
           "target": "dmg",
           "arch": ["x64", "arm64"]
-        },
-        {
-          "target": "zip",
-          "arch": ["x64", "arm64"]
         }
       ],
-      "icon": "public/icon.icns",
       "category": "public.app-category.business"
     },
     "linux": {
       "target": ["AppImage", "deb"],
-      "icon": "public/favicon.ico",
       "category": "Office"
     },
     "nsis": {
       "oneClick": false,
       "allowToChangeInstallationDirectory": true,
-      "installerIcon": "public/favicon.ico",
-      "uninstallerIcon": "public/favicon.ico",
-      "installerHeaderIcon": "public/favicon.ico",
       "createDesktopShortcut": true,
       "createStartMenuShortcut": true,
       "shortcutName": "DataPOS"
-    },
-    "dmg": {
-      "contents": [
-        {
-          "x": 130,
-          "y": 220
-        },
-        {
-          "x": 410,
-          "y": 220,
-          "type": "link",
-          "path": "/Applications"
-        }
-      ]
     }
   },
   "browserslist": {
