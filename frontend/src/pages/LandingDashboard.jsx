@@ -260,6 +260,50 @@ const LandingDashboard = () => {
             </div>
           </div>
 
+          {/* Coming Soon Apps Section */}
+          <div className="mb-16">
+            <div className="text-center mb-10">
+              <div className="inline-flex items-center gap-2 bg-purple-500/10 border border-purple-500/20 rounded-full px-4 py-2 mb-4">
+                <Sparkles className="w-4 h-4 text-purple-400" />
+                <span className="text-sm text-purple-400 font-medium">Së Shpejti</span>
+              </div>
+              <h2 className="text-3xl font-bold text-white mb-4">Aplikacione të Reja në Zhvillim</h2>
+              <p className="text-gray-400 max-w-xl mx-auto">
+                Sistemet e ardhshme që do të lehtësojnë punën tuaj edhe më shumë
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {comingSoonApps.map((app, index) => (
+                <div
+                  key={index}
+                  className={`relative p-6 rounded-2xl bg-gradient-to-br ${app.gradient} border ${app.borderColor} overflow-hidden group hover:scale-[1.02] transition-all duration-300`}
+                >
+                  <div className="absolute top-4 right-4">
+                    <span className="px-3 py-1 text-xs font-semibold bg-white/10 text-white rounded-full backdrop-blur-sm">
+                      SË SHPEJTI
+                    </span>
+                  </div>
+                  <div className={`w-14 h-14 ${app.iconBg} rounded-2xl flex items-center justify-center mb-4`}>
+                    <app.icon className={`w-7 h-7 ${app.iconColor}`} />
+                  </div>
+                  <h3 className="font-semibold text-white text-lg mb-2">{app.title}</h3>
+                  <p className="text-sm text-gray-400 mb-4">
+                    {app.description}
+                  </p>
+                  <ul className="space-y-2">
+                    {app.features.map((feature, idx) => (
+                      <li key={idx} className="text-xs text-gray-500 flex items-center gap-2">
+                        <div className={`w-1.5 h-1.5 ${app.dotColor} rounded-full`}></div>
+                        {feature}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
+            </div>
+          </div>
+
           {/* Features Section */}
           <div className="bg-gradient-to-b from-white/[0.05] to-transparent rounded-2xl p-8 border border-white/10 mb-16">
             <div className="text-center mb-8">
