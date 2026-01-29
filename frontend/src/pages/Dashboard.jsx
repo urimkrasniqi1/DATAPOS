@@ -271,6 +271,9 @@ const Dashboard = () => {
 
   return (
     <div className="space-y-6" data-testid="dashboard-page">
+      {/* Trial Banner */}
+      <TrialBanner />
+      
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
