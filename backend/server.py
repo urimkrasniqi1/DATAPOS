@@ -107,6 +107,7 @@ app.include_router(audit_router, prefix="/api")
 app.include_router(categories_router, prefix="/api")
 app.include_router(init_router, prefix="/api")
 app.include_router(upload.router, prefix="/api")
+app.include_router(registration.router, prefix="/api")
 
 
 @app.get("/")
