@@ -12,6 +12,7 @@ const Login = () => {
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
   const { login } = useAuth();
   const navigate = useNavigate();
   
@@ -24,12 +25,14 @@ const Login = () => {
   const handlePinLogin = async () => {
     if (pin.length < 1) return;
     setLoading(true);
+    setError('');
     const result = await login(pin, pin);
     setLoading(false);
     if (result.success) {
       navigate('/pos');
     } else {
       setPin('');
+      setError('PIN i gabuar. Provoni përsëri.');
     }
   };
 
@@ -37,10 +40,13 @@ const Login = () => {
   const handleAdminLogin = async (e) => {
     e.preventDefault();
     setLoading(true);
+    setError('');
     const result = await login(username, password);
     setLoading(false);
     if (result.success) {
       navigate('/dashboard');
+    } else {
+      setError(result.error || 'Username ose fjalëkalimi i gabuar');
     }
   };
 
