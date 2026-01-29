@@ -405,6 +405,17 @@ const SuperAdmin = () => {
                       <div className="text-right mr-4">
                         <p className="text-sm"><Users className="h-3 w-3 inline mr-1" />{tenant.users_count || 0} përdorues</p>
                         <p className="text-sm"><ShoppingCart className="h-3 w-3 inline mr-1" />{tenant.sales_count || 0} shitje</p>
+                        {tenant.status === 'trial' && tenant.trial_expires && (
+                          <p className="text-xs text-orange-600 mt-1">
+                            <Clock className="h-3 w-3 inline mr-1" />
+                            Trial: {calculateRemainingDays(tenant.trial_expires)} ditë
+                          </p>
+                        )}
+                        {tenant.subscription_plan && (
+                          <p className="text-xs text-green-600 mt-1">
+                            Plan: {tenant.subscription_plan}
+                          </p>
+                        )}
                       </div>
                       <Select 
                         value={tenant.status} 
