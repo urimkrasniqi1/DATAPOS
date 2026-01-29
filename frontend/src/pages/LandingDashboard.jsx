@@ -155,19 +155,28 @@ const LandingDashboard = () => {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-16">
-            {/* Windows Button */}
-            <div className="group relative bg-gradient-to-b from-white/[0.08] to-white/[0.02] backdrop-blur-sm rounded-2xl p-8 border border-white/10 flex flex-col items-center text-center overflow-hidden opacity-60">
-              <div className="absolute top-4 right-4 bg-[#00a79d]/20 text-[#00a79d] text-xs font-semibold px-3 py-1 rounded-full">
-                SË SHPEJTI
+            {/* Windows Button - ACTIVE */}
+            <a
+              href="https://github.com/urimkrasniqi1/DATAPOS/releases/download/v1.0.0/DataPOS.rar"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group relative bg-gradient-to-b from-[#00a79d]/20 to-[#00a79d]/5 backdrop-blur-sm rounded-2xl p-8 border border-[#00a79d]/30 hover:border-[#00a79d] transition-all duration-500 flex flex-col items-center text-center overflow-hidden cursor-pointer"
+            >
+              <div className="absolute inset-0 bg-gradient-to-b from-[#00a79d]/0 to-[#00a79d]/0 group-hover:from-[#00a79d]/10 group-hover:to-[#00a79d]/20 transition-all duration-500"></div>
+              <div className="absolute top-4 right-4 bg-[#00a79d] text-white text-xs font-semibold px-3 py-1 rounded-full">
+                SHKARKO
               </div>
               <div className="relative">
-                <div className="w-20 h-20 bg-white/5 rounded-2xl flex items-center justify-center mb-6">
-                  <Monitor className="w-10 h-10 text-gray-500" />
+                <div className="w-20 h-20 bg-[#00a79d]/20 group-hover:bg-[#00a79d]/30 rounded-2xl flex items-center justify-center mb-6 transition-all duration-500 group-hover:scale-110">
+                  <Monitor className="w-10 h-10 text-[#00a79d]" />
                 </div>
-                <h3 className="text-xl font-semibold text-gray-400 mb-2">Windows</h3>
-                <p className="text-gray-600 text-sm mb-4">Aplikacion desktop</p>
+                <h3 className="text-xl font-semibold text-white mb-2">Windows</h3>
+                <p className="text-gray-400 text-sm mb-4">Aplikacion desktop</p>
+                <div className="inline-flex items-center gap-2 text-[#00a79d] text-sm font-medium">
+                  <span>Shkarko .RAR →</span>
+                </div>
               </div>
-            </div>
+            </a>
 
             {/* macOS Button */}
             <div className="group relative bg-gradient-to-b from-white/[0.08] to-white/[0.02] backdrop-blur-sm rounded-2xl p-8 border border-white/10 flex flex-col items-center text-center overflow-hidden opacity-60">
