@@ -5,6 +5,7 @@ import { Toaster, toast } from 'sonner';
 
 // Pages
 import Login from './pages/Login';
+import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
 import POS from './pages/POS';
 import Products from './pages/Products';
