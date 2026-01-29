@@ -20,6 +20,7 @@ const Register = () => {
   const [formData, setFormData] = useState({
     company_name: '',
     full_name: '',
+    username: '',
     email: '',
     phone: '',
     password: '',
@@ -37,6 +38,14 @@ const Register = () => {
     
     if (!formData.full_name.trim()) {
       newErrors.full_name = 'Emri i plotë është i detyrueshëm';
+    }
+    
+    if (!formData.username.trim()) {
+      newErrors.username = 'Username është i detyrueshëm';
+    } else if (formData.username.length < 3) {
+      newErrors.username = 'Username duhet të ketë të paktën 3 karaktere';
+    } else if (!/^[a-zA-Z0-9_]+$/.test(formData.username)) {
+      newErrors.username = 'Username mund të përmbajë vetëm shkronja, numra dhe _';
     }
     
     if (!formData.email.trim()) {
@@ -74,6 +83,7 @@ const Register = () => {
       const response = await axios.post(`${API}/api/register`, {
         company_name: formData.company_name,
         full_name: formData.full_name,
+        username: formData.username,
         email: formData.email,
         phone: formData.phone,
         password: formData.password
